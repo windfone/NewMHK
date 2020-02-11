@@ -2,27 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rlayout_topbar_root"
     android:layout_width="match_parent"
-    android:layout_height="66dp"
-    >
+    android:layout_height="67dp"
+    android:background="@color/whitefff">
 
     <ImageView
         android:id="@+id/img_topbar_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="21dp"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="15dp"
         android:src="@drawable/icon_back" />
 
     <TextView
         android:id="@+id/txt_topbar_name"
+        style="@style/textSize_black000_16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        style="@style/textSize_whitefff_16"
-        />
+        android:layout_marginBottom="11dp" />
 
     <ViewStub
         android:id="@+id/stub_right"
@@ -30,8 +29,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="15dp"
-        />
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="11dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/gray8F8"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewMHK</string>
+    <string name="app_name">MHK</string>
 
     <string-array name="request_permission_reason">
         <item>为了您更好的使用播放语音、录制音频等功能，需要您同意以下这些权限：</item>
@@ -13,4 +13,25 @@
     <string name="is_exits">是否退出</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
+
+    <!--layout-button-->
+    <string name="filter">筛选</string>
+
+    <!-- activity_login-->
+    <string name="login">登录</string>
+    <string name="please_input_user_name">请输入用户名</string>
+    <string name="please_input_pwd">请输入密码</string>
+    <string name="forget_psd">忘记密码</string>
+    <string name="please_input_votify_code">请输入验证码</string>
+    <string name="votify_code_err">验证码输入错误，请重新输入</string>
+    <string name="username_unregister">该用户名尚未注册，请输入正确的用户名</string>
+    <string name="psd_err">密码输入错误，请重新输入</string>
+    <string name="logining">登录中...</string>
+    <string name="register_name_digits">
+        ._@0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ
+    </string>
+
+    <!--dialog_net-->
+    <string name="net_error">您的网络不给力啊，快去查看下手机设置吧</string>
+
 </resources>

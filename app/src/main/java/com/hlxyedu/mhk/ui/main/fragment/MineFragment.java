@@ -59,5 +59,5 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
     public void onViewClicked() {
 
     }
-    
+
 }

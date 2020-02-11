@@ -69,10 +69,10 @@ public class BottomBarItem  extends LinearLayout {
         if (selected) {
 //            mIcon.setImageDrawable(sicon);
 
-            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.blueEDE));
+            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.blueDF4));
         } else {
 //            mIcon.setImageDrawable(icon);
-            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.blackE3E));
+            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.gray9A9));
         }
     }
 

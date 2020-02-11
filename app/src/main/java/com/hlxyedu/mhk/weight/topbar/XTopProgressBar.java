@@ -18,7 +18,7 @@ import com.hlxyedu.mhk.R;
  * 邮箱：dqwei@iflytek.com
  */
 
-public class XTopBar extends LinearLayout {
+public class XTopProgressBar extends LinearLayout {
 
     private LinearLayout time_layout;
 
@@ -32,11 +32,11 @@ public class XTopBar extends LinearLayout {
 
     private int cur = 0;
 
-    public XTopBar(Context context) {
+    public XTopProgressBar(Context context) {
         super(context);
     }
 
-    public XTopBar(Context context, AttributeSet attrs) {
+    public XTopProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         initView();
