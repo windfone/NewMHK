@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">NewMHK</string>
+
+    <string-array name="request_permission_reason">
+        <item>为了您更好的使用播放语音、录制音频等功能，需要您同意以下这些权限：</item>
+        <item>1. 访问您设备上的内容和文件</item>
+        <item>2. 允许访问麦克风</item>
+        <item>3. 获取手机状态信息</item>
+    </string-array>
+    <string name="permission">为了您能够使用录音功能，需要您同意录音、读取手机存储等权限</string>
+    <string name="exam">考试</string>
+    <string name="notice">提示</string>
+    <string name="is_exits">是否退出</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+</resources>

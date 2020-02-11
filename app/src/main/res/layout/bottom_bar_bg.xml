@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottombar_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grayDFD" />
+
+    <LinearLayout
+        android:id="@+id/containers_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+
+</RelativeLayout>

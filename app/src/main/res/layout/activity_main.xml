@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitefff"
+    tools:context=".ui.main.activity.MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fl_tab_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/bottombar_height"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3E3"
+                android:layout_gravity="bottom"/>
+
+        </FrameLayout>
+
+        <com.hlxyedu.mhk.weight.bottombar.BottomBar
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bottombar_height"
+            android:layout_gravity="bottom"
+            />
+
+    </FrameLayout>
+
+</RelativeLayout>
