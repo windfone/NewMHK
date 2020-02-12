@@ -48,7 +48,7 @@
     </style>
 
     <style name="textSize_gray0B0_15">
-        <item name="android:textColor">@color/gray0B0</item>
+        <item name="android:textColorHint">@color/gray0B0</item>
         <item name="android:textSize">@dimen/textsize_sp_15</item>
     </style>
 
@@ -62,6 +62,11 @@
         <item name="android:textSize">@dimen/textsize_sp_14</item>
     </style>
 
+    <style name="textSize_black303_14">
+        <item name="android:textColor">@color/black303</item>
+        <item name="android:textSize">@dimen/textsize_sp_14</item>
+    </style>
+
     <style name="textSize_grayf8f_14">
         <item name="android:textColor">@color/grayf8f</item>
         <item name="android:textSize">@dimen/textsize_sp_14</item>
@@ -69,6 +74,11 @@
 
     <style name="textSize_whitefff_13">
         <item name="android:textColor">@color/whitefff</item>
+        <item name="android:textSize">@dimen/textsize_sp_13</item>
+    </style>
+
+    <style name="textSize_gray696_13">
+        <item name="android:textColor">@color/gray696</item>
         <item name="android:textSize">@dimen/textsize_sp_13</item>
     </style>
 

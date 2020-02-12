@@ -30,14 +30,32 @@
     <string name="register_name_digits">
         ._@0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ
     </string>
+    <string name="ID_card_digits">
+        0123456789xX
+    </string>
 
     <!--activity_found_psd-->
     <string name="please_input_ID_card">请输入身份证号</string>
     <string name="please_input_new_psd">请输入新密码</string>
+    <string name="please_input_new_psd_again">请重新输入新密码</string>
     <string name="psd_requirements">请输入6-16位数字或字母为密码</string>
     <string name="ID_card_err">身份证号输入错误，请重新输入</string>
+    <string name="psd_different">两次密码输入不一致，请重新输入</string>
 
     <!--dialog_net-->
     <string name="net_error">您的网络不给力啊，快去查看下手机设置吧</string>
+
+    <!--main-->
+    <string name="exercise">练习</string>
+    <string name="operation">作业</string>
+    <string name="mine">我的</string>
+
+    <!--fragment_mine-->
+    <string name="grade">答题成绩</string>
+    <string name="feedback">意见反馈</string>
+    <string name="terms_of_service">服务条款</string>
+    <string name="about_us">关于我们</string>
+    <string name="version_code">版本号：</string>
+
 
 </resources>

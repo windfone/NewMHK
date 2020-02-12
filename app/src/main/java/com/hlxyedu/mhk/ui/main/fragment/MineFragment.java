@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hlxyedu.mhk.R;
@@ -21,9 +22,18 @@ import butterknife.Unbinder;
  */
 public class MineFragment extends RootFragment<MinePresenter> implements MineContract.View {
 
-
-    @BindView(R.id.feedback_tv)
-    TextView feedbackTv;
+    @BindView(R.id.grade_rl)
+    RelativeLayout gradeRl;
+    @BindView(R.id.feedback_rl)
+    RelativeLayout feedbackRl;
+    @BindView(R.id.terms_of_service_rl)
+    RelativeLayout termsOfServiceRl;
+    @BindView(R.id.about_us_rl)
+    RelativeLayout aboutUsRl;
+    @BindView(R.id.version_tv)
+    TextView versionTv;
+    @BindView(R.id.version_rl)
+    RelativeLayout versionRl;
 
     public static MineFragment newInstance() {
         Bundle args = new Bundle();
@@ -53,11 +63,19 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
 
     }
 
-
-
-    @OnClick(R.id.feedback_tv)
-    public void onViewClicked() {
-
+    @OnClick({R.id.grade_rl, R.id.feedback_rl, R.id.terms_of_service_rl, R.id.about_us_rl, R.id.version_rl})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.grade_rl:
+                break;
+            case R.id.feedback_rl:
+                break;
+            case R.id.terms_of_service_rl:
+                break;
+            case R.id.about_us_rl:
+                break;
+            case R.id.version_rl:
+                break;
+        }
     }
-
 }

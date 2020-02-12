@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
 import com.hlxyedu.mhk.ui.main.contract.MainContract;
+import com.hlxyedu.mhk.ui.main.fragment.ExamFragment;
 import com.hlxyedu.mhk.ui.main.fragment.ExerciseFragment;
 import com.hlxyedu.mhk.ui.main.fragment.MineFragment;
 import com.hlxyedu.mhk.ui.main.fragment.OperationFragment;
@@ -31,7 +32,7 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
     @BindView(R.id.bottomBar)
     BottomBar mBottomBar;
     private SupportFragment[] mFragments = new SupportFragment[4];
-    List<String> navigations = Arrays.asList("练习","作业","考试","我的");
+    List<String> navigations = Arrays.asList("练习", "作业", "考试", "我的");
     List<Integer> bottomIcons = Arrays.asList(R.drawable.icon_bar_selector_exercise, R.drawable.icon_bar_selector_operation,
             R.drawable.icon_bar_selector_exam, R.drawable.icon_bar_selector_mine);
 //    @BindView(R.id.main_topbar)
@@ -63,13 +64,13 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
     protected void initEventAndData() {
         //设置宽高
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-        mBottomBar.initBottomBar(screenWidth, MainActivity.this,navigations,bottomIcons);
+        mBottomBar.initBottomBar(screenWidth, MainActivity.this, navigations, bottomIcons);
 
         SupportFragment firstFragment = findFragment(ExerciseFragment.class);
         if (firstFragment == null) {
             mFragments[FIRST] = ExerciseFragment.newInstance();
             mFragments[SECOND] = OperationFragment.newInstance();
-            mFragments[THIRD] = ExerciseFragment.newInstance();
+            mFragments[THIRD] = ExamFragment.newInstance();
             mFragments[FOURTH] = MineFragment.newInstance();
 
             loadMultipleRootFragment(R.id.fl_tab_container, FIRST,
@@ -80,7 +81,7 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
             // 这里我们需要拿到mFragments的引用,也可以通过getChildFragmentManager.findFragmentByTag自行进行判断查找(效率更高些),用下面的方法查找更方便些
             mFragments[FIRST] = firstFragment;
             mFragments[SECOND] = findFragment(OperationFragment.class);
-            mFragments[THIRD] = findFragment(ExerciseFragment.class);
+            mFragments[THIRD] = findFragment(ExamFragment.class);
             mFragments[FOURTH] = findFragment(MineFragment.class);
         }
 

@@ -38,12 +38,14 @@
             android:digits="@string/register_name_digits"
             android:gravity="center_vertical"
             android:hint="@string/please_input_user_name"
+            android:inputType="textEmailAddress"
             android:paddingStart="47dp"
             android:singleLine="true"
             android:textCursorDrawable="@drawable/my_cursor"
             tools:ignore="RtlSymmetry" />
 
         <View
+            android:id="@+id/user_name_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignParentBottom="true"
@@ -72,7 +74,7 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="17dp"
-            android:src="@drawable/icon_ID_card"
+            android:src="@drawable/icon_id_card"
             tools:ignore="ContentDescription" />
 
         <EditText
@@ -81,15 +83,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
-            android:digits="@string/register_name_digits"
+            android:digits="@string/ID_card_digits"
             android:gravity="center_vertical"
             android:hint="@string/please_input_ID_card"
+            android:inputType="number"
             android:paddingStart="47dp"
             android:singleLine="true"
             android:textCursorDrawable="@drawable/my_cursor"
             tools:ignore="RtlSymmetry" />
 
         <View
+            android:id="@+id/id_card_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignParentBottom="true"
@@ -130,12 +134,14 @@
             android:digits="@string/register_name_digits"
             android:gravity="center_vertical"
             android:hint="@string/please_input_new_psd"
+            android:inputType="numberPassword"
             android:paddingStart="47dp"
             android:singleLine="true"
             android:textCursorDrawable="@drawable/my_cursor"
             tools:ignore="RtlSymmetry" />
 
         <View
+            android:id="@+id/new_psd_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignParentBottom="true"
@@ -151,5 +157,65 @@
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
         android:text="@string/psd_requirements" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:paddingStart="38dp"
+        android:paddingEnd="38dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="17dp"
+            android:src="@drawable/icon_psd"
+            tools:ignore="ContentDescription" />
+
+        <EditText
+            android:id="@+id/new_psd_again_edit"
+            style="@style/textSize_gray0B0_15"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:digits="@string/register_name_digits"
+            android:gravity="center_vertical"
+            android:hint="@string/please_input_new_psd_again"
+            android:inputType="numberPassword"
+            android:paddingStart="47dp"
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/my_cursor"
+            tools:ignore="RtlSymmetry" />
+
+        <View
+            android:id="@+id/new_psd_again_line"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/gray9D9" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/psd_different_tv"
+        style="@style/textSize_redE90_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/psd_different" />
+
+    <Button
+        android:id="@+id/confirm_btn"
+        style="@style/textSize_whitefff_17"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="38dp"
+        android:background="@drawable/blue_btn_bg"
+        android:enabled="false"
+        android:text="@string/confirm" />
 
 </LinearLayout>

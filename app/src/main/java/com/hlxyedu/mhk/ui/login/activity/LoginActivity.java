@@ -3,23 +3,20 @@ package com.hlxyedu.mhk.ui.login.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.Gravity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.login.contract.LoginContract;
 import com.hlxyedu.mhk.ui.login.presenter.LoginPresenter;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ViewHolder;
+import com.hlxyedu.mhk.weight.dialog.NetErrorDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +37,12 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     EditText vertifyEdit;
     @BindView(R.id.login_btn)
     Button loginBtn;
+    @BindView(R.id.user_name_line)
+    View userNameLine;
+    @BindView(R.id.psd_line)
+    View psdLine;
+    @BindView(R.id.vertify_line)
+    View vertifyLine;
 
     /**
      * 打开新Activity
@@ -64,7 +67,8 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
 
     @Override
     protected void initEventAndData() {
-        showNetErrorDialog();
+        NetErrorDialog.getInstance().showNetErrorDialog(this);
+        initUIState();
     }
 
     @Override
@@ -76,6 +80,7 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.forget_psd_tv:
+                startActivity(FoundPsdActivity.newInstance(this));
                 break;
             case R.id.login_btn:
                 startActivity(MainActivity.newInstance(this));
@@ -83,28 +88,105 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
         }
     }
 
-    public void showNetErrorDialog() {
 
-        WindowManager windowManager = (WindowManager) this
-                .getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
+    private void initUIState() {
+        userNameEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    userNameLine.setBackgroundColor(getResources().getColor(R.color.blueED4));
+                    psdLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                    vertifyLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                }
+            }
+        });
+        psdEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    userNameLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                    psdLine.setBackgroundColor(getResources().getColor(R.color.blueED4));
+                    vertifyLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                }
+            }
+        });
+        vertifyEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    userNameLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                    psdLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
+                    vertifyLine.setBackgroundColor(getResources().getColor(R.color.blueED4));
+                }
+            }
+        });
 
-        DialogPlus dialogPlus = DialogPlus.newDialog(this)
-                .setGravity(Gravity.CENTER)
-                .setContentHolder(new ViewHolder(R.layout.dialog_net))
-                .setContentWidth((int) (display
-                        .getWidth() * 0.8))
-                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
-                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
-                .setCancelable(true)
-                .setOnClickListener((dialog, view1) -> {
-                    switch (view1.getId()) {
-                        case R.id.confirm_btn:
-                            dialog.dismiss();
-                            break;
-                    }
-                }).create();
-        dialogPlus.show();
+        userNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(psdEdit.getText().toString())
+                        && !StringUtils.isTrimEmpty(vertifyEdit.getText().toString())) {
+                    loginBtn.setEnabled(true);
+                } else {
+                    loginBtn.setEnabled(false);
+                }
+            }
+        });
+
+        psdEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(userNameEdit.getText().toString())
+                        && !StringUtils.isTrimEmpty(vertifyEdit.getText().toString())) {
+                    loginBtn.setEnabled(true);
+                } else {
+                    loginBtn.setEnabled(false);
+                }
+            }
+        });
+
+        vertifyEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(userNameEdit.getText().toString())
+                        && !StringUtils.isTrimEmpty(psdEdit.getText().toString())) {
+                    loginBtn.setEnabled(true);
+                } else {
+                    loginBtn.setEnabled(false);
+                }
+            }
+        });
+
     }
 
 }
