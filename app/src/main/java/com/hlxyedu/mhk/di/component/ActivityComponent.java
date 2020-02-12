@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.hlxyedu.mhk.di.module.ActivityModule;
 import com.hlxyedu.mhk.di.scope.ActivityScope;
+import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.splash.activity.SplashActivity;
@@ -25,5 +26,7 @@ public interface ActivityComponent {
     void inject(MainActivity mainActivity);
 
     void inject(LoginActivity loginActivity);
+
+    void inject(FoundPsdActivity foundPsdActivity);
 
 }
