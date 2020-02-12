@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_checked="true" >
+        <shape>
+            <!-- 矩形的圆角弧度 -->
+            <corners android:radius="4dp" />
+            <!-- 矩形的填充色 -->
+            <solid android:color="@color/orangeD69" />
+        </shape>
+    </item>
+
+    <item >
+        <shape>
+        <!-- 矩形的圆角弧度 -->
+        <corners android:radius="4dp" />
+        <!-- 矩形的填充色 -->
+        <solid android:color="@color/whitefff" />
+        </shape>
+    </item>
+
+</selector>

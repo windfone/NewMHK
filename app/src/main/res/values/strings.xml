@@ -57,5 +57,20 @@
     <string name="about_us">关于我们</string>
     <string name="version_code">版本号：</string>
 
+    <!--activity_exercise_select-->
+    <string name="state_select">状态选择：</string>
+    <string name="all_state">全部状态</string>
+    <string name="completed">已完成</string>
+    <string name="undone">未完成</string>
+    <string name="question_type">题型选择：</string>
+    <string name="listening_type_1">听力题型1</string>
+    <string name="listening_type_2">听力题型2</string>
+    <string name="reading_comprehension">阅读理解</string>
+    <string name="oral_listening">口语听力</string>
+    <string name="write_reading">读后写题</string>
+    <string name="whole_truth_test">全真试题</string>
+    <string name="exercise_number">练习次数：</string>
+    <string name="low_top">从高到低排序</string>
+    <string name="top_low">从低到高排序</string>
 
 </resources>

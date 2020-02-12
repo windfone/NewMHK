@@ -7,7 +7,9 @@
     <ImageView
         android:id="@+id/right_iv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_select"
+        android:layout_centerVertical="true"/>
 
     <TextView
         style="@style/textSize_grayf8f_14"

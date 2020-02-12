@@ -41,6 +41,9 @@
         <activity android:name=".ui.login.activity.FoundPsdActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.exercise.activity.ExerciseSelectActivity"
+            android:screenOrientation="portrait"/>
+
         <!-- 初始化service -->
         <service
             android:name="com.skyworth.rxqwelibrary.service.InitializeService"

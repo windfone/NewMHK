@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
+import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.splash.contract.SplashContract;
@@ -55,7 +56,7 @@ public class SplashActivity extends RootActivity<SplashPresenter> implements Spl
         }
 
         new Handler().postDelayed(() -> {
-            startActivity(LoginActivity.newInstance(getBaseContext()));
+            startActivity(ExerciseSelectActivity.newInstance(getBaseContext()));
 //            if (mPresenter.isLogin()) {
 //                startActivity(MainActivity.newInstance(getBaseContext()));
 //            } else {

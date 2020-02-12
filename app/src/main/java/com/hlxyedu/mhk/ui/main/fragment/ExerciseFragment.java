@@ -10,9 +10,12 @@ import android.view.ViewGroup;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExercisePresenter;
+import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
+import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,14 @@ import butterknife.Unbinder;
 /**
  * Created by zhangguihua
  */
-public class ExerciseFragment extends RootFragment<ExercisePresenter> implements ExerciseContract.View {
+public class ExerciseFragment extends RootFragment<ExercisePresenter> implements ExerciseContract.View, XBaseTopBarImp {
 
 
     @BindView(R.id.rlv)
     RecyclerView rlv;
+    @BindView(R.id.xbase_topbar)
+    XBaseTopBar xbaseTopbar;
+
     private ExerciseAdapter mAdapter;
 
     private List<DataVO> dataVOList = new ArrayList<>();
@@ -56,6 +62,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
+        xbaseTopbar.setxBaseTopBarImp(this);
 //        stateLoading();
         stateMain();
 
@@ -108,4 +115,13 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         stateError();
     }
 
+    @Override
+    public void left() {
+
+    }
+
+    @Override
+    public void right() {
+        startActivity(ExerciseSelectActivity.newInstance(mActivity));
+    }
 }
