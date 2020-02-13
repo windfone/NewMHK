@@ -61,6 +61,10 @@
             android:name=".ui.mine.activity.GradeActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.mine.activity.FeedBackActivity"
+            android:screenOrientation="portrait" />
+
         <!-- 初始化service -->
         <service
             android:name="com.skyworth.rxqwelibrary.service.InitializeService"

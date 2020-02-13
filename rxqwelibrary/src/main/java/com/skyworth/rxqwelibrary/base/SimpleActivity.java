@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 
+import com.gyf.immersionbar.ImmersionBar;
 import com.skyworth.rxqwelibrary.managers.AppManagers;
 import com.umeng.analytics.MobclickAgent;
 
@@ -49,7 +50,12 @@ public abstract class SimpleActivity extends AppCompatActivity {
         AppManagers.getInstance().addActivity(this);
         initEventAndData();
 
-        //设置透明通知栏
+        // 沉浸式
+        // keyboardEnable 解决软键盘与底部输入框冲突问题，默认为false
+        ImmersionBar.with(this)
+                .transparentStatusBar().keyboardEnable(true).init();
+
+       /* //设置透明通知栏
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -58,7 +64,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        actionBar.hide();*/
     }
 
     protected void onViewCreated() {

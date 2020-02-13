@@ -12,6 +12,7 @@ import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
+import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.splash.contract.SplashContract;
 import com.hlxyedu.mhk.ui.splash.presenter.SplashPresenter;
 
@@ -56,7 +57,7 @@ public class SplashActivity extends RootActivity<SplashPresenter> implements Spl
         }
 
         new Handler().postDelayed(() -> {
-            startActivity(LoginActivity.newInstance(getBaseContext()));
+            startActivity(FeedBackActivity.newInstance(getBaseContext()));
 //            if (mPresenter.isLogin()) {
 //                startActivity(MainActivity.newInstance(getBaseContext()));
 //            } else {

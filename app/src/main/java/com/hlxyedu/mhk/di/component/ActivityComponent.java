@@ -9,6 +9,7 @@ import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
+import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
 import com.hlxyedu.mhk.ui.operation.activity.OperationSelectActivity;
 import com.hlxyedu.mhk.ui.splash.activity.SplashActivity;
@@ -40,5 +41,7 @@ public interface ActivityComponent {
     void inject(OperationSelectActivity operationSelectActivity);
 
     void inject(GradeActivity gradeActivity);
+
+    void inject(FeedBackActivity feedBackActivity);
 
 }
