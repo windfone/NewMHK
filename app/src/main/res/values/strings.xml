@@ -73,4 +73,12 @@
     <string name="low_top">从高到低排序</string>
     <string name="top_low">从低到高排序</string>
 
+    <!--activity_test_score-->
+    <string name="test_score">试卷分数</string>
+
+    <!--activity_operation_select-->
+    <string name="positive_time">时间正序</string>
+    <string name="reverse_time">时间倒序</string>
+    <string name="time_sort">时间排序：</string>
+
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/test_score_bg_cd"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="5dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:background="@drawable/icon_test_score_bg">
+
+        <TextView
+            android:id="@+id/test_type_tv"
+            style="@style/textSize_black303_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="34dp"
+            android:layout_marginTop="16dp"
+            android:text="听力理解"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/correct_number_tv"
+            style="@style/textSize_blackb4b_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/test_type_tv"
+            android:layout_marginStart="34dp"
+            android:layout_marginTop="10dp"
+            android:text="听力理解答对题数" />
+
+        <TextView
+            android:id="@+id/all_number_tv"
+            style="@style/textSize_blackb4b_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/correct_number_tv"
+            android:layout_marginStart="34dp"
+            android:layout_marginTop="10dp"
+            android:text="听力理解题总数" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

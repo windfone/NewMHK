@@ -20,7 +20,7 @@
             android:name="design_height_in_dp"
             android:value="667" />
 
-        <activity android:name=".ui.splash.activity.SplashActivity"
+        <activity android:name=".ui.operation.activity.OperationSelectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Splash">
             <intent-filter>
@@ -42,6 +42,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.exercise.activity.ExerciseSelectActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.exam.activity.TestScoreActivity"
             android:screenOrientation="portrait"/>
 
         <!-- 初始化service -->
