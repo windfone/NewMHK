@@ -9,8 +9,10 @@ import android.widget.TextView;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
+import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
 import com.hlxyedu.mhk.ui.main.contract.MineContract;
 import com.hlxyedu.mhk.ui.main.presenter.MinePresenter;
+import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +69,7 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.grade_rl:
+                startActivity(GradeActivity.newInstance(mActivity));
                 break;
             case R.id.feedback_rl:
                 break;

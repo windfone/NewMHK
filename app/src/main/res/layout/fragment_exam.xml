@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:isShowLeft_x="false"
-        app:isShowRight_x="false"
+        app:isShowRight_x="true"
         app:middleText_x="@string/exam" />
 
     <LinearLayout

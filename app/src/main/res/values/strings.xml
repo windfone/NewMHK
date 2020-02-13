@@ -81,4 +81,6 @@
     <string name="reverse_time">时间倒序</string>
     <string name="time_sort">时间排序：</string>
 
+    <!--activity_grade-->
+
 </resources>

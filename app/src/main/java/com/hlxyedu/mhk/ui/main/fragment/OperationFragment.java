@@ -10,6 +10,9 @@ import com.hlxyedu.mhk.model.bean.DataVO;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.ui.main.contract.OperationContract;
 import com.hlxyedu.mhk.ui.main.presenter.OperationPresenter;
+import com.hlxyedu.mhk.ui.operation.activity.OperationSelectActivity;
+import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
+import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +22,14 @@ import butterknife.BindView;
 /**
  * Created by zhangguihua
  */
-public class OperationFragment extends RootFragment<OperationPresenter> implements OperationContract.View {
+public class OperationFragment extends RootFragment<OperationPresenter> implements OperationContract.View, XBaseTopBarImp {
 
 
     @BindView(R.id.rlv)
     RecyclerView rlv;
+    @BindView(R.id.xbase_topbar)
+    XBaseTopBar xbaseTopbar;
+
     private ExerciseAdapter mAdapter;
 
     private List<DataVO> dataVOList = new ArrayList<>();
@@ -51,6 +57,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
+        xbaseTopbar.setxBaseTopBarImp(this);
 //        stateLoading();
         stateMain();
 
@@ -103,4 +110,13 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         stateError();
     }
 
+    @Override
+    public void left() {
+
+    }
+
+    @Override
+    public void right() {
+        startActivity(OperationSelectActivity.newInstance(mActivity));
+    }
 }
