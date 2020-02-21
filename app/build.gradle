@@ -170,6 +170,7 @@ dependencies {
     //other
     implementation rootProject.ext.dependencies["walle"]
     compile project(path: ':rxqwelibrary')
+    compile project(path: ':record')
 }
 
 walle {

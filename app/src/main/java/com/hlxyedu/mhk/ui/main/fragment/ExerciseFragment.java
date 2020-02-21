@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
@@ -75,6 +77,9 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList, "获取");
         rlv.setLayoutManager(new LinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
+
+        mAdapter.setOnItemChildClickListener((adapter, view, position) ->
+                startActivity(ExerciseActivity.newInstance(mActivity)));
 
 //        count = 1;
 //        if (!dataVOList.isEmpty()) {

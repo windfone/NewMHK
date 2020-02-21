@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.hlxyedu.mhk.di.module.ActivityModule;
 import com.hlxyedu.mhk.di.scope.ActivityScope;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
+import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
@@ -43,5 +44,7 @@ public interface ActivityComponent {
     void inject(GradeActivity gradeActivity);
 
     void inject(FeedBackActivity feedBackActivity);
+
+    void inject(ExerciseActivity exerciseActivity);
 
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.exercise.fragment.ERepeatFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="35dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_countdown" />
+
+        <TextView
+            android:id="@+id/countdown_tv"
+            style="@style/textSize_orangeD57_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="90S" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/content_tv"
+        style="@style/textSize_black303_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="95dp"
+        android:layout_marginEnd="45dp"
+        android:lineSpacingExtra="4dp"
+        android:text="这是一首简单的小情歌，唱着我们心头的白鸽，我想我很适合，
+        当一个歌颂者，青春在风中飘着。这是一首简单的小情歌，唱着我们心头的
+        白鸽，我想我很适合，当一个歌颂者，青春在风中飘着。这是一首简单的小情歌，唱着我们心
+        头的白鸽，我想我很适合，当一个歌颂者，青春在风中飘着。" />
+
+</RelativeLayout>

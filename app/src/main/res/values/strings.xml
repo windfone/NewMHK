@@ -84,4 +84,17 @@
     <!--activity_feedback-->
     <string name="input_description">请输入简述</string>
 
+    <!--activity_exercise-->
+    <string name="exercise_more">（随机出题，可多次练习）</string>
+    <string name="next_step">下一步</string>
+    <string name="exam_complete">考试完成</string>
+    <string name="finished">完成</string>
+    <string name="next_question">下一题</string>
+    <string name="commit_to_next_question">提交进入下一题</string>
+    <string name="pressed_speaking">按下说话</string>
+    <string name="playing_content">播放内容</string>
+    <string name="see_demo">查看范文</string>
+    <string name="commit_answer">提交答卷</string>
+    <string name="upload_pic">拍照并上传</string>
+
 </resources>

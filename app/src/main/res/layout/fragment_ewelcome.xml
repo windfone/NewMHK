@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.exercise.fragment.EWelcomeFragment">
+
+    <TextView
+        android:id="@+id/hint_tv"
+        style="@style/textSize_black303_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="62dp"
+        android:layout_marginEnd="38dp"
+        android:text="说明：/n z1-15题，这部分试题，都是两个人的简短对话，第三个人根据对话提出的问题，请你在四个书面答案中选出唯一恰当的答案。" />
+
+</RelativeLayout>
