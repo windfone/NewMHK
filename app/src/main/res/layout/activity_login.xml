@@ -59,7 +59,7 @@
             android:digits="@string/register_name_digits"
             android:gravity="center_vertical"
             android:hint="@string/please_input_user_name"
-            android:inputType="textEmailAddress"
+            android:inputType="phone"
             android:paddingStart="47dp"
             android:singleLine="true"
             android:textCursorDrawable="@drawable/my_cursor"
@@ -75,12 +75,14 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/user_error_prompt_tv"
         style="@style/textSize_redE90_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/username_unregister" />
+        android:text="@string/username_unregister"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -133,18 +135,21 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/psd_error_prompt_tv"
         style="@style/textSize_redE90_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/psd_err" />
+        android:text="@string/psd_err"
+        android:visibility="invisible" />
 
     <RelativeLayout
+        android:id="@+id/code_error_prompt_rl"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:paddingStart="38dp"
-        android:paddingEnd="38dp">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -170,15 +175,14 @@
             android:textCursorDrawable="@drawable/my_cursor"
             tools:ignore="RtlSymmetry" />
 
-        <TextView
+        <ImageView
+            android:id="@+id/code_iv"
             style="@style/textSize_black949_14"
-            android:layout_width="89dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@color/blue0DF"
-            android:gravity="center"
-            android:text="@string/forget_psd" />
+            android:layout_marginEnd="22dp" />
 
         <View
             android:id="@+id/vertify_line"
@@ -190,12 +194,14 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/code_error_prompt_tv"
         style="@style/textSize_redE90_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/votify_code_err" />
+        android:text="@string/votify_code_err"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/login_btn"
@@ -206,7 +212,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="38dp"
         android:background="@drawable/blue_btn_bg"
-        android:enabled="true"
+        android:enabled="false"
         android:text="@string/login" />
 
 </LinearLayout>

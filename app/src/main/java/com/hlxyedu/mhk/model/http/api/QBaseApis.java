@@ -1,5 +1,13 @@
 package com.hlxyedu.mhk.model.http.api;
 
+import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.http.response.HttpResponse;
+
+import io.reactivex.Flowable;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
+
 /**
  * 作者：skyworth on 2017/9/7 09:51
  * 邮箱：dqwei@iflytek.com
@@ -34,6 +42,14 @@ public interface QBaseApis {
     // 用户登录
 //    @GET("user/login")
 //    Flowable<HttpResponse<UserVO>> getLoginBody(@Query("username") String username, @Query("password") String password);
+
+    @FormUrlEncoded
+    @POST("login/loginm.do")
+    Flowable<HttpResponse<UserVO>> postLoginBody(@Field("mobile") String mobile, @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("login/forgotPwordm.do")
+    Flowable<HttpResponse<String>> postModifyPsdBody(@Field("mobile") String mobile, @Field("password") String password,@Field("idNum") String idNum);
 
 }
 

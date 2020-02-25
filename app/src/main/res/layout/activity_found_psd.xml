@@ -60,7 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/username_unregister" />
+        android:text="@string/username_unregister"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -108,7 +109,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/ID_card_err" />
+        android:text="@string/ID_card_err"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -204,7 +206,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
         android:layout_marginTop="6dp"
-        android:text="@string/psd_different" />
+        android:text="@string/psd_different"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/confirm_btn"

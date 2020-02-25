@@ -1,10 +1,14 @@
 package com.hlxyedu.mhk.model.http;
 
 
+import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.api.ManageApis;
 import com.hlxyedu.mhk.model.http.api.QBaseApis;
+import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
 import javax.inject.Inject;
+
+import io.reactivex.Flowable;
 
 /**
  *
@@ -22,4 +26,13 @@ public class RetrofitHelper implements HttpHelper {
     }
 
 
+    @Override
+    public Flowable<HttpResponse<UserVO>> postLoginBody(String mobile, String pwd) {
+        return qBaseApis.postLoginBody(mobile,pwd);
+    }
+
+    @Override
+    public Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum) {
+        return qBaseApis.postModifyPsdBody(mobile,password,idNum);
+    }
 }

@@ -28,7 +28,7 @@
     <string name="psd_err">密码输入错误，请重新输入</string>
     <string name="logining">登录中...</string>
     <string name="register_name_digits">
-        ._@0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ
+        0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
     </string>
     <string name="ID_card_digits">
         0123456789xX

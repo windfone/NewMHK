@@ -8,9 +8,6 @@ package com.hlxyedu.mhk.model.http.response;
 public class HttpResponse<T> {
 
     private String msg;
-    private String resultType;
-    private int status;
-    private boolean success;
     private int code;
     private T data;
 
@@ -20,22 +17,6 @@ public class HttpResponse<T> {
 
     public void setData(T data) {
         this.data = data;
-    }
-
-    public String getResultType() {
-        return resultType;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public void setResultType(String resultType) {
-        this.resultType = resultType;
     }
 
     public String getMsg() {
@@ -54,11 +35,4 @@ public class HttpResponse<T> {
         this.code = code;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }

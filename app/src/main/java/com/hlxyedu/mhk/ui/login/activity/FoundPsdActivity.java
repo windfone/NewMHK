@@ -11,10 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.login.contract.FoundPsdContract;
 import com.hlxyedu.mhk.ui.login.presenter.FoundPsdPresenter;
+import com.hlxyedu.mhk.utils.ForResultUtils;
 import com.hlxyedu.mhk.weight.dialog.NetErrorDialog;
 
 import butterknife.BindView;
@@ -53,6 +55,8 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
     @BindView(R.id.new_psd_again_line)
     View newPsdAgainLine;
 
+    private String mobile, psd, newPsd, idCard;
+
     /**
      * 打开新Activity
      *
@@ -76,7 +80,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     @Override
     protected void initEventAndData() {
-        NetErrorDialog.getInstance().showNetErrorDialog(this);
+//        NetErrorDialog.getInstance().showNetErrorDialog(this);
         initUIState();
 
     }
@@ -86,8 +90,29 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     }
 
+    @Override
+    public void foundPsdSuccess() {
+        ToastUtils.showShort("密码重置成功");
+        Intent i = new Intent();
+        i.putExtra("mobile", mobile);
+        i.putExtra("password", psd);
+        setResult(ForResultUtils.RESULT_CODE, i);
+        finish();
+    }
+
     @OnClick(R.id.confirm_btn)
     public void onViewClicked() {
+        mobile = userNameEdit.getText().toString().trim();
+        psd = newPsdEdit.getText().toString().trim();
+        newPsd = newPsdAgainEdit.getText().toString().trim();
+        idCard = IDCardEdit.getText().toString().trim();
+        if (!StringUtils.equals(psd, newPsd)) {
+            psdDifferentTv.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            psdDifferentTv.setVisibility(View.INVISIBLE);
+        }
+        mPresenter.foundPsd(mobile, psd, idCard);
     }
 
     private void initUIState() {

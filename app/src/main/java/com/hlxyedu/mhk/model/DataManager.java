@@ -1,7 +1,11 @@
 package com.hlxyedu.mhk.model;
 
+import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.HttpHelper;
+import com.hlxyedu.mhk.model.http.response.HttpResponse;
 import com.hlxyedu.mhk.model.prefs.PreferencesHelper;
+
+import io.reactivex.Flowable;
 
 /**
  * 作者：skyworth on 2017/7/11 09:55
@@ -67,6 +71,16 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     @Override
     public void clearLoginInfo() {
         mPreferencesHelper.clearLoginInfo();
+    }
+
+    @Override
+    public Flowable<HttpResponse<UserVO>> postLoginBody(String mobile, String pwd) {
+        return mHttpHelper.postLoginBody(mobile, pwd);
+    }
+
+    @Override
+    public Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum) {
+        return mHttpHelper.postModifyPsdBody(mobile,password,idNum);
     }
 
 }
