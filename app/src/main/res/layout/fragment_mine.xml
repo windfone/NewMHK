@@ -170,4 +170,23 @@
         android:layout_height="1dp"
         android:background="@color/gray8F8" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/exit_btn"
+            style="@style/textSize_whitefff_16"
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginBottom="50dp"
+            android:text="@string/exit_login"
+            android:theme="@style/RedExitButtonStyle"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
 </LinearLayout>

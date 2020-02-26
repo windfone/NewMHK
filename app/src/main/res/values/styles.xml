@@ -12,6 +12,10 @@
         <item name="android:windowBackground">@drawable/icon_splash</item>
     </style>
 
+    <style name="RedExitButtonStyle" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">@android:color/holo_red_light</item>
+    </style>
+
     <style name="textSize_whitefff_17">
         <item name="android:textColor">@color/whitefff</item>
         <item name="android:textSize">@dimen/textsize_sp_17</item>

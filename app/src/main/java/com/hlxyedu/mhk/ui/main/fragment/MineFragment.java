@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
@@ -37,6 +39,8 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
     TextView versionTv;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
+    @BindView(R.id.exit_btn)
+    Button exit_btn;
 
     public static MineFragment newInstance() {
         Bundle args = new Bundle();
@@ -58,7 +62,12 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
 
     @Override
     protected void initEventAndData() {
-
+        versionTv.setText("v" + AppUtils.getAppVersionName());
+        if (mPresenter.isLogin()) {
+            exit_btn.setVisibility(View.VISIBLE);
+        } else {
+            exit_btn.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -66,7 +75,7 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
 
     }
 
-    @OnClick({R.id.grade_rl, R.id.feedback_rl, R.id.terms_of_service_rl, R.id.about_us_rl, R.id.version_rl})
+    @OnClick({R.id.grade_rl, R.id.feedback_rl, R.id.terms_of_service_rl, R.id.about_us_rl, R.id.version_rl, R.id.exit_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.grade_rl:
@@ -80,6 +89,10 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
             case R.id.about_us_rl:
                 break;
             case R.id.version_rl:
+                break;
+            case R.id.exit_btn:
+                mPresenter.clearLoginInfo();
+                mPresenter.setLoginState(false);
                 break;
         }
     }

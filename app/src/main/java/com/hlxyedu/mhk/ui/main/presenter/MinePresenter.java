@@ -27,4 +27,20 @@ public class MinePresenter extends RxPresenter<MineContract.View> implements Min
     private void registerEvent() {
 
     }
+
+    @Override
+    public boolean isLogin() {
+        return mDataManager.getLoginStatus();
+    }
+
+    @Override
+    public void clearLoginInfo() {
+        mDataManager.clearLoginInfo();
+    }
+
+    @Override
+    public void setLoginState(boolean login) {
+        mDataManager.setLoginStatus(login);
+    }
+
 }

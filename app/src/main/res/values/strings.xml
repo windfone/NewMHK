@@ -56,6 +56,7 @@
     <string name="terms_of_service">服务条款</string>
     <string name="about_us">关于我们</string>
     <string name="version_code">版本号：</string>
+    <string name="exit_login">退出登录</string>
 
     <!--activity_exercise_select-->
     <string name="state_select">状态选择：</string>

@@ -14,5 +14,13 @@ public interface MineContract {
     }
 
     interface Presenter extends BasePresenter<View> {
+
+        boolean isLogin();
+
+        void clearLoginInfo();
+
+        void setLoginState(boolean login);
+
     }
+
 }
