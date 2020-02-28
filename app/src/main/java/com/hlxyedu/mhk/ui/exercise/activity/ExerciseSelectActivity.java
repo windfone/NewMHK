@@ -2,16 +2,22 @@ package com.hlxyedu.mhk.ui.exercise.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
+import com.hlxyedu.mhk.base.RxBus;
+import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.ui.exercise.contract.ExerciseSelectContract;
 import com.hlxyedu.mhk.ui.exercise.presenter.ExerciseSelectPresenter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by zhangguihua
@@ -42,6 +48,12 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
     CheckBox lowTopCb;
     @BindView(R.id.top_low_cb)
     CheckBox topLowCb;
+    @BindView(R.id.confirm_btn)
+    Button confirmBtn;
+
+    private String stateSelect;
+    private String questionType;
+    private String exerciseNum;
 
     /**
      * 打开新Activity
@@ -67,6 +79,11 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
     @Override
     protected void initEventAndData() {
         xbaseTopbar.setxBaseTopBarImp(this);
+    }
+
+    @OnClick(R.id.confirm_btn)
+    public void onViewClicked() {
+        RxBus.getDefault().post(new SelectEvent(SelectEvent.SELECT,stateSelect,questionType,exerciseNum));
     }
 
     @Override

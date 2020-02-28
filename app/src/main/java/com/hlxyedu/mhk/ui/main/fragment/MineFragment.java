@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.AppUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
+import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.contract.MineContract;
 import com.hlxyedu.mhk.ui.main.presenter.MinePresenter;
 import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
@@ -93,6 +94,8 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
             case R.id.exit_btn:
                 mPresenter.clearLoginInfo();
                 mPresenter.setLoginState(false);
+                startActivity(LoginActivity.newInstance(mActivity));
+                mActivity.finish();
                 break;
         }
     }

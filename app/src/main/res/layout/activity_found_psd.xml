@@ -38,7 +38,7 @@
             android:digits="@string/register_name_digits"
             android:gravity="center_vertical"
             android:hint="@string/please_input_user_name"
-            android:inputType="textEmailAddress"
+            android:inputType="phone"
             android:paddingStart="47dp"
             android:singleLine="true"
             android:textCursorDrawable="@drawable/my_cursor"

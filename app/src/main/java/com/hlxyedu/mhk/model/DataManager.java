@@ -1,5 +1,6 @@
 package com.hlxyedu.mhk.model;
 
+import com.hlxyedu.mhk.model.bean.ExamListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.HttpHelper;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
@@ -80,7 +81,12 @@ public class DataManager implements HttpHelper, PreferencesHelper {
 
     @Override
     public Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum) {
-        return mHttpHelper.postModifyPsdBody(mobile,password,idNum);
+        return mHttpHelper.postModifyPsdBody(mobile, password, idNum);
+    }
+
+    @Override
+    public Flowable<HttpResponse<ExamListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version) {
+        return mHttpHelper.getExamList(examType, id, pageNum, perpage, version);
     }
 
 }

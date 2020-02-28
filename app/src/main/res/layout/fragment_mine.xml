@@ -138,7 +138,7 @@
         android:background="@drawable/item_click_selector">
 
         <TextView
-            android:id="@+id/version_tv"
+            android:id="@+id/banbenhao_tv"
             style="@style/textSize_black303_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -147,12 +147,13 @@
             android:text="@string/version_code" />
 
         <TextView
+            android:id="@+id/version_tv"
             style="@style/textSize_black303_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="25dp"
-            android:layout_toRightOf="@+id/version_tv"
+            android:layout_toRightOf="@+id/banbenhao_tv"
             android:text="v1.0.1" />
 
         <ImageView
