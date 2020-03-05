@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
-import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exam.adapter.TestScoreAdapter;
 import com.hlxyedu.mhk.ui.mine.contract.GradeContract;
 import com.hlxyedu.mhk.ui.mine.presenter.GradePresenter;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by zhangguihua
@@ -37,7 +35,7 @@ public class GradeActivity extends RootActivity<GradePresenter> implements Grade
 
     private TestScoreAdapter mAdapter;
 
-    private List<DataVO> dataVOList = new ArrayList<>();
+    private List<OperationVO> OperationVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
@@ -65,15 +63,15 @@ public class GradeActivity extends RootActivity<GradePresenter> implements Grade
     @Override
     protected void initEventAndData() {
         xbaseTopbar.setxBaseTopBarImp(this);
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
 
         View view = LayoutInflater.from(this).inflate(R.layout.grade_header_view, null);
         finishPagerTv = view.findViewById(R.id.finished_pager_tv);
-        mAdapter = new TestScoreAdapter(R.layout.item_test_score, dataVOList, "获取");
+        mAdapter = new TestScoreAdapter(R.layout.item_test_score, OperationVOList, "获取");
         mAdapter.addHeaderView(view);
         rlv.setLayoutManager(new LinearLayoutManager(this));
         rlv.setAdapter(mAdapter);

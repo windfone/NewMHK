@@ -2,34 +2,32 @@ package com.hlxyedu.mhk.ui.exam.adapter;
 
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hlxyedu.mhk.R;
-import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestScoreAdapter extends BaseQuickAdapter<DataVO, BaseViewHolder> {
+public class TestScoreAdapter extends BaseQuickAdapter<OperationVO, BaseViewHolder> {
 
     private String title;
-    private ArrayList<DataVO> datas;
+    private ArrayList<OperationVO> datas;
 
     public TestScoreAdapter(int layoutResId,
-                            @Nullable List<DataVO> data, String mTitles) {
+                            @Nullable List<OperationVO> data, String mTitles) {
         super(layoutResId, data);
-        this.datas = (ArrayList<DataVO>) data;
+        this.datas = (ArrayList<OperationVO>) data;
         this.title = mTitles;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, DataVO item) {
+    protected void convert(BaseViewHolder helper, OperationVO item) {
         String start = "听力理解答对题数：";
         String end = "81题";
         String str;
@@ -49,6 +47,6 @@ public class TestScoreAdapter extends BaseQuickAdapter<DataVO, BaseViewHolder> {
 //
 //        RelativeLayout relativeLayout = (RelativeLayout) helper.itemView;
 //        relativeLayout.setOnClickListener(view ->
-//                RxBus.getDefault().post(new LoginEvent(LoginEvent.LOGIN,helper.getLayoutPosition(), (ArrayList<DataVO>) datas, title, item.getConTitle())));
+//                RxBus.getDefault().post(new LoginEvent(LoginEvent.LOGIN,helper.getLayoutPosition(), (ArrayList<OperationVO>) datas, title, item.getConTitle())));
     }
 }

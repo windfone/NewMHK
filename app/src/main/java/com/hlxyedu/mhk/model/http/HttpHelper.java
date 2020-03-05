@@ -1,12 +1,13 @@
 package com.hlxyedu.mhk.model.http;
 
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
+import java.util.List;
+
 import io.reactivex.Flowable;
-import retrofit2.http.Field;
-import retrofit2.http.Query;
 
 /**
  * 作者：skyworth on 2017/7/11 09:56
@@ -21,6 +22,7 @@ public interface HttpHelper {
 
       Flowable<HttpResponse<String>> postModifyPsdBody(String mobile,String password,String idNum);
 
-      Flowable<HttpResponse<ExamListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version);
+      Flowable<HttpResponse<ExerciseListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version);
 
+      Flowable<HttpResponse<List<OperationVO>>> getOperationList(String userId, int pageNumber, int pageSize, String hws);
 }

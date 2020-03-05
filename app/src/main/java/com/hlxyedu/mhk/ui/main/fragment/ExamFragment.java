@@ -3,16 +3,12 @@ package com.hlxyedu.mhk.ui.main.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.blankj.utilcode.util.AppUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.model.bean.DataVO;
-import com.hlxyedu.mhk.model.bean.ExamListVO;
-import com.hlxyedu.mhk.model.bean.ExamVO;
-import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseVO;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
@@ -38,7 +34,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
     private ExerciseAdapter mAdapter;
 
-    private List<ExamVO> dataVOList = new ArrayList<>();
+    private List<ExerciseVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
@@ -88,11 +84,11 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
-    public void onSuccess(ExamListVO examListVO) {
-        if (!examListVO.getExam().isEmpty()) {
-            dataVOList.addAll(examListVO.getExam());
+    public void onSuccess(ExerciseListVO exerciseListVO) {
+        if (!exerciseListVO.getExam().isEmpty()) {
+            dataVOList.addAll(exerciseListVO.getExam());
             mAdapter.setNewData(dataVOList);
-            if (examListVO.getExam().size() < pageSize) {
+            if (exerciseListVO.getExam().size() < pageSize) {
                 mAdapter.loadMoreEnd();
             } else {
                 mAdapter.loadMoreComplete();

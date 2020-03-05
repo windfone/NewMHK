@@ -5,13 +5,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.model.bean.DataVO;
-import com.hlxyedu.mhk.model.bean.ExamListVO;
-import com.hlxyedu.mhk.model.bean.ExamVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
-import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
+import com.hlxyedu.mhk.ui.main.adapter.OperationAdapter;
 import com.hlxyedu.mhk.ui.main.contract.OperationContract;
 import com.hlxyedu.mhk.ui.main.presenter.OperationPresenter;
 import com.hlxyedu.mhk.ui.operation.activity.OperationSelectActivity;
@@ -34,13 +33,14 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
 
-    private ExerciseAdapter mAdapter;
+    private OperationAdapter mAdapter;
 
-    private List<ExamVO> dataVOList = new ArrayList<>();
+    private List<OperationVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
-    private String examType;
+    private String hws = "A";// 作业完成状态,默认全部
+
 
     public static OperationFragment newInstance() {
         Bundle args = new Bundle();
@@ -66,7 +66,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         xbaseTopbar.setxBaseTopBarImp(this);
         stateLoading();
 
-        mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList, "获取");
+        mAdapter = new OperationAdapter(R.layout.item_exercise, dataVOList);
         rlv.setLayoutManager(new LinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
@@ -74,11 +74,11 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
+        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {
-            mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
+            mPresenter.getOperationList(mPresenter.getID(), ++count, pageSize,hws);
         }, rlv);
         mAdapter.setOnItemChildClickListener((adapter, view, position) ->
                 startActivity(ExerciseActivity.newInstance(mActivity)));
@@ -86,11 +86,23 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     }
 
     @Override
-    public void onSuccess(ExamListVO examListVO) {
-        if (!examListVO.getExam().isEmpty()) {
-            dataVOList.addAll(examListVO.getExam());
+    public void onSelect(String state) {
+        if (StringUtils.isEmpty(state)){
+            return;
+        }
+        hws = state;
+        dataVOList.clear();
+        mAdapter.notifyDataSetChanged();
+        count = 1;
+        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
+    }
+
+    @Override
+    public void onSuccess(List<OperationVO> operationListVOS) {
+        if (!operationListVOS.isEmpty()) {
+            dataVOList.addAll(operationListVOS);
             mAdapter.setNewData(dataVOList);
-            if (examListVO.getExam().size() < pageSize) {
+            if (operationListVOS.size() < pageSize) {
                 mAdapter.loadMoreEnd();
             } else {
                 mAdapter.loadMoreComplete();

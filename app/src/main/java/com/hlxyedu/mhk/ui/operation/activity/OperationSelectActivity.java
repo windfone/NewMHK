@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
+import com.hlxyedu.mhk.base.RxBus;
+import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.ui.operation.contract.OperationSelectContract;
 import com.hlxyedu.mhk.ui.operation.presenter.OperationSelectPresenter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
@@ -29,18 +31,6 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
 
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
-    @BindView(R.id.exercise_number_tv)
-    TextView exerciseNumberTv;
-    @BindView(R.id.positive_cb)
-    CheckBox positiveCb;
-    @BindView(R.id.positive_cv)
-    CardView positiveCv;
-    @BindView(R.id.reserve_cb)
-    CheckBox reserveCb;
-    @BindView(R.id.reserve_cv)
-    CardView reserveCv;
-    @BindView(R.id.ll)
-    LinearLayout ll;
     @BindView(R.id.state_tv)
     TextView stateTv;
     @BindView(R.id.completed_cb)
@@ -57,6 +47,8 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
     CardView undoneCv;
     @BindView(R.id.confirm_btn)
     Button confirmBtn;
+
+    private String hws;
 
     /**
      * 打开新Activity
@@ -89,20 +81,21 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
 
     }
 
-    @OnClick({R.id.positive_cb, R.id.reserve_cb, R.id.completed_cb, R.id.all_state_cb, R.id.undone_cb, R.id.confirm_btn})
+    @OnClick({ R.id.completed_cb, R.id.all_state_cb, R.id.undone_cb, R.id.confirm_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.positive_cb:
-                break;
-            case R.id.reserve_cb:
-                break;
             case R.id.completed_cb:
+                hws = "D";
                 break;
             case R.id.all_state_cb:
+                hws = "A";
                 break;
             case R.id.undone_cb:
+                hws = "U";
                 break;
             case R.id.confirm_btn:
+                RxBus.getDefault().post(new SelectEvent(SelectEvent.OPERATION_SEL, hws));
+                finish();
                 break;
         }
     }

@@ -1,6 +1,6 @@
 package com.hlxyedu.mhk.model.event;
 
-import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ public class LoginEvent {
 
     private int pos;
 
-    private ArrayList<DataVO> lists;
+    private ArrayList<OperationVO> lists;
 
     private String title;
 
@@ -22,7 +22,7 @@ public class LoginEvent {
         this.type = type;
     }
 
-    public LoginEvent(String type, int pos, ArrayList<DataVO> lists, String title, String conTitle) {
+    public LoginEvent(String type, int pos, ArrayList<OperationVO> lists, String title, String conTitle) {
         this.type = type;
         this.pos = pos;
         this.lists = lists;
@@ -42,11 +42,11 @@ public class LoginEvent {
         this.pos = pos;
     }
 
-    public ArrayList<DataVO> getLists() {
+    public ArrayList<OperationVO> getLists() {
         return lists;
     }
 
-    public void setLists(ArrayList<DataVO> lists) {
+    public void setLists(ArrayList<OperationVO> lists) {
         this.lists = lists;
     }
 

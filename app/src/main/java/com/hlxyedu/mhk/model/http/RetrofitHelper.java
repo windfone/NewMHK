@@ -1,11 +1,14 @@
 package com.hlxyedu.mhk.model.http;
 
 
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.api.ManageApis;
 import com.hlxyedu.mhk.model.http.api.QBaseApis;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,7 +41,13 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ExamListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version) {
+    public Flowable<HttpResponse<ExerciseListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version) {
         return qBaseApis.getExamList(examType,id,pageNum,perpage,version);
     }
+
+    @Override
+    public Flowable<HttpResponse<List<OperationVO>>> getOperationList(String userId, int pageNumber, int pageSize, String hws) {
+        return qBaseApis.getOperationList(userId,pageNumber,pageSize,hws);
+    }
+
 }

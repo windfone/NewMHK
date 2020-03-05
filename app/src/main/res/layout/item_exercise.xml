@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="5dp"
-        android:src="@drawable/icon_question" />
+        android:src="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/positive_btn"
@@ -43,8 +43,7 @@
         android:layout_alignStart="@+id/title_tv"
         android:layout_marginTop="15dp"
         android:layout_toStartOf="@+id/positive_btn"
-        android:singleLine="true"
-        android:text="听力题题型1试卷1" />
+        android:singleLine="true"/>
 
     <TextView
         android:id="@+id/author_tv"

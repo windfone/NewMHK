@@ -1,22 +1,18 @@
 package com.hlxyedu.mhk.ui.main.presenter;
 
 import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.JsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
-import com.hlxyedu.mhk.model.event.LoginEvent;
 import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -48,13 +44,13 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                 .filter(new Predicate<SelectEvent>() {
                     @Override
                     public boolean test(@NonNull SelectEvent selectEvent) throws Exception {
-                        return selectEvent.getType().equals(SelectEvent.SELECT);
+                        return selectEvent.getType().equals(SelectEvent.EXERCISE_SEL);
                     }
                 })
                 .subscribeWith(new CommonSubscriber<SelectEvent>(mView) {
                     @Override
                     public void onNext(SelectEvent s) {
-                        mView.onSelect(s.getStateSelect(), s.getQuestionType(), s.getExerciseSelect());
+                        mView.onSelect(s.getQuestionType());
                     }
 
                     @Override
@@ -72,10 +68,10 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
-                                new CommonSubscriber<ExamListVO>(mView) {
+                                new CommonSubscriber<ExerciseListVO>(mView) {
                                     @Override
-                                    public void onNext(ExamListVO examListVO) {
-                                        mView.onSuccess(examListVO);
+                                    public void onNext(ExerciseListVO exerciseListVO) {
+                                        mView.onSuccess(exerciseListVO);
                                     }
 
                                     @Override

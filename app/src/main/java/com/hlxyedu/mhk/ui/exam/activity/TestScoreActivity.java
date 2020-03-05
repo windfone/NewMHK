@@ -7,11 +7,10 @@ import android.support.v7.widget.RecyclerView;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
-import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exam.adapter.TestScoreAdapter;
 import com.hlxyedu.mhk.ui.exam.contract.TestScoreContract;
 import com.hlxyedu.mhk.ui.exam.presenter.TestScorePresenter;
-import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
@@ -32,7 +31,7 @@ public class TestScoreActivity extends RootActivity<TestScorePresenter> implemen
 
     private TestScoreAdapter mAdapter;
 
-    private List<DataVO> dataVOList = new ArrayList<>();
+    private List<OperationVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
@@ -60,11 +59,11 @@ public class TestScoreActivity extends RootActivity<TestScorePresenter> implemen
     @Override
     protected void initEventAndData() {
         xbaseTopbar.setxBaseTopBarImp(this);
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
+        dataVOList.add(new OperationVO());
+        dataVOList.add(new OperationVO());
+        dataVOList.add(new OperationVO());
+        dataVOList.add(new OperationVO());
+        dataVOList.add(new OperationVO());
 
         mAdapter = new TestScoreAdapter(R.layout.item_test_score, dataVOList, "获取");
         rlv.setLayoutManager(new LinearLayoutManager(this));

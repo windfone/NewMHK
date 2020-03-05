@@ -3,17 +3,17 @@ package com.hlxyedu.mhk.ui.main.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
+import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.model.bean.DataVO;
-import com.hlxyedu.mhk.model.bean.ExamListVO;
-import com.hlxyedu.mhk.model.bean.ExamVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseVO;
+import com.hlxyedu.mhk.model.http.api.ApiConstants;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+
+import static com.skyworth.rxqwelibrary.app.AppConstants.DOWNLOAD_PATH;
 
 /**
  * Created by zhangguihua
@@ -42,7 +42,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
 
     private ExerciseAdapter mAdapter;
 
-    private List<ExamVO> dataVOList = new ArrayList<>();
+    private List<ExerciseVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
@@ -67,8 +67,14 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     }
 
     @Override
-    public void onSelect(String stateSelect, String questionType, String exerciseSelect) {
+    public void onSelect(String questionType) {
+        if (StringUtils.isEmpty(questionType)) {
+            return;
+        }
         examType = questionType;
+        dataVOList.clear();
+        mAdapter.notifyDataSetChanged();
+        count = 1;
         mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
     }
 
@@ -92,16 +98,25 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         mAdapter.setOnLoadMoreListener(() -> {
             mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
         }, rlv);
-        mAdapter.setOnItemChildClickListener((adapter, view, position) ->
-                startActivity(ExerciseActivity.newInstance(mActivity)));
+//        mAdapter.setOnItemChildClickListener((adapter, view, position) ->
+//                startActivity(ExerciseActivity.newInstance(mActivity)));
+        mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                long taskId = Aria.download(this)
+                        .load(ApiConstants.HOST+dataVOList.get(position).getZip_path())     //读取下载地址
+                        .setFilePath(DOWNLOAD_PATH) //设置文件保存的完整路径
+                        .create();   //创建并启动下载
+            }
+        });
     }
 
     @Override
-    public void onSuccess(ExamListVO examListVO) {
-        if (!examListVO.getExam().isEmpty()) {
-            dataVOList.addAll(examListVO.getExam());
+    public void onSuccess(ExerciseListVO exerciseListVO) {
+        if (!exerciseListVO.getExam().isEmpty()) {
+            dataVOList.addAll(exerciseListVO.getExam());
             mAdapter.setNewData(dataVOList);
-            if (examListVO.getExam().size() < pageSize) {
+            if (exerciseListVO.getExam().size() < pageSize) {
                 mAdapter.loadMoreEnd();
             } else {
                 mAdapter.loadMoreComplete();

@@ -1,6 +1,6 @@
 package com.hlxyedu.mhk.model.bean;
 
-public class ExamVO {
+public class ExerciseVO {
 
     /**
      * zip_path : /resources/mhk/mobile/MHKMN3021TL(5).zip

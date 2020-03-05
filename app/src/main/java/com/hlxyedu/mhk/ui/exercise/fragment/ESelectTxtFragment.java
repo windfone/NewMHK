@@ -3,14 +3,11 @@ package com.hlxyedu.mhk.ui.exercise.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.model.bean.DataVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exercise.adapter.SelectTxtAdapter;
 import com.hlxyedu.mhk.ui.exercise.contract.EChoiceContract;
 import com.hlxyedu.mhk.ui.exercise.presenter.EChoicePresenter;
@@ -33,7 +30,7 @@ public class ESelectTxtFragment extends RootFragment<EChoicePresenter> implement
 
     private SelectTxtAdapter mAdapter;
 
-    private List<DataVO> dataVOList = new ArrayList<>();
+    private List<OperationVO> OperationVOList = new ArrayList<>();
 
     public static ESelectTxtFragment newInstance() {
         Bundle args = new Bundle();
@@ -55,12 +52,12 @@ public class ESelectTxtFragment extends RootFragment<EChoicePresenter> implement
 
     @Override
     protected void initEventAndData() {
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
-        dataVOList.add(new DataVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
+        OperationVOList.add(new OperationVO());
 
-        mAdapter = new SelectTxtAdapter(R.layout.item_select_txt, dataVOList, "获取");
+        mAdapter = new SelectTxtAdapter(R.layout.item_select_txt, OperationVOList, "获取");
         rcy.setLayoutManager(new LinearLayoutManager(mActivity));
         rcy.setAdapter(mAdapter);
 

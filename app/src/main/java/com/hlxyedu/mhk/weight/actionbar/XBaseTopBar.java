@@ -53,12 +53,6 @@ public class XBaseTopBar extends RelativeLayout implements View.OnClickListener{
 
     private LinearLayout middle_layout;
 
-    private RightListener rightListener;
-
-    public void setRightListener(RightListener listener){
-        this.rightListener = listener;
-    }
-
     public void setxBaseTopBarImp(XBaseTopBarImp xBaseTopBarImp) {
         this.xBaseTopBarImp = xBaseTopBarImp;
     }
@@ -161,7 +155,6 @@ public class XBaseTopBar extends RelativeLayout implements View.OnClickListener{
                 xBaseTopBarImp.right();
                 break;
             case R.id.right_iv:
-                rightListener.right();
                 xBaseTopBarImp.right();
                 break;
         }
@@ -172,7 +165,4 @@ public class XBaseTopBar extends RelativeLayout implements View.OnClickListener{
         img_topbar_left.setImageDrawable(drawable);
     }
 
-    public interface RightListener{
-        void right();
-    }
 }

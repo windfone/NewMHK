@@ -1,10 +1,13 @@
 package com.hlxyedu.mhk.model;
 
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.HttpHelper;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 import com.hlxyedu.mhk.model.prefs.PreferencesHelper;
+
+import java.util.List;
 
 import io.reactivex.Flowable;
 
@@ -85,8 +88,13 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ExamListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version) {
+    public Flowable<HttpResponse<ExerciseListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version) {
         return mHttpHelper.getExamList(examType, id, pageNum, perpage, version);
+    }
+
+    @Override
+    public Flowable<HttpResponse<List<OperationVO>>> getOperationList(String userId, int pageNumber, int pageSize, String hws) {
+        return mHttpHelper.getOperationList(userId,pageNumber,pageSize,hws);
     }
 
 }

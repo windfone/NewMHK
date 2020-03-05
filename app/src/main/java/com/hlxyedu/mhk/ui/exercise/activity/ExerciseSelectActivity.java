@@ -3,6 +3,7 @@ package com.hlxyedu.mhk.ui.exercise.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
@@ -26,34 +27,22 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
 
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
-    @BindView(R.id.completed_cb)
-    CheckBox completedCb;
-    @BindView(R.id.all_state_cb)
-    CheckBox allStateCb;
-    @BindView(R.id.undone_cb)
-    CheckBox undoneCb;
-    @BindView(R.id.listening_type_1_cb)
-    CheckBox listeningType1Cb;
-    @BindView(R.id.listening_type_2_cb)
-    CheckBox listeningType2Cb;
-    @BindView(R.id.reading_comprehension_cb)
-    CheckBox readingComprehensionCb;
-    @BindView(R.id.write_reading_cb)
-    CheckBox writeReadingCb;
-    @BindView(R.id.oral_listening_cb)
-    CheckBox oralListeningCb;
-    @BindView(R.id.whole_truth_test_cb)
-    CheckBox wholeTruthTestCb;
-    @BindView(R.id.low_top_cb)
-    CheckBox lowTopCb;
-    @BindView(R.id.top_low_cb)
-    CheckBox topLowCb;
     @BindView(R.id.confirm_btn)
     Button confirmBtn;
+    @BindView(R.id.composition_cb)
+    CheckBox compositionCb;
+    @BindView(R.id.listening_cb)
+    CheckBox listeningCb;
+    @BindView(R.id.reading_cb)
+    CheckBox readingCb;
+    @BindView(R.id.write_cb)
+    CheckBox writeCb;
+    @BindView(R.id.oral_cb)
+    CheckBox oralCb;
+    @BindView(R.id.complex_cb)
+    CheckBox complexCb;
 
-    private String stateSelect;
     private String questionType;
-    private String exerciseNum;
 
     /**
      * 打开新Activity
@@ -83,7 +72,8 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
 
     @OnClick(R.id.confirm_btn)
     public void onViewClicked() {
-        RxBus.getDefault().post(new SelectEvent(SelectEvent.SELECT,stateSelect,questionType,exerciseNum));
+        RxBus.getDefault().post(new SelectEvent(SelectEvent.EXERCISE_SEL, questionType));
+        finish();
     }
 
     @Override
@@ -101,4 +91,27 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
 
     }
 
+    @OnClick({R.id.composition_cb, R.id.listening_cb, R.id.reading_cb, R.id.write_cb, R.id.oral_cb, R.id.complex_cb})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.composition_cb:
+                questionType = "ZW";
+                break;
+            case R.id.listening_cb:
+                questionType = "TL";
+                break;
+            case R.id.reading_cb:
+                questionType = "YD";
+                break;
+            case R.id.write_cb:
+                questionType = "SM";
+                break;
+            case R.id.oral_cb:
+                questionType = "KY";
+                break;
+            case R.id.complex_cb:
+                questionType = "ZH";
+                break;
+        }
+    }
 }

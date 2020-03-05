@@ -16,90 +16,13 @@
         app:middleText_x="@string/operation" />
 
     <TextView
-        android:id="@+id/exercise_number_tv"
+        android:id="@+id/state_tv"
         style="@style/textSize_black303_15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/xbase_topbar"
         android:layout_marginStart="29dp"
         android:layout_marginTop="25dp"
-        android:text="@string/time_sort" />
-
-    <LinearLayout
-        android:id="@+id/ll"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@+id/exercise_number_tv"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/positive_cv"
-                android:layout_width="167dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="5dp"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="5dp">
-
-                <CheckBox
-                    android:id="@+id/positive_cb"
-                    style="@style/textSize_orange_white_12"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/orange_btn_selector"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="@string/positive_time" />
-
-            </android.support.v7.widget.CardView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/reserve_cv"
-                android:layout_width="167dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="5dp">
-
-                <CheckBox
-                    android:id="@+id/reserve_cb"
-                    style="@style/textSize_orange_white_12"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/orange_btn_selector"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="@string/reverse_time" />
-
-            </android.support.v7.widget.CardView>
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/state_tv"
-        style="@style/textSize_black303_15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ll"
-        android:layout_marginStart="29dp"
-        android:layout_marginTop="21dp"
         android:text="@string/state_select" />
 
     <android.support.v7.widget.CardView

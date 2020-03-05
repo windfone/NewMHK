@@ -1,15 +1,17 @@
 package com.hlxyedu.mhk.model.http.api;
 
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
+
+import java.util.List;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 /**
@@ -43,7 +45,11 @@ public interface QBaseApis {
 
     // 获取习题列表
     @GET("phone/getExamList.do")
-    Flowable<HttpResponse<ExamListVO>> getExamList(@Query("examType") String examType, @Query("id") String id, @Query("pageNum") int pageNum, @Query("perpage") int perpage, @Query("version")String version);
+    Flowable<HttpResponse<ExerciseListVO>> getExamList(@Query("examType") String examType, @Query("id") String id, @Query("pageNum") int pageNum, @Query("perpage") int perpage, @Query("version") String version);
+
+    // 获取作业列表
+    @GET("phone/appAssig.do")
+    Flowable<HttpResponse<List<OperationVO>>> getOperationList(@Query("userId") String userId, @Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize, @Query("hws") String hws);
 
 }
 

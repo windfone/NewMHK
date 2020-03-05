@@ -1,6 +1,6 @@
 package com.hlxyedu.mhk.ui.main.contract;
 
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 
@@ -13,7 +13,7 @@ public interface ExamContract {
         //返回登陆结果
         void responeError(String errorMsg);
 
-        void onSuccess(ExamListVO examListVO);
+        void onSuccess(ExerciseListVO exerciseListVO);
     }
 
     interface Presenter extends BasePresenter<View> {

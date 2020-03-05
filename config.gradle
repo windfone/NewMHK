@@ -87,8 +87,8 @@ ext{
             "PersistentCookieJar"               : "com.github.franmontiel:PersistentCookieJar:v1.0.1",
             //下载
             //https://github.com/AriaLyy/Aria
-            "aria-core"                         : "com.arialyy.aria:aria-core:3.6.3",
-            "aria-compiler"                     : "com.arialyy.aria:aria-compiler:3.6.3",
+            "aria-core"                         : "com.arialyy.aria:core:3.8.6",
+            "aria-compiler"                     : "com.arialyy.aria:compiler:3.8.6",
             // https://github.com/AlexLiuSheng/CheckVersionLib
             // 升级
             "checkVersionLib"                   : "com.allenliu.versionchecklib:library:2.2.0",

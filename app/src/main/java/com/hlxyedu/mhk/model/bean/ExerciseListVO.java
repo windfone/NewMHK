@@ -2,7 +2,7 @@ package com.hlxyedu.mhk.model.bean;
 
 import java.util.List;
 
-public class ExamListVO {
+public class ExerciseListVO {
 
 
     /**
@@ -11,7 +11,7 @@ public class ExamListVO {
      */
 
     private int total;
-    private List<ExamVO> exam;
+    private List<ExerciseVO> exam;
 
     public int getTotal() {
         return total;
@@ -21,12 +21,14 @@ public class ExamListVO {
         this.total = total;
     }
 
-    public List<ExamVO> getExam() {
+    public List<ExerciseVO> getExam() {
         return exam;
     }
 
-    public void setExam(List<ExamVO> exam) {
+    public void setExam(List<ExerciseVO> exam) {
         this.exam = exam;
     }
+
+
 
 }

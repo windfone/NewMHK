@@ -16,97 +16,17 @@
         app:middleText_x="@string/exercise" />
 
     <TextView
-        android:id="@+id/state_tv"
+        android:id="@+id/question_type_tv"
         style="@style/textSize_black303_15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/xbase_topbar"
         android:layout_marginStart="29dp"
-        android:layout_marginTop="21dp"
-        android:text="@string/state_select" />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/completed_cv"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/state_tv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="5dp">
-
-        <CheckBox
-            android:id="@+id/completed_cb"
-            style="@style/textSize_orange_white_12"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/orange_btn_selector"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/completed" />
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/all_state_cv"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/state_tv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="7dp"
-        android:layout_toStartOf="@+id/completed_cv"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="5dp">
-
-        <CheckBox
-            android:id="@+id/all_state_cb"
-            style="@style/textSize_orange_white_12"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/orange_btn_selector"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/all_state" />
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/undone_cv"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/state_tv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="17dp"
-        android:layout_toEndOf="@+id/completed_cv"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="5dp">
-
-        <CheckBox
-            android:id="@+id/undone_cb"
-            style="@style/textSize_orange_white_12"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/orange_btn_selector"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/undone" />
-
-    </android.support.v7.widget.CardView>
-
-    <TextView
-        android:id="@+id/question_type_tv"
-        style="@style/textSize_black303_15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/completed_cv"
-        android:layout_marginStart="29dp"
         android:layout_marginTop="25dp"
         android:text="@string/question_type" />
 
     <android.support.v7.widget.CardView
-        android:id="@+id/listening_type_1_cv"
+        android:id="@+id/composition_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_below="@+id/question_type_tv"
@@ -116,55 +36,55 @@
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/listening_type_1_cb"
+            android:id="@+id/composition_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/orange_btn_selector"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/listening_type_2" />
+            android:text="@string/composition" />
 
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/listening_type_2_cv"
+        android:id="@+id/listening_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_below="@+id/question_type_tv"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="7dp"
-        android:layout_toStartOf="@+id/listening_type_1_cv"
+        android:layout_toStartOf="@+id/composition_cv"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/listening_type_2_cb"
+            android:id="@+id/listening_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/orange_btn_selector"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/listening_type_1" />
+            android:text="@string/listening" />
 
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/reading_comprehension_cv"
+        android:id="@+id/reading_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
         android:layout_below="@+id/question_type_tv"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="7dp"
         android:layout_marginTop="17dp"
-        android:layout_toEndOf="@+id/listening_type_1_cv"
+        android:layout_toEndOf="@+id/composition_cv"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/reading_comprehension_cb"
+            android:id="@+id/reading_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -176,40 +96,40 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/write_reading_cv"
+        android:id="@+id/write_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/listening_type_1_cv"
+        android:layout_below="@+id/composition_cv"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="17dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/write_reading_cb"
+            android:id="@+id/write_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/orange_btn_selector"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/write_reading" />
+            android:text="@string/written" />
 
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/oral_listening_cv"
+        android:id="@+id/oral_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/listening_type_1_cv"
+        android:layout_below="@+id/composition_cv"
         android:layout_marginTop="17dp"
         android:layout_marginEnd="7dp"
-        android:layout_toStartOf="@+id/listening_type_1_cv"
+        android:layout_toStartOf="@+id/composition_cv"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/oral_listening_cb"
+            android:id="@+id/oral_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -221,19 +141,19 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/whole_truth_test_cv"
+        android:id="@+id/complex_cv"
         android:layout_width="110dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/listening_type_1_cv"
+        android:layout_below="@+id/composition_cv"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="7dp"
         android:layout_marginTop="17dp"
-        android:layout_toEndOf="@+id/listening_type_1_cv"
+        android:layout_toEndOf="@+id/composition_cv"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
         <CheckBox
-            android:id="@+id/whole_truth_test_cb"
+            android:id="@+id/complex_cb"
             style="@style/textSize_orange_white_12"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -244,82 +164,7 @@
 
     </android.support.v7.widget.CardView>
 
-    <TextView
-        android:id="@+id/exercise_number_tv"
-        style="@style/textSize_black303_15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/whole_truth_test_cv"
-        android:layout_marginStart="29dp"
-        android:layout_marginTop="25dp"
-        android:text="@string/exercise_number" />
 
-    <LinearLayout
-        android:id="@+id/ll"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@+id/exercise_number_tv"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/low_top_cv"
-                android:layout_width="167dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="5dp"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="5dp">
-
-                <CheckBox
-                    android:id="@+id/low_top_cb"
-                    style="@style/textSize_orange_white_12"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/orange_btn_selector"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="@string/low_top" />
-
-            </android.support.v7.widget.CardView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/top_low_cv"
-                android:layout_width="167dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="5dp">
-
-                <CheckBox
-                    android:id="@+id/top_low_cb"
-                    style="@style/textSize_orange_white_12"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/orange_btn_selector"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="@string/top_low" />
-
-            </android.support.v7.widget.CardView>
-
-        </RelativeLayout>
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/confirm_btn"

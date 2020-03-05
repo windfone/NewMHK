@@ -4,7 +4,7 @@ import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.model.bean.ExamListVO;
+import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
@@ -45,10 +45,10 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
-                                new CommonSubscriber<ExamListVO>(mView) {
+                                new CommonSubscriber<ExerciseListVO>(mView) {
                                     @Override
-                                    public void onNext(ExamListVO examListVO) {
-                                        mView.onSuccess(examListVO);
+                                    public void onNext(ExerciseListVO exerciseListVO) {
+                                        mView.onSuccess(exerciseListVO);
                                     }
 
                                     @Override
