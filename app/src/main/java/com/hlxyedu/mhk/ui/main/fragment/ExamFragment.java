@@ -64,7 +64,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         xbaseTopbar.setxBaseTopBarImp(this);
         stateLoading();
 
-        mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList, "获取");
+        mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList);
         rlv.setLayoutManager(new LinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
@@ -79,7 +79,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
             mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
         }, rlv);
         mAdapter.setOnItemChildClickListener((adapter, view, position) ->
-                startActivity(ExerciseActivity.newInstance(mActivity)));
+                startActivity(ExerciseActivity.newInstance(mActivity,"")));
 
     }
 

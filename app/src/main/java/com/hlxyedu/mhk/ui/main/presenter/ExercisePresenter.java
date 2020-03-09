@@ -7,6 +7,8 @@ import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
+import com.hlxyedu.mhk.model.event.LoginEvent;
 import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
@@ -39,6 +41,7 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
     }
 
     private void registerEvent() {
+        // 选择（列表条件筛选）
         addSubscribe(RxBus.getDefault().toFlowable(SelectEvent.class)
                 .compose(RxUtil.<SelectEvent>rxSchedulerHelper())
                 .filter(new Predicate<SelectEvent>() {
@@ -51,6 +54,27 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                     @Override
                     public void onNext(SelectEvent s) {
                         mView.onSelect(s.getQuestionType());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        addSubscribe(RxBus.getDefault().toFlowable(DownLoadEvent.class)
+                .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
+                .filter(new Predicate<DownLoadEvent>() {
+                    @Override
+                    public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
+                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
+                    @Override
+                    public void onNext(DownLoadEvent s) {
+                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
                     }
 
                     @Override

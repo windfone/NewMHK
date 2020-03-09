@@ -17,6 +17,8 @@ public interface ExerciseContract {
 
         void onSelect(String questionType);
 
+        void download(int pos,String downloadPath,String examName);
+
     }
 
     interface Presenter extends BasePresenter<View> {

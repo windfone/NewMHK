@@ -81,7 +81,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
             mPresenter.getOperationList(mPresenter.getID(), ++count, pageSize,hws);
         }, rlv);
         mAdapter.setOnItemChildClickListener((adapter, view, position) ->
-                startActivity(ExerciseActivity.newInstance(mActivity)));
+                startActivity(ExerciseActivity.newInstance(mActivity,"")));
 
     }
 

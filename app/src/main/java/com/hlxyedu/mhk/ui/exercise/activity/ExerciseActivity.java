@@ -108,8 +108,9 @@ public class ExerciseActivity extends RootActivity<ExercisePresenter> implements
      * @param context
      * @return
      */
-    public static Intent newInstance(Context context) {
+    public static Intent newInstance(Context context,String path) {
         Intent intent = new Intent(context, ExerciseActivity.class);
+        intent.putExtra("papers",path);
         return intent;
     }
 
