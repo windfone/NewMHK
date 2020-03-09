@@ -3,6 +3,7 @@ package com.hlxyedu.mhk.ui.main.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -99,9 +100,9 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
 //                .start();
         long taskId = Aria.download(this)
                 .load(downloadPath)     //读取下载地址
-                .setFilePath(AppConstants.FILE_DOWNLOAD_PATH + examName) //设置文件保存的完整路径
+                .setFilePath(AppConstants.FILE_DOWNLOAD_PATH + examName,true) //设置文件保存的完整路径
                 .create();   //创建并启动下载
-
+        Log.e("=========",AppConstants.FILE_DOWNLOAD_PATH + examName);
         examNames.add(examName);
         posis.add(posi);
     }

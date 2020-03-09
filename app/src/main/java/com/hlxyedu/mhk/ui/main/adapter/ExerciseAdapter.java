@@ -63,7 +63,7 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
                 button.setText("下载中...");
                 button.setEnabled(false);
                 RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER,helper.getLayoutPosition(),
-                        ApiConstants.HOST + item.getZip_path(),item.getExamname()));
+                        ApiConstants.HOST + item.getZip_path(),path));
             }
         });
 
