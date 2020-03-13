@@ -68,7 +68,7 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                 .filter(new Predicate<DownLoadEvent>() {
                     @Override
                     public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
-                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER);
+                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE);
                     }
                 })
                 .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {

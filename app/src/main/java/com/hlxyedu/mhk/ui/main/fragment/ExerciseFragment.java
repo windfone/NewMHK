@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
@@ -13,6 +16,7 @@ import com.arialyy.aria.core.task.DownloadTask;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
@@ -26,6 +30,9 @@ import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExercisePresenter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -59,6 +66,9 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     private List<String> examNames = new ArrayList<>();
     private List<Integer> posis = new ArrayList<>();
 
+    private DialogPlus downloadDialog;
+    private TextView loadingProgressTv;
+
     public static ExerciseFragment newInstance() {
         Bundle args = new Bundle();
 
@@ -91,20 +101,22 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
 
     @Override
     public void download(int posi,String downloadPath,String examName) {
-//        tvDownload.setEnabled(false);
-//        iv_book_progress.setVisibility(android.view.View.VISIBLE);
-//        Aria.download(this).register();
-//        Aria.download(this)
-//                .load(downloadPath)     //读取下载地址
-//                .setFilePath(AppConstants.FILE_DOWNLOAD_PATH + examName) //设置文件保存的完整路径
-//                .start();
+//        showDownloadDialog();
         long taskId = Aria.download(this)
                 .load(downloadPath)     //读取下载地址
                 .setFilePath(AppConstants.FILE_DOWNLOAD_PATH + examName,true) //设置文件保存的完整路径
                 .create();   //创建并启动下载
-        Log.e("=========",AppConstants.FILE_DOWNLOAD_PATH + examName);
+
         examNames.add(examName);
         posis.add(posi);
+    }
+
+    //在这里处理任务执行中的状态，如进度进度条的刷新
+    @Download.onTaskRunning
+    protected void running(DownloadTask task) {
+        int p = task.getPercent();	//任务进度百分比
+        Log.e("=============",p+"");
+
     }
 
     @Download.onTaskFail
@@ -113,7 +125,9 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
             if (task.getTaskName().equals(examNames.get(i))){
                 Button button = (Button) mAdapter.getViewByPosition(rlv,posis.get(i),R.id.positive_btn);
                 button.setEnabled(true);
+                ToastUtils.showShort("下载失败，重试");
                 button.setText("获取");
+//                downloadDialog.dismiss();
             }
         }
     }
@@ -125,13 +139,9 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
                 Button button = (Button) mAdapter.getViewByPosition(rlv,posis.get(i),R.id.positive_btn);
                 button.setEnabled(true);
                 button.setText("开始练习");
+//                downloadDialog.dismiss();
             }
         }
-//        iv_book_progress.setVisibility(android.view.View.GONE);
-//        tvDownload.setEnabled(true);
-//        tvDownload.setText(R.string.dwonload_already);
-//        String path = bookVO.getRname() + ".pdf";
-//        startActivity(PDFReaderActivity.newInstance(this, path, bookVO.getRname()));
     }
 
     @Override
@@ -177,6 +187,27 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
             }
         }
     }
+
+    /*//显示弹框
+    public void showDownloadDialog() {
+        downloadDialog = DialogPlus.newDialog(getActivity())
+                .setContentHolder(new ViewHolder(R.layout.download_file_dialog))
+                .setGravity(Gravity.CENTER)
+                .setContentWidth(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setCancelable(false)
+//                .setContentBackgroundResource(R.drawable.toast_bg)
+                .setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(DialogPlus dialog, View view) {
+
+                    }
+                })
+                .create();
+        loadingProgressTv = (TextView) downloadDialog.findViewById(R.id.loading_progress_tv);
+        loadingProgressTv.setText("6666");
+        downloadDialog.show();
+    }*/
 
     @Override
     public void responeError(String errorMsg) {

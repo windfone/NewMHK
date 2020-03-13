@@ -143,17 +143,15 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation 'androidx.appcompat:appcompat:1.1.0'
-//    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-//    testImplementation 'junit:junit:4.12'
-//    androidTestImplementation 'androidx.test:runner:1.2.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //    implementation 'androidx.appcompat:appcompat:1.1.0'
+    //    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    //    testImplementation 'junit:junit:4.12'
+    //    androidTestImplementation 'androidx.test:runner:1.2.0'
+    //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // 下载
     implementation rootProject.ext.dependencies["aria-core"]
     annotationProcessor rootProject.ext.dependencies["aria-compiler"]
-
     //base
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["cardview-v7"]
@@ -162,18 +160,20 @@ dependencies {
     testImplementation rootProject.ext.dependencies["junit"]
     androidTestImplementation rootProject.ext.dependencies["runner"]
     androidTestImplementation rootProject.ext.dependencies["espresso"]
-//    implementation project(path: ':rxqwelibrary')
-
+    //    implementation project(path: ':rxqwelibrary')
     //di
     implementation rootProject.ext.dependencies["butterknife"]
     annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
     implementation rootProject.ext.dependencies["dagger"]
     annotationProcessor rootProject.ext.dependencies["dagger-compiler"]
-
     //other
     implementation rootProject.ext.dependencies["walle"]
     compile project(path: ':rxqwelibrary')
     compile project(path: ':record')
+    implementation files('libs/dom4j-1.6.1.jar')
+    implementation files('libs/tm-extractors-0.4.jar')
+
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 }
 
 walle {

@@ -32,6 +32,46 @@ public class AppContext extends BaseApplication {
 
     private String uid;
 
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    private int allItem;
+
+    public int getAllItem() {
+        return allItem;
+    }
+
+    public void setAllItem(int allItem) {
+        this.allItem = allItem;
+    }
+
+    private int currentItem;
+
+    public int getCurrentItem() {
+        return currentItem;
+    }
+
+    public void setCurrentItem(int currentItem) {
+        this.currentItem = currentItem;
+    }
+
+    private String answer;
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     /*//用户uservo
     private UserVO userVO;
 

@@ -2,6 +2,7 @@ package com.hlxyedu.mhk.model.http.api;
 
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
+import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
@@ -50,6 +51,11 @@ public interface QBaseApis {
     // 获取作业列表
     @GET("phone/appAssig.do")
     Flowable<HttpResponse<List<OperationVO>>> getOperationList(@Query("userId") String userId, @Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize, @Query("hws") String hws);
+
+    // 练习-选择题提交答案获取成绩
+    @FormUrlEncoded
+    @POST("phone/calExamScore.do")      //id 为userId，此处比较混乱，特注明
+    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String id, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId);
 
 }
 

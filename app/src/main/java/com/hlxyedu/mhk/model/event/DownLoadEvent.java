@@ -2,7 +2,8 @@ package com.hlxyedu.mhk.model.event;
 
 public class DownLoadEvent {
 
-    public static final String DOWNLOAD_PAPER = "DOWNLOAD_PAPER";
+    public static final String DOWNLOAD_PAPER_EXERCISE = "DOWNLOAD_PAPER_EXERCISE";
+    public static final String DOWNLOAD_PAPER_OPERATION = "DOWNLOAD_PAPER_OPERATION";
 
     private String type;
 

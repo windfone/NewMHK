@@ -17,11 +17,12 @@ public class OperationVO {
          * state : 2
          */
 
-        private String id;
+        private String id;// homeworkId
         private Object teacherId;
         private String teacherName;
         private String homeworkName;
         private String examType;
+        private String zipPath;
         private String termType;
         private String termValue;
         private String examId;
@@ -126,4 +127,11 @@ public class OperationVO {
             this.state = state;
         }
 
+        public String getZipPath() {
+            return zipPath;
+        }
+
+        public void setZipPath(String zipPath) {
+            this.zipPath = zipPath;
+        }
 }

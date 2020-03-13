@@ -7,6 +7,7 @@ import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.OperationContract;
@@ -53,6 +54,28 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
                     @Override
                     public void onNext(SelectEvent s) {
                         mView.onSelect(s.getQuestionType());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        //下载指令
+        addSubscribe(RxBus.getDefault().toFlowable(DownLoadEvent.class)
+                .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
+                .filter(new Predicate<DownLoadEvent>() {
+                    @Override
+                    public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
+                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER_OPERATION);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
+                    @Override
+                    public void onNext(DownLoadEvent s) {
+                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
                     }
 
                     @Override

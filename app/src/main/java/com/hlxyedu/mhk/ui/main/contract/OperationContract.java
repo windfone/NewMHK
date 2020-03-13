@@ -19,6 +19,7 @@ public interface OperationContract {
 
         void onSelect(String hws); // 作业完成状态
 
+        void download(int pos,String downloadPath,String examName);
     }
 
     interface Presenter extends BasePresenter<View> {

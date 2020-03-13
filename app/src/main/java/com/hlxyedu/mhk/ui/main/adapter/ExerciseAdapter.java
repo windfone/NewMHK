@@ -16,6 +16,7 @@ import com.hlxyedu.mhk.model.bean.ExerciseVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
+import com.hlxyedu.mhk.ui.exercise.activity.TestListeningActivity;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -48,8 +49,11 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
 //
 //        }
 
-        String path = item.getExamname() + ".zip";
-        if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + path)) {
+        String[] zipPaths = item.getZip_path().split("/");
+        //压缩包名字
+        String zipName = zipPaths[zipPaths.length-1];
+//        String path = item.getExamname() + ".zip";
+        if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
             helper.setText(R.id.positive_btn,"开始练习");
         } else {
             helper.setText(R.id.positive_btn,"获取");
@@ -57,13 +61,16 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
 
         Button button = helper.getView(R.id.positive_btn);
         button.setOnClickListener(v -> {
-            if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + path)) {
-                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
+            if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
+                if(item.getExamname().contains("听力")){
+                    mContext.startActivity(TestListeningActivity.newInstance(mContext, AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                }
+//                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
             } else {
                 button.setText("下载中...");
                 button.setEnabled(false);
-                RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER,helper.getLayoutPosition(),
-                        ApiConstants.HOST + item.getZip_path(),path));
+                RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE,helper.getLayoutPosition(),
+                        ApiConstants.HOST + item.getZip_path(),zipName));
             }
         });
 

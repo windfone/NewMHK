@@ -9,6 +9,8 @@ import com.hlxyedu.mhk.ui.exercise.fragment.EEndFragment;
 import com.hlxyedu.mhk.ui.exercise.fragment.ERepeatFragment;
 import com.hlxyedu.mhk.ui.exercise.fragment.ETxtFragment;
 import com.hlxyedu.mhk.ui.exercise.fragment.EWelcomeFragment;
+import com.hlxyedu.mhk.ui.exercise.fragment.ListeningFragment;
+import com.hlxyedu.mhk.ui.exercise.fragment.TestFinishFragment;
 import com.hlxyedu.mhk.ui.main.fragment.ExamFragment;
 import com.hlxyedu.mhk.ui.main.fragment.ExerciseFragment;
 import com.hlxyedu.mhk.ui.main.fragment.MineFragment;
@@ -43,5 +45,9 @@ public interface FragmentComponent {
     void inject(ETxtFragment eTxtFragment);
 
     void inject(EEndFragment eEndFragment);
+
+    void inject(ListeningFragment listeningFragment);
+
+    void inject(TestFinishFragment testFinishFragment);
 
 }

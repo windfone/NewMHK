@@ -24,8 +24,7 @@ public class AppConfig {
             AppConstants.DOWNLOAD_PATH,
             AppConstants.LOGS_PATH,
 
-            AppConstants.RECORD_DOWNLOAD_PATH,
-            AppConstants.FILE_DOWNLOAD_PATH
+            AppConstants.RECORD_DOWNLOAD_PATH
     };
 
     private AppConfig(){
