@@ -22,6 +22,8 @@ public class BaseEvents {
 
 	private int value;
 
+	private Object questionId;
+
 	public String getType() {
 		return type;
 	}
@@ -45,6 +47,14 @@ public class BaseEvents {
 		this.data = data;
 	}
 
+	public BaseEvents(String type, int value, Object data, Object questionId) {
+		super();
+		this.type = type;
+		this.value = value;
+		this.data = data;
+		this.questionId = questionId;
+	}
+
 	public BaseEvents(String type, int value) {
 		super();
 		this.type = type;
@@ -56,5 +66,13 @@ public class BaseEvents {
         this.type = type;
         this.data = data;
     }
-	
+
+	public Object getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(Object questionId) {
+		this.questionId = questionId;
+	}
+
 }

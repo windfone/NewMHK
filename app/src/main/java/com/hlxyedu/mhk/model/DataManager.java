@@ -11,6 +11,8 @@ import com.hlxyedu.mhk.model.prefs.PreferencesHelper;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * 作者：skyworth on 2017/7/11 09:55
@@ -99,8 +101,13 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String id, String homeworkId, String answer, String examId) {
-        return mHttpHelper.postExerciseScoreBody(id,homeworkId,answer,examId);
+    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId) {
+        return mHttpHelper.postExerciseScoreBody(userId,homeworkId,answer,examId);
+    }
+
+    @Override
+    public Flowable<HttpResponse<String>> uploadRecord(RequestBody userId, RequestBody examId, RequestBody homeworkId, RequestBody testId, RequestBody testType, RequestBody fileName, MultipartBody.Part fileData) {
+        return mHttpHelper.uploadRecord(userId,examId,homeworkId,testId,testType,fileName,fileData);
     }
 
 }

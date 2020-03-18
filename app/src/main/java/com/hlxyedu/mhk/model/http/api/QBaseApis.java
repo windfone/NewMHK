@@ -9,10 +9,14 @@ import com.hlxyedu.mhk.model.http.response.HttpResponse;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 /**
@@ -55,8 +59,18 @@ public interface QBaseApis {
     // 练习-选择题提交答案获取成绩
     @FormUrlEncoded
     @POST("phone/calExamScore.do")      //id 为userId，此处比较混乱，特注明
-    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String id, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId);
+    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId);
 
+    @Multipart
+    @POST("phone/uploadRec.do")
+    Flowable<HttpResponse<String>> uploadRecord(@Part("id") RequestBody userId,
+                                              @Part("examId") RequestBody examId,
+                                              @Part("homeworkId") RequestBody homeworkId,
+                                              @Part("testId") RequestBody testId,
+                                              @Part("testType") RequestBody testType,
+                                              @Part("fileName") RequestBody fileName,
+                                              @Part MultipartBody.Part fileData);
+//                                              @Part("audioData") MultipartBody.Part fileData);
 }
 
 

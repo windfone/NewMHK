@@ -4,10 +4,12 @@ import android.app.Activity;
 
 import com.hlxyedu.mhk.di.module.ActivityModule;
 import com.hlxyedu.mhk.di.scope.ActivityScope;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
-import com.hlxyedu.mhk.ui.exercise.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
@@ -49,5 +51,9 @@ public interface ActivityComponent {
     void inject(ExerciseActivity exerciseActivity);
 
     void inject(TestListeningActivity testListeningActivity);
+
+    void inject(TestSpeakActivity testSpeakActivity);
+
+    void inject(TestTxtActivity testTxtActivity);
 
 }

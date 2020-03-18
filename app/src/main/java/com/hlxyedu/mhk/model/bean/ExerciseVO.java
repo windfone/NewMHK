@@ -5,7 +5,7 @@ public class ExerciseVO {
     /**
      * zip_path : /resources/mhk/mobile/MHKMN3021TL(5).zip
      * times : 32
-     * id : 266
+     * id : 266 // examId
      * examname : 【三级】MHK模拟试卷3021听力练习(5)
      * price : 0
      */

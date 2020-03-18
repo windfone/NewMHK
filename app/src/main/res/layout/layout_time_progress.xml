@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="1000px"
+        android:layout_height="40px"
+        android:fitsSystemWindows="true"
+        android:max="200"
+        android:progress="200"
+        android:progressDrawable="@drawable/progressbar_blue_drawable_corner"
+        />
+</LinearLayout>

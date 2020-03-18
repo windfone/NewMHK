@@ -1,5 +1,7 @@
 package com.skyworth.rxqwelibrary.app;
 
+import android.util.Log;
+
 import java.io.File;
 
 /**
@@ -43,6 +45,11 @@ public class AppConstants {
     // sd卡中的考试时间
     public static String SD_EXAMDATE_PATH = "";
 
+    /**
+     * 本地录音文件缓存地址
+     */
+    public static  String RECORD_PATH = "";
+
 
 
     //缓存相关
@@ -67,6 +74,7 @@ public class AppConstants {
         DOWNLOAD_PATH = PARENT_FOLD_PATH + "download" + File.separator;
         LOGS_PATH = PARENT_FOLD_PATH + "logs" + File.separator;
 
+        RECORD_PATH = PARENT_FOLD_PATH + "audio" + File.separator;
         RECORD_DOWNLOAD_PATH = DOWNLOAD_PATH + "audio" + File.separator;
         FILE_DOWNLOAD_PATH = DOWNLOAD_PATH + "files" + File.separator;
         UNFILE_DOWNLOAD_PATH = DOWNLOAD_PATH + "unzip" + File.separator;
@@ -112,7 +120,8 @@ public class AppConstants {
     /**
      * 音频文件后缀名
      */
-    public static final String AUDIO_FILE_SUFFIX = ".mp3";
+//    public static final String AUDIO_FILE_SUFFIX = ".mp3";
+    public static final String AUDIO_FILE_SUFFIX = ".wav";
     /**
      * 音频文件后缀名
      */

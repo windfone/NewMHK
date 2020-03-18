@@ -12,7 +12,8 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
-import com.hlxyedu.mhk.ui.exercise.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -76,7 +77,10 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
             button.setOnClickListener(v -> {
                 if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
                     if(StringUtils.equals(item.getExamType(),"TL")){
-                        mContext.startActivity(TestListeningActivity.newInstance(mContext, AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getExamId(),item.getId()));
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "作业",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getExamId(),item.getId()));
+                    }else if (StringUtils.equals(item.getExamType(),"KY")){
+                        //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;    type = homeWork
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "作业",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getExamId(),item.getId(),"homeWork"));
                     }
 //                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
                 } else {

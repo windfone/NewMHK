@@ -8,15 +8,28 @@ public class CommitEvent {
 
     private Object answer;
 
-    private String paperId;
+    private String examId;
 
     private String homeworkId;
 
-    public CommitEvent(String type, Object answer,String paperId,String homeworkId) {
+    private String testId;
+
+    private String testType;
+
+    public CommitEvent(String type, Object answer,String examId,String homeworkId) {
         this.type = type;
         this.answer = answer;
-        this.paperId = paperId;
+        this.examId = examId;
         this.homeworkId = homeworkId;
+    }
+
+    public CommitEvent(String type, Object answer,String examId,String homeworkId,String testId,String testType) {
+        this.type = type;
+        this.answer = answer;
+        this.examId = examId;
+        this.homeworkId = homeworkId;
+        this.testId = testId;
+        this.testType = testType;
     }
 
     public String getType() {
@@ -35,12 +48,12 @@ public class CommitEvent {
         this.answer = answer;
     }
 
-    public String getPaperId() {
-        return paperId;
+    public String getExamId() {
+        return examId;
     }
 
-    public void setPaperId(String paperId) {
-        this.paperId = paperId;
+    public void setExamId(String paperId) {
+        this.examId = paperId;
     }
 
     public String getHomeworkId() {
@@ -49,5 +62,21 @@ public class CommitEvent {
 
     public void setHomeworkId(String homeworkId) {
         this.homeworkId = homeworkId;
+    }
+
+    public String getTestId() {
+        return testId;
+    }
+
+    public void setTestId(String testId) {
+        this.testId = testId;
+    }
+
+    public String getTestType() {
+        return testType;
+    }
+
+    public void setTestType(String testType) {
+        this.testType = testType;
     }
 }

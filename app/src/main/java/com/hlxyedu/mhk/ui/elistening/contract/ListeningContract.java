@@ -1,22 +1,24 @@
-package com.hlxyedu.mhk.ui.exercise.contract;
+package com.hlxyedu.mhk.ui.elistening.contract;
 
-import com.hlxyedu.mhk.model.event.BaseEvents;
+import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 
 /**
  * Created by zhangguihua
  */
-public interface TestListeningContract {
+public interface ListeningContract {
 
     interface View extends BaseView {
         //返回登陆结果
         void responeError(String errorMsg);
 
-        void onMainEvent(BaseEvents event);
-
+        void commitSuccess(ScoreVO scoreVO);
     }
 
     interface Presenter extends BasePresenter<View> {
+        void cimmitAnswer(String finalAnswer,String paperId,String homeworkId);
+
+        String getUserId();
     }
 }

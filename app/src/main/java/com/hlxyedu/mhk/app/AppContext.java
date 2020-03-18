@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.multidex.MultiDex;
 
 
+import com.fifedu.record.recinbox.bl.record.RecorderManager;
 import com.hlxyedu.mhk.api.Constants;
 import com.hlxyedu.mhk.di.component.AppComponent;
 import com.hlxyedu.mhk.di.component.DaggerAppComponent;
@@ -177,7 +178,7 @@ public class AppContext extends BaseApplication {
 
 
         // 初始化音频录制工具
-//        RecorderManager.createInstance(this);
+        RecorderManager.createInstance(this);
 
         AppConfig.getAppConfig(this);
 

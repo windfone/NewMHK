@@ -1,13 +1,9 @@
 package com.hlxyedu.mhk.ui.main.adapter;
 
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
-import com.arialyy.aria.core.Aria;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hlxyedu.mhk.R;
@@ -15,8 +11,8 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.bean.ExerciseVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
-import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
-import com.hlxyedu.mhk.ui.exercise.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -63,7 +59,10 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
         button.setOnClickListener(v -> {
             if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
                 if(item.getExamname().contains("听力")){
-                    mContext.startActivity(TestListeningActivity.newInstance(mContext, AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    mContext.startActivity(TestListeningActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                }else if (item.getExamname().contains("口语")){
+                    //最后一个参数为 item.getId() 指的是examId
+                    mContext.startActivity(TestSpeakActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
                 }
 //                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
             } else {

@@ -76,7 +76,15 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.exercise.activity.TestListeningActivity"
+            android:name=".ui.elistening.activity.TestListeningActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.espeak.activity.TestSpeakActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.ecomposition.activity.TestTxtActivity"
             android:screenOrientation="portrait" />
 
         <!-- 初始化service -->

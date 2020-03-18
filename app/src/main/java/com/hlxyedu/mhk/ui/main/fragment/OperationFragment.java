@@ -184,7 +184,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
 
     @Override
     public void responeError(String errorMsg) {
-        stateError();
+//        stateError();
     }
 
     @Override

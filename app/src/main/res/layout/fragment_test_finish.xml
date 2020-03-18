@@ -4,42 +4,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whitefff"
-    android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".ui.exercise.fragment.TestFinishFragment">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="67dp"
-        android:src="@drawable/icon_complete" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <TextView
-        style="@style/textSize_black000_16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
-        android:text="@string/exam_complete" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="67dp"
+            android:src="@drawable/icon_complete" />
 
-    <TextView
-        android:id="@+id/wait_text"
-        style="@style/textSize_black000_16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="73dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="73dp"
-        android:text="正在获取答题成绩，请稍等..."/>
+        <TextView
+            style="@style/textSize_black000_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:text="@string/exam_complete" />
 
-    <TextView
-        android:id="@+id/success_hint_text"
-        style="@style/textSize_black000_16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="73dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="73dp"
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/wait_text"
+            style="@style/textSize_black000_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="73dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="73dp"
+            android:text="正在获取答题成绩，请稍等..." />
 
+        <TextView
+            android:id="@+id/success_hint_text"
+            style="@style/textSize_black000_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="73dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="73dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/finish_btn"
+        style="@style/textSize_whitefff_17"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="38dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginBottom="44dp"
+        android:background="@drawable/blue_btn_bg"
+        android:text="@string/finished"
+        android:visibility="gone" />
 
 </LinearLayout>

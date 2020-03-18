@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/whitefff"
     android:orientation="vertical"
-    tools:context=".ui.elistening.activity.TestListeningActivity">
+    tools:context=".ui.ecomposition.activity.TestTxtActivity">
 
     <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
         android:id="@+id/xbase_topbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:isShowLeft_x="true"
         app:isShowRight_x="false"
-        app:middleText_x="@string/exercise" />
+        app:middleText_x="@string/exercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/ll"
@@ -48,19 +48,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.hlxyedu.mhk.weight.view.WaveView
+            android:id="@+id/waveview"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="38dp"
+            android:layout_marginEnd="38dp"
+            android:layout_marginBottom="34dp"
+            android:background="@color/blackb4b"
+            android:visibility="gone" />
+
         <com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager
             android:id="@+id/notouch_vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"/>
+            android:layout_above="@+id/waveview"
+            android:layout_margin="10dp" />
 
         <RelativeLayout
             android:id="@+id/countdown_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="45dp"
             android:layout_marginEnd="35dp"
+            android:layout_marginBottom="100dp"
             android:visibility="gone">
 
             <ImageView
@@ -78,5 +92,6 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
 
 </LinearLayout>

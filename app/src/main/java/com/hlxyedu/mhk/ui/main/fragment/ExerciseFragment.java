@@ -23,6 +23,7 @@ import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.ExerciseVO;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
 import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
@@ -166,6 +167,8 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         mAdapter.setOnLoadMoreListener(() -> {
             mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
         }, rlv);
+//        String zipName = "MHKMN3005KY(1).zip";
+//        startActivity(TestSpeakActivity.newInstance(mContext, AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,"0"));
     }
 
     @Override

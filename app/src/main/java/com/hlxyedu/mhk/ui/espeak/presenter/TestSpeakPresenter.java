@@ -1,10 +1,10 @@
-package com.hlxyedu.mhk.ui.exercise.presenter;
+package com.hlxyedu.mhk.ui.espeak.presenter;
 
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.event.BaseEvents;
-import com.hlxyedu.mhk.ui.exercise.contract.TestListeningContract;
+import com.hlxyedu.mhk.ui.espeak.contract.TestSpeakContract;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
 
@@ -16,17 +16,17 @@ import io.reactivex.functions.Predicate;
 /**
  * Created by zhangguihua
  */
-public class TestListeningPresenter extends RxPresenter<TestListeningContract.View> implements TestListeningContract.Presenter {
+public class TestSpeakPresenter extends RxPresenter<TestSpeakContract.View> implements TestSpeakContract.Presenter {
     private DataManager mDataManager;
 
     @Inject
-    public TestListeningPresenter(DataManager mDataManager) {
+    public TestSpeakPresenter(DataManager mDataManager) {
         super(mDataManager);
         this.mDataManager = mDataManager;
     }
 
     @Override
-    public void attachView(TestListeningContract.View view) {
+    public void attachView(TestSpeakContract.View view) {
         super.attachView(view);
         registerEvent();
     }
@@ -52,6 +52,6 @@ public class TestListeningPresenter extends RxPresenter<TestListeningContract.Vi
                     }
                 })
         );
-
     }
+
 }

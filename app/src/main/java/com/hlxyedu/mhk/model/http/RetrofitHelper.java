@@ -14,6 +14,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  *
@@ -52,8 +54,13 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String id, String homeworkId, String answer, String examId) {
-        return qBaseApis.postExerciseScoreBody(id,homeworkId,answer,examId);
+    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId) {
+        return qBaseApis.postExerciseScoreBody(userId,homeworkId,answer,examId);
+    }
+
+    @Override
+    public Flowable<HttpResponse<String>> uploadRecord(RequestBody userId, RequestBody examId, RequestBody homeworkId, RequestBody testId, RequestBody testType, RequestBody fileName, MultipartBody.Part fileData) {
+        return qBaseApis.uploadRecord(userId,examId,homeworkId,testId,testType,fileName,fileData);
     }
 
 }
