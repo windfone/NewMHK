@@ -89,16 +89,12 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
     TextView questionTypeTv;
-    @BindView(R.id.ll)
-    LinearLayout ll;
     @BindView(R.id.notouch_vp)
     NoTouchViewPager viewPager;
     @BindView(R.id.countdown_tv)
     TextView countdownTv;
     @BindView(R.id.countdown_rl)
     RelativeLayout countdownRl;
-    @BindView(R.id.view_main)
-    RelativeLayout viewMain;
     @BindView(R.id.waveview)
     WaveView waveview;
 
@@ -215,7 +211,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         userDir = AppConstants.RECORD_PATH
                 + fileName.substring(0,fileName.length()-4) + File.separator;
         LogUtils.d(TAG, "创建录音文件夹");
-        FileUtils.createFileByDeleteOldFile(userDir);
+        FileUtils.createOrExistsDir(userDir);
     }
 
     private void clearTimeProgress() {

@@ -65,12 +65,8 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
     TextView questionTypeTv;
-    @BindView(R.id.ll)
-    LinearLayout ll;
     @BindView(R.id.notouch_vp)
     NoTouchViewPager notouchVp;
-    @BindView(R.id.view_main)
-    RelativeLayout viewMain;
     @BindView(R.id.countdown_tv)
     TextView countdownTv;
     @BindView(R.id.countdown_rl)
@@ -702,6 +698,12 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     protected void onStop() {
         AudioPlayManager.getManager().stop();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        RxTimerUtil.cancel();
+        super.onDestroy();
     }
 
     @Override

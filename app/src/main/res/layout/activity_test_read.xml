@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/whitefff"
     android:orientation="vertical"
-    tools:context=".ui.ecomposition.activity.TestTxtActivity">
+    tools:context=".ui.eread.activity.TestReadActivity">
 
     <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
         android:id="@+id/xbase_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:isShowLeft_x="true"
         app:isShowRight_x="false"
-        app:middleText_x="@string/exercise"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        app:middleText_x="@string/exercise" />
 
     <LinearLayout
         android:id="@+id/ll"
@@ -29,7 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="39dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:text="练习题型模拟大礼包" />
 
         <TextView
             style="@style/textSize_whitefff_12"
@@ -51,17 +52,15 @@
             android:id="@+id/notouch_vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp" />
+            android:layout_marginBottom="10dp" />
 
         <RelativeLayout
             android:id="@+id/countdown_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginTop="45dp"
             android:layout_marginEnd="35dp"
-            android:layout_marginBottom="100dp"
             android:visibility="gone">
 
             <ImageView
@@ -79,6 +78,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </LinearLayout>

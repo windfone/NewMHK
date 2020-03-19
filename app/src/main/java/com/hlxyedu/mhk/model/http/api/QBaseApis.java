@@ -61,13 +61,14 @@ public interface QBaseApis {
     @POST("phone/calExamScore.do")      //id 为userId，此处比较混乱，特注明
     Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId);
 
+
     @Multipart
     @POST("phone/uploadRec.do")
     Flowable<HttpResponse<String>> uploadRecord(@Part("id") RequestBody userId,
                                               @Part("examId") RequestBody examId,
                                               @Part("homeworkId") RequestBody homeworkId,
                                               @Part("testId") RequestBody testId,
-                                              @Part("testType") RequestBody testType,
+                                              @Part("type") RequestBody type,
                                               @Part("fileName") RequestBody fileName,
                                               @Part MultipartBody.Part fileData);
 //                                              @Part("audioData") MultipartBody.Part fileData);

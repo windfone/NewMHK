@@ -11,7 +11,9 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.bean.ExerciseVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
@@ -63,6 +65,12 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
                 }else if (item.getExamname().contains("口语")){
                     //最后一个参数为 item.getId() 指的是examId
                     mContext.startActivity(TestSpeakActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                }else if (item.getExamname().contains("阅读")){
+                    //最后一个参数为 item.getId() 指的是examId
+                    mContext.startActivity(TestReadActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                } else if (item.getExamname().contains("作文")){
+                    //最后一个参数为 item.getId() 指的是examId
+                    mContext.startActivity(TestTxtActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
                 }
 //                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
             } else {

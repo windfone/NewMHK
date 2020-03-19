@@ -71,8 +71,8 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onSupportVisible() {
+        super.onSupportVisible();
         count = 1;
         pageSize = 20;
         mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
@@ -120,7 +120,14 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @Override
     public void onSuccess(List<OperationVO> operationListVOS) {
         if (!operationListVOS.isEmpty()) {
-            dataVOList.addAll(operationListVOS);
+            // 为了好测试做些筛选，之后去掉
+            for (int i = 0; i < operationListVOS.size(); i++) {
+                if (operationListVOS.get(i).getExamType().equals("YD")){
+                    dataVOList.add(operationListVOS.get(i));
+                }
+            }
+            //
+//            dataVOList.addAll(operationListVOS);
             mAdapter.setNewData(dataVOList);
             if (operationListVOS.size() < pageSize) {
                 mAdapter.loadMoreEnd();

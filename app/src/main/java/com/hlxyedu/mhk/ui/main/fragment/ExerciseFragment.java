@@ -59,7 +59,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     private ExerciseAdapter mAdapter;
 
     private List<ExerciseVO> dataVOList = new ArrayList<>();
-    private int pageSize = 20;
+    private int pageSize = 100;
     private int count = 1; // 当前页数;
 
     private String examType;
@@ -101,6 +101,14 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     }
 
     @Override
+    public void onSupportVisible() {
+        super.onSupportVisible();
+        count = 1; // 当前页数;
+        pageSize = 20;
+        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
+    }
+
+    @Override
     public void download(int posi,String downloadPath,String examName) {
 //        showDownloadDialog();
         long taskId = Aria.download(this)
@@ -116,7 +124,6 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     @Download.onTaskRunning
     protected void running(DownloadTask task) {
         int p = task.getPercent();	//任务进度百分比
-        Log.e("=============",p+"");
 
     }
 
@@ -174,7 +181,14 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     @Override
     public void onSuccess(ExerciseListVO exerciseListVO) {
         if (!exerciseListVO.getExam().isEmpty()) {
-            dataVOList.addAll(exerciseListVO.getExam());
+            // 为了好测试做些筛选，之后去掉
+            for (int i = 0; i < exerciseListVO.getExam().size(); i++) {
+                if (exerciseListVO.getExam().get(i).getExamname().contains("阅读")){
+                    dataVOList.add(exerciseListVO.getExam().get(i));
+                }
+            }
+            //
+//            dataVOList.addAll(exerciseListVO.getExam());
             mAdapter.setNewData(dataVOList);
             if (exerciseListVO.getExam().size() < pageSize) {
                 mAdapter.loadMoreEnd();

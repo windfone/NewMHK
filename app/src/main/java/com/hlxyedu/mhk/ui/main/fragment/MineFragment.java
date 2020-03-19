@@ -1,14 +1,20 @@
 package com.hlxyedu.mhk.ui.main.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
@@ -17,6 +23,9 @@ import com.hlxyedu.mhk.ui.main.contract.MineContract;
 import com.hlxyedu.mhk.ui.main.presenter.MinePresenter;
 import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
+import com.skyworth.rxqwelibrary.managers.AppManagers;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,10 +101,32 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
             case R.id.version_rl:
                 break;
             case R.id.exit_btn:
-                mPresenter.clearLoginInfo();
-                mPresenter.setLoginState(false);
-                startActivity(LoginActivity.newInstance(mActivity));
-                mActivity.finish();
+                WindowManager windowManager = (WindowManager)mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus logoutDialog = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_logout))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(true)//设置不可取消   可以取消
+                        .setOnClickListener((dialog, view1) -> {
+                            switch (view1.getId()) {
+                                case R.id.btn_neg:
+                                    dialog.dismiss();
+                                    break;
+                                case R.id.btn_pos:
+                                    mPresenter.clearLoginInfo();
+                                    mPresenter.setLoginState(false);
+                                    startActivity(LoginActivity.newInstance(mActivity));
+                                    mActivity.finish();
+                                    break;
+                            }
+                        }).create();
+                logoutDialog.show();
                 break;
         }
     }
