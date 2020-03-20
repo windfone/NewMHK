@@ -55,17 +55,17 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
                 .setText(R.id.author_tv, item.getTeacherName() + "");
 
         if (StringUtils.equals(item.getExamType(), "KY")) { //口语
-            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_oral_listening);
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_speak);
         } else if (StringUtils.equals(item.getExamType(), "YD")) { //阅读
-
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_read);
         } else if (StringUtils.equals(item.getExamType(), "SM")) { //书面
-
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_book);
         } else if (StringUtils.equals(item.getExamType(), "TL")) { //听力
-            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_hearing_2);
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_listening);
         } else if (StringUtils.equals(item.getExamType(), "ZW")) { //作文
-
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_txt);
         } else if (StringUtils.equals(item.getExamType(), "ZH")) { //全真试题（综合）
-
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_zh);
         }
 
         String[] zipPaths = item.getZipPath().split("/");
@@ -81,20 +81,16 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
                 if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
                     if (StringUtils.equals(item.getExamType(), "TL")) {
                         mContext.startActivity(TestListeningActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    }
-                    else if (StringUtils.equals(item.getExamType(), "KY")) {
+                    } else if (StringUtils.equals(item.getExamType(), "KY")) {
                         //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;    type = homeWork
                         mContext.startActivity(TestSpeakActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
-                    }
-                    else if (StringUtils.equals(item.getExamType(), "YD")) {
+                    } else if (StringUtils.equals(item.getExamType(), "YD")) {
                         //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
                         mContext.startActivity(TestReadActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    }
-                    else if (StringUtils.equals(item.getExamType(), "SM")) {
+                    } else if (StringUtils.equals(item.getExamType(), "SM")) {
                         //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
                         mContext.startActivity(TestBookActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    }
-                    else if (StringUtils.equals(item.getExamType(), "ZW")) {
+                    } else if (StringUtils.equals(item.getExamType(), "ZW")) {
                         //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
                         mContext.startActivity(TestTxtActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
                     }

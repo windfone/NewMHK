@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.hlxyedu.mhk.R;
@@ -36,17 +37,19 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
         helper.setText(R.id.title_tv,item.getExamname())
               .setText(R.id.exercise_number_tv,item.getTimes()+"");
 
-//        if (StringUtils.equals(item.getExamType(),"KY")){ //口语
-//            helper.setImageResource(R.id.question_type_iv,R.drawable.icon_oral_listening);
-//        }else if (StringUtils.equals(item.getExamType(),"YD")){ //阅读
-//
-//        }else if (StringUtils.equals(item.getExamType(),"SM")){ //？
-//
-//        }else if (StringUtils.equals(item.getExamType(),"TL")){ //听力
-//            helper.setImageResource(R.id.question_type_iv,R.drawable.icon_hearing_2);
-//        }else if (StringUtils.equals(item.getExamType(),"ZW")){ //作文
-//
-//        }
+        if (item.getExamname().contains("口语")) { //口语
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_speak);
+        } else if (item.getExamname().contains("阅读")) { //阅读
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_read);
+        } else if (item.getExamname().contains("书面")) { //书面
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_book);
+        } else if (item.getExamname().contains("听力")) { //听力
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_listening);
+        } else if (item.getExamname().contains("作文")) { //作文
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_txt);
+        } else if (item.getExamname().contains("综合")) { //全真试题（综合）
+            helper.setImageResource(R.id.question_type_iv, R.drawable.icon_zh);
+        }
 
         String[] zipPaths = item.getZip_path().split("/");
         //压缩包名字

@@ -8,8 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="5dp"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_marginStart="5dp" />
 
     <Button
         android:id="@+id/positive_btn"
@@ -26,7 +25,7 @@
         style="@style/textSize_black303_14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14sp"
+        android:layout_marginStart="4sp"
         android:layout_marginTop="19dp"
         android:layout_toStartOf="@+id/positive_btn"
         android:layout_toEndOf="@+id/question_type_iv" />
@@ -36,9 +35,8 @@
         style="@style/textSize_gray696_13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title_tv"
         android:layout_alignStart="@+id/title_tv"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="55dp"
         android:layout_toStartOf="@+id/positive_btn"
         android:singleLine="true" />
 
