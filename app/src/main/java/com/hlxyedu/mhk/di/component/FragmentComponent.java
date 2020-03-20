@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.hlxyedu.mhk.di.module.FragmentModule;
 import com.hlxyedu.mhk.di.scope.FragmentScope;
+import com.hlxyedu.mhk.ui.ebook.fragment.BookFragment;
 import com.hlxyedu.mhk.ui.ecomposition.fragment.TxtFragment;
 import com.hlxyedu.mhk.ui.eread.fragment.ReadFragment;
 import com.hlxyedu.mhk.ui.espeak.fragment.SpeakFragment;
@@ -58,5 +59,7 @@ public interface FragmentComponent {
     void inject(TxtFragment txtFragment);
 
     void inject(ReadFragment readFragment);
+
+    void inject(BookFragment bookFragment);
 
 }

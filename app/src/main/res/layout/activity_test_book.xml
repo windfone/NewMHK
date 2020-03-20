@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/whitefff"
     android:orientation="vertical"
-    tools:context=".ui.eread.activity.TestReadActivity">
+    tools:context=".ui.ebook.activity.TestBookActivity">
 
     <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
         android:id="@+id/xbase_topbar"
@@ -29,8 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="39dp"
-            android:layout_marginTop="5dp"
-            android:text="练习题型模拟大礼包" />
+            android:layout_marginTop="5dp" />
 
         <TextView
             style="@style/textSize_whitefff_12"

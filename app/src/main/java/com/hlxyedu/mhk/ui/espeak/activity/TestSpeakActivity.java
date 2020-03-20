@@ -861,8 +861,13 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     }
 
     @Override
+    public void onBackPressedSupport() {
+        mMaterialDialog.show();
+    }
+
+    @Override
     public void left() {
-        finish();
+        mMaterialDialog.show();
     }
 
     @Override

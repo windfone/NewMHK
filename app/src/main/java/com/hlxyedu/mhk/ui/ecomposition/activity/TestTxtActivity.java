@@ -93,14 +93,13 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId) {
         Intent intent = new Intent(context, TestTxtActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
         intent.putExtra("examId", examId);
         intent.putExtra("homeworkId", homeworkId);
-        intent.putExtra("testType", testType);
         return intent;
     }
 
@@ -434,10 +433,20 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     }
 
     @Override
-    public void left() {
-        finish();
+    public void onBackPressedSupport() {
+        mMaterialDialog.show();
     }
 
+    @Override
+    protected void onDestroy() {
+        RxTimerUtil.cancel();
+        super.onDestroy();
+    }
+
+    @Override
+    public void left() {
+        mMaterialDialog.show();
+    }
     @Override
     public void right() {
 
@@ -477,12 +486,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             loadData();
             return null;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        RxTimerUtil.cancel();
-        super.onDestroy();
     }
 
 }

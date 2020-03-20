@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.hlxyedu.mhk.R;
+import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
@@ -49,9 +50,9 @@ public class NetErrorDialog {
         DialogPlus dialogPlus = DialogPlus.newDialog(context)
                 .setGravity(Gravity.CENTER)
                 .setContentHolder(new ViewHolder(R.layout.dialog_net))
+                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
                 .setContentWidth((int) (display
                         .getWidth() * 0.8))
-                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
                 .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
                 .setCancelable(true)
                 .setOnClickListener((dialog, view1) -> {

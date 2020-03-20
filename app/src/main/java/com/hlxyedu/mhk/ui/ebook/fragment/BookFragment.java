@@ -1,4 +1,4 @@
-package com.hlxyedu.mhk.ui.eread.fragment;
+package com.hlxyedu.mhk.ui.ebook.fragment;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -22,8 +22,8 @@ import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.EventsConfig;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
-import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
-import com.hlxyedu.mhk.ui.eread.presenter.ReadPresenter;
+import com.hlxyedu.mhk.ui.ebook.contract.BookContract;
+import com.hlxyedu.mhk.ui.ebook.presenter.BookPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.StringUtils;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
@@ -36,9 +36,11 @@ import java.util.ArrayList;
 /**
  * Created by zhangguihua
  */
-public class ReadFragment extends RootFragment<ReadPresenter> implements ReadContract.View, ListenQuestionItemView.onAnswerClickListener {
+public class BookFragment extends RootFragment<BookPresenter> implements BookContract.View, ListenQuestionItemView.onAnswerClickListener {
 
-    private static final String TAG = ReadFragment.class.getSimpleName();
+
+
+    private static final String TAG = BookFragment.class.getSimpleName();
 
     private View view;
     //数据中心
@@ -71,10 +73,10 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
     //数组长度
     private int op_long=0;
 
-    public static ReadFragment newInstance() {
+    public static BookFragment newInstance() {
         Bundle args = new Bundle();
 
-        ReadFragment fragment = new ReadFragment();
+        BookFragment fragment = new BookFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,7 +117,7 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
                 base_layout = getView(view,R.id.base_layout);
                 startTraining();
                 break;
-            case PageModel.READ_yuedulijie:
+            case PageModel.BOOK_shumianbiaoda:
                 view = View.inflate(getActivity(), R.layout.fragment_test_layout,
                         null);
                 base_layout = getView(view,R.id.base_layout);
@@ -179,10 +181,10 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
 //                    getHandler().sendMessage(message);
 //                }
 //            }else {
-                //下一个fragment
-                Message message = new Message();
-                message.what = NEXT_PAGE;
-                getHandler().sendMessage(message);
+            //下一个fragment
+            Message message = new Message();
+            message.what = NEXT_PAGE;
+            getHandler().sendMessage(message);
 //            }
         }
 
@@ -267,7 +269,7 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
                 message.what = NEXT_TRAIN;
                 getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
 
-                BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE,EventsConfig.SHOW_DETAL_VIEW);
+                BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
                 baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
                 RxBus.getDefault().post(baseEvents);
 
@@ -338,5 +340,6 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
     public void responeError(String errorMsg) {
 
     }
+
 
 }

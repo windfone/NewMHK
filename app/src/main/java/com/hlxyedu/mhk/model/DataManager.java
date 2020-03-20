@@ -95,6 +95,7 @@ public class DataManager implements HttpHelper, PreferencesHelper {
         return mHttpHelper.getExamList(examType, id, pageNum, perpage, version);
     }
 
+
     @Override
     public Flowable<HttpResponse<List<OperationVO>>> getOperationList(String userId, int pageNumber, int pageSize, String hws) {
         return mHttpHelper.getOperationList(userId,pageNumber,pageSize,hws);

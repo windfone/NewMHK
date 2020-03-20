@@ -1,9 +1,8 @@
-package com.hlxyedu.mhk.ui.eread.activity;
+package com.hlxyedu.mhk.ui.ebook.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,10 +21,9 @@ import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.ListenQOptionModel;
 import com.hlxyedu.mhk.model.models.PageModel;
-import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
-import com.hlxyedu.mhk.ui.eread.contract.TestReadContract;
-import com.hlxyedu.mhk.ui.eread.fragment.ReadFragment;
-import com.hlxyedu.mhk.ui.eread.presenter.TestReadPresenter;
+import com.hlxyedu.mhk.ui.ebook.contract.TestBookContract;
+import com.hlxyedu.mhk.ui.ebook.fragment.BookFragment;
+import com.hlxyedu.mhk.ui.ebook.presenter.TestBookPresenter;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
@@ -52,16 +50,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by zhangguihua
- * 阅读理解（和书面表达 是一样的）
+ * 书面表达（和阅读理解 一样）
  */
-public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> implements TestReadContract.View, XBaseTopBarImp {
+public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> implements TestBookContract.View, XBaseTopBarImp {
 
-    private static final String TAG = TestReadActivity.class.getSimpleName();
-
+    private static final String TAG = TestBookActivity.class.getSimpleName();
+    public String answer = "";
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
@@ -72,17 +69,11 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     TextView countdownTv;
     @BindView(R.id.countdown_rl)
     RelativeLayout countdownRl;
-
     //解析到的数据中心
     private List<PageModel> pageModels;
     //fragment 数组
-    private List<ReadFragment> readFragments;
-
+    private List<BookFragment> bookFragments;
     private int currentItem = 0;
-
-    public String answer = "";
-
-
     private String zipPath;// 压缩包路径
     private String fileName;// (压缩包名字 TLXXX.zip)也是解压后的文件夹名字 TLXXX.zip
     private String examId; // 试卷id
@@ -98,7 +89,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
      * @return
      */
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
-        Intent intent = new Intent(context, TestReadActivity.class);
+        Intent intent = new Intent(context, TestBookActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
@@ -106,8 +97,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId,String homeworkId) {
-        Intent intent = new Intent(context, TestReadActivity.class);
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId) {
+        Intent intent = new Intent(context, TestBookActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
@@ -125,10 +116,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         examId = intent.getStringExtra("examId");
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
-        if (fileName.contains("YD")){
-            questionTypeTv.setText("阅读理解模拟大礼包");
-        }
-        else if (fileName.contains("SM")) {
+        if (fileName.contains("SM")) {
             questionTypeTv.setText("书面表达模拟大礼包");
         }
         // 解压文件
@@ -142,7 +130,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
         pageModels = new ArrayList<PageModel>();
-        readFragments = new ArrayList<ReadFragment>();
+        bookFragments = new ArrayList<BookFragment>();
 
         viewPager.setNoScroll(true);
         loadDataAndRefreshView();
@@ -158,19 +146,19 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 AppContext.getInstance().setCurrentItem(currentItem);
 
                 // 结束的页面
-                if (currentItem == readFragments.size() -1){
+                if (currentItem == bookFragments.size() - 1) {
                     String final_answer = "";
-                    if (!StringUtils.equals(answer,"")){
+                    if (!StringUtils.equals(answer, "")) {
                         final_answer = answer.substring(0, answer.length() - 1) + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,final_answer,examId,homeworkId));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
                 clearTimeProgress();
                 int time = (int) event.getData();
                 // 暂停时间太短 1秒不显示倒计时时间
-                if (time > 1){
+                if (time > 1) {
 //                    countdownRl.setVisibility(View.VISIBLE);
                     startTimeProgress(time);
                 }
@@ -186,16 +174,16 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //                openActivity(FinalScoreActivity_.class, bundle);
 //                killActivity(this);
 //                break;
-            case EventsConfig.SUCCESS_READ:
+            case EventsConfig.SUCCESS_BOOK:
                 AppContext.getInstance().setAllItem(pageModels.size());
                 for (int i = 0; i < pageModels.size(); i++) {
-                    ReadFragment readFragment = ReadFragment.newInstance();
-                    readFragment.setPageModel(pageModels.get(i));
-                    readFragments.add(readFragment);
+                    BookFragment bookFragment = BookFragment.newInstance();
+                    bookFragment.setPageModel(pageModels.get(i));
+                    bookFragments.add(bookFragment);
                 }
 
                 viewPager.setAdapter(new MyFragmentPagerAdapter(
-                        getSupportFragmentManager(), readFragments));
+                        getSupportFragmentManager(), bookFragments));
 
                 stateMain();
                 break;
@@ -221,38 +209,16 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         TIMER = time;
         RxTimerUtil.interval(1000, number -> {
             TIMER--;
-            if (TIMER == 0 ){
+            if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
                 RxTimerUtil.cancel();
                 // 下一题
-            }else {
+            } else {
                 countdownRl.setVisibility(View.VISIBLE);
                 countdownTv.setText(TIMER + "S");
             }
         });
-    }
-
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
     }
 
     //开始解压文件
@@ -326,20 +292,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         }
     }
 
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_READ));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
-        }
-    }
-
     //正式加载数据
     private void loadData() {
         //读取本地数据
@@ -371,8 +323,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //            if (AppContext.getInstance().getProperty("examType").equals("ZH")){
 //                parts = root.elements("part").subList(5,7);
 //            }else {
-                // 获取特定名称的子元素
-                parts = root.elements("part");
+            // 获取特定名称的子元素
+            parts = root.elements("part");
 //            }
 
             for (int i = 0; i < parts.size(); i++) {
@@ -392,14 +344,16 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 }
                 for (int j = 0; j < pages.size(); j++) {
                     Element page = pages.get(j);
-                    switch (sectionName) {
+                    //1.解析欢迎数据
+                    switch (sectionName){
                         case PageModel.huanying:
                         case PageModel.jieshu:
-                            AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels, fileName, page, partName, sectionName);
+                            AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels,fileName,page, partName, sectionName);
                             break;
-                        case PageModel.READ_yuedulijie:
-                            encodeReadPageModel(page, partName, sectionName, j);
+                        case PageModel.BOOK_shumianbiaoda:
+                            encodepageModel(page, partName, sectionName,j);
                             break;
+
                     }
                 }
             }
@@ -418,12 +372,11 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     }
 
     /**
-     * 阅读题
-     *
+     * 书面表达
      * @param page
      * @param type
      */
-    private void encodeReadPageModel(Element page, String type, String section_name, int pagenumber) {
+    private void encodepageModel(Element page,String type,String section_name,int pagenumber){
         //第二部分的解析和第一部分有区别
         //以每个page 为一页
 
@@ -438,24 +391,26 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         pageModel.setSection(section_name);
 
         //1.先解析开始部分，和欢迎部分是一样的
-        for (int i = 0; i < elements.size(); i++) {
+        for (int i=0;i<elements.size();i++) {
 
             Element element = elements.get(i);
             BasePageModel basePageModel = new BasePageModel();
             basePageModel.setCurrent(current++);
             basePageModel.setType(element.getName());
 
-            switch (element.getName()) {
+            switch (element.getName()){
                 case BasePageModel.TEXT:
                     basePageModel.setContent(element.getStringValue());
                     pageModel.addVO(basePageModel);
                     break;
                 case BasePageModel.RICHTEXT:
-                    if (pagenumber == 0) {
-                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), true));
+                    if(pagenumber == 0)
+                    {
+                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),true));
                         basePageModel.setSuffix("png");
-                    } else {
-                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), false));
+                    }else
+                    {
+                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),false));
                     }
 
                     pageModel.addVO(basePageModel);
@@ -468,19 +423,21 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
                 case BasePageModel.QUESTIONS:
                     List<Element> questions = element.elements();
-                    for (int j = 0; j < questions.size(); j++) {
+                    for (int j=0;j<questions.size();j++)
+                    {
                         Element question = questions.get(j);
                         BasePageModel questionsModel = new BasePageModel();
                         questionsModel.setCurrent(current++);
                         questionsModel.setType(question.getName());
 
-                        switch (question.getName()) {
+                        switch (question.getName())
+                        {
                             case BasePageModel.TEXT:
                                 questionsModel.setContent(question.getStringValue());
                                 pageModel.addVO(questionsModel);
                                 break;
                             case BasePageModel.RICHTEXT:
-                                questionsModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question.attributeValue("src"), false));
+                                questionsModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question.attributeValue("src"),false));
                                 pageModel.addVO(questionsModel);
                                 break;
                             case BasePageModel.QUESTION:
@@ -488,7 +445,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
                                 String qustionid = question.attributeValue("id");
 
-                                for (int j_1 = 0; j_1 < questions_1.size(); j_1++) {
+                                for (int j_1=0;j_1<questions_1.size();j_1++)
+                                {
                                     Element question_1 = questions_1.get(j_1);
                                     BasePageModel questionModel = new BasePageModel();
                                     questionModel.setCurrent(current++);
@@ -496,18 +454,18 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
                                     questionModel.setQuestionid(qustionid);
 
-                                    switch (question_1.getName()) {
+                                    switch (question_1.getName())
+                                    {
                                         case BasePageModel.TEXT:
                                             questionModel.setContent(question_1.getStringValue());
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.RICHTEXT:
-                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question_1.attributeValue("src"), false));
+                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question_1.attributeValue("src"),false));
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.AUDIO:
-                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question_1.attributeValue("src"), false));
-
+                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question_1.attributeValue("src"),false));
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.WAIT:
@@ -516,10 +474,10 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                                             break;
                                         case BasePageModel.SELECT:
 
-                                            List<Element> options = question_1.elements("option");
+                                            List<Element> options =  question_1.elements("option");
 
                                             List<ListenQOptionModel> listenQOptionModels = new ArrayList<ListenQOptionModel>();
-                                            for (int k = 0; k < options.size(); k++) {
+                                            for (int k = 0;k<options.size();k++){
                                                 ListenQOptionModel listenQOptionModel = new ListenQOptionModel();
 
                                                 Element option = options.get(k);
@@ -540,14 +498,12 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                         }
                     }
 
-
                     break;
                 case BasePageModel.QUESTION:
                     //question 中会有其他参数
-
                     break;
                 case BasePageModel.AUDIO:
-                    basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), false));
+                    basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),false));
                     pageModel.addVO(basePageModel);
                     break;
             }
@@ -589,6 +545,42 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     @Override
     public void right() {
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_BOOK));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
     }
 
 }

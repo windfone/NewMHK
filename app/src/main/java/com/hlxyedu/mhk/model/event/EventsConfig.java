@@ -50,7 +50,7 @@ public class EventsConfig {
 //    public static final int SUCCESS = 0x2002;
     public static final int SUCCESS_LISTEN = 0x2004;
     public static final int SUCCESS_SPEAK = 0x2005;
-//    public static final int SUCCESS_READ = 0x2006;
+    public static final int SUCCESS_READ = 0x2006;
     public static final int SUCCESS_BOOK = 0x2007;
     public static final int SUCCESS_WRITE = 0x2008;
 

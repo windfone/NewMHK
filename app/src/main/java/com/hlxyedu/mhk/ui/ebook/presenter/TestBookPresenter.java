@@ -1,10 +1,10 @@
-package com.hlxyedu.mhk.ui.eread.presenter;
+package com.hlxyedu.mhk.ui.ebook.presenter;
 
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.event.BaseEvents;
-import com.hlxyedu.mhk.ui.eread.contract.TestReadContract;
+import com.hlxyedu.mhk.ui.ebook.contract.TestBookContract;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
 
@@ -16,17 +16,17 @@ import io.reactivex.functions.Predicate;
 /**
  * Created by zhangguihua
  */
-public class TestReadPresenter extends RxPresenter<TestReadContract.View> implements TestReadContract.Presenter {
+public class TestBookPresenter extends RxPresenter<TestBookContract.View> implements TestBookContract.Presenter {
     private DataManager mDataManager;
 
     @Inject
-    public TestReadPresenter(DataManager mDataManager) {
+    public TestBookPresenter(DataManager mDataManager) {
         super(mDataManager);
         this.mDataManager = mDataManager;
     }
 
     @Override
-    public void attachView(TestReadContract.View view) {
+    public void attachView(TestBookContract.View view) {
         super.attachView(view);
         registerEvent();
     }

@@ -174,21 +174,19 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         mAdapter.setOnLoadMoreListener(() -> {
             mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
         }, rlv);
-//        String zipName = "MHKMN3005KY(1).zip";
-//        startActivity(TestSpeakActivity.newInstance(mContext, AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,"0"));
     }
 
     @Override
     public void onSuccess(ExerciseListVO exerciseListVO) {
         if (!exerciseListVO.getExam().isEmpty()) {
-            // 为了好测试做些筛选，之后去掉
-            for (int i = 0; i < exerciseListVO.getExam().size(); i++) {
-                if (exerciseListVO.getExam().get(i).getExamname().contains("阅读")){
-                    dataVOList.add(exerciseListVO.getExam().get(i));
-                }
-            }
-            //
-//            dataVOList.addAll(exerciseListVO.getExam());
+//            // 为了好测试做些筛选，之后去掉
+//            for (int i = 0; i < exerciseListVO.getExam().size(); i++) {
+//                if (exerciseListVO.getExam().get(i).getExamname().contains("书面")){
+//                    dataVOList.add(exerciseListVO.getExam().get(i));
+//                }
+//            }
+//            //
+            dataVOList.addAll(exerciseListVO.getExam());
             mAdapter.setNewData(dataVOList);
             if (exerciseListVO.getExam().size() < pageSize) {
                 mAdapter.loadMoreEnd();

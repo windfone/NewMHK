@@ -149,6 +149,7 @@
         android:layout_marginStart="7dp"
         android:layout_marginTop="17dp"
         android:layout_toEndOf="@+id/composition_cv"
+        android:visibility="gone"
         app:cardCornerRadius="4dp"
         app:cardElevation="5dp">
 
@@ -163,8 +164,6 @@
             android:text="@string/whole_truth_test" />
 
     </android.support.v7.widget.CardView>
-
-
 
     <Button
         android:id="@+id/confirm_btn"

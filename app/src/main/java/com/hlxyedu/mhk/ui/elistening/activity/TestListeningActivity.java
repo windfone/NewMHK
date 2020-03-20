@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -707,8 +708,13 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     }
 
     @Override
+    public void onBackPressedSupport() {
+        mMaterialDialog.show();
+    }
+
+    @Override
     public void left() {
-        finish();
+        mMaterialDialog.show();
     }
 
     @Override
@@ -726,8 +732,4 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         return R.layout.activity_test_listening;
     }
 
-    @OnClick(R.id.next_btn)
-    public void onViewClicked() {
-        finish();
-    }
 }

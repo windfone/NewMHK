@@ -95,21 +95,27 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.composition_cb:
+                // 作文
                 questionType = "ZW";
                 break;
             case R.id.listening_cb:
+                // 听力理解
                 questionType = "TL";
                 break;
             case R.id.reading_cb:
+                // 阅读理解
                 questionType = "YD";
                 break;
             case R.id.write_cb:
+                // 书面表达
                 questionType = "SM";
                 break;
             case R.id.oral_cb:
+                // 口语听力
                 questionType = "KY";
                 break;
             case R.id.complex_cb:
+                // 综合
                 questionType = "ZH";
                 break;
         }

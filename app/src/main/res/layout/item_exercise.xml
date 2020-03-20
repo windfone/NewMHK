@@ -19,8 +19,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/orange_btn_bg"
-        android:text="获取" />
+        android:background="@drawable/orange_btn_bg" />
 
     <TextView
         android:id="@+id/title_tv"
@@ -30,9 +29,7 @@
         android:layout_marginStart="14sp"
         android:layout_marginTop="19dp"
         android:layout_toStartOf="@+id/positive_btn"
-        android:layout_toEndOf="@+id/question_type_iv"
-        android:singleLine="true"
-        android:text="听力题题型1试卷1" />
+        android:layout_toEndOf="@+id/question_type_iv" />
 
     <TextView
         android:id="@+id/exercise_number_tv"
@@ -43,7 +40,7 @@
         android:layout_alignStart="@+id/title_tv"
         android:layout_marginTop="15dp"
         android:layout_toStartOf="@+id/positive_btn"
-        android:singleLine="true"/>
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/author_tv"
@@ -53,8 +50,7 @@
         android:layout_below="@+id/exercise_number_tv"
         android:layout_alignStart="@+id/title_tv"
         android:layout_marginTop="3dp"
-        android:layout_toStartOf="@+id/positive_btn"
-        android:text="张一老师" />
+        android:layout_toStartOf="@+id/positive_btn" />
 
 
     <View

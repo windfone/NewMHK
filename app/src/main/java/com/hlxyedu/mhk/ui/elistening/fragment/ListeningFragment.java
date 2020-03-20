@@ -127,6 +127,11 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     }
 
     @Override
+    public boolean isShow() {
+        return isSupportVisible();
+    }
+
+    @Override
     public void commitSuccess(ScoreVO scoreVO) {
         waitText.setVisibility(View.GONE);
         successHintText.setVisibility(View.VISIBLE);

@@ -120,14 +120,14 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @Override
     public void onSuccess(List<OperationVO> operationListVOS) {
         if (!operationListVOS.isEmpty()) {
-            // 为了好测试做些筛选，之后去掉
-            for (int i = 0; i < operationListVOS.size(); i++) {
-                if (operationListVOS.get(i).getExamType().equals("YD")){
-                    dataVOList.add(operationListVOS.get(i));
-                }
-            }
-            //
-//            dataVOList.addAll(operationListVOS);
+//            // 为了好测试做些筛选，之后去掉
+//            for (int i = 0; i < operationListVOS.size(); i++) {
+//                if (operationListVOS.get(i).getExamType().equals("SM")){
+//                    dataVOList.add(operationListVOS.get(i));
+//                }
+//            }
+//            //
+            dataVOList.addAll(operationListVOS);
             mAdapter.setNewData(dataVOList);
             if (operationListVOS.size() < pageSize) {
                 mAdapter.loadMoreEnd();

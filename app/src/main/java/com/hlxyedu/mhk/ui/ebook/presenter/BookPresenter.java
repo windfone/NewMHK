@@ -1,4 +1,4 @@
-package com.hlxyedu.mhk.ui.elistening.presenter;
+package com.hlxyedu.mhk.ui.ebook.presenter;
 
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -9,7 +9,8 @@ import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
-import com.hlxyedu.mhk.ui.elistening.contract.ListeningContract;
+import com.hlxyedu.mhk.ui.ebook.contract.BookContract;
+import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
@@ -23,17 +24,17 @@ import retrofit2.adapter.rxjava2.HttpException;
 /**
  * Created by zhangguihua
  */
-public class ListeningPresenter extends RxPresenter<ListeningContract.View> implements ListeningContract.Presenter {
+public class BookPresenter extends RxPresenter<BookContract.View> implements BookContract.Presenter {
     private DataManager mDataManager;
 
     @Inject
-    public ListeningPresenter(DataManager mDataManager) {
+    public BookPresenter(DataManager mDataManager) {
         super(mDataManager);
         this.mDataManager = mDataManager;
     }
 
     @Override
-    public void attachView(ListeningContract.View view) {
+    public void attachView(BookContract.View view) {
         super.attachView(view);
         registerEvent();
     }
@@ -54,7 +55,6 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                         if(!mView.isShow()){
                             return;
                         }
-
                         cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId());
                     }
 
@@ -100,5 +100,6 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
         UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(),UserVO.class);
         return userVO.getId();
     }
+
 
 }

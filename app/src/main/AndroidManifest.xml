@@ -91,6 +91,10 @@
             android:name=".ui.eread.activity.TestReadActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.ebook.activity.TestBookActivity"
+            android:screenOrientation="portrait" />
+
         <!-- 初始化service -->
         <service
             android:name="com.skyworth.rxqwelibrary.service.InitializeService"
