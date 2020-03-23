@@ -1,4 +1,4 @@
-package com.hlxyedu.mhk.ui.exercise.contract;
+package com.hlxyedu.mhk.ui.select.contract;
 
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
@@ -6,7 +6,7 @@ import com.skyworth.rxqwelibrary.base.BaseView;
 /**
  * Created by zhangguihua
  */
-public interface EEndContract {
+public interface ExerciseSelectContract {
 
     interface View extends BaseView {
         //返回登陆结果

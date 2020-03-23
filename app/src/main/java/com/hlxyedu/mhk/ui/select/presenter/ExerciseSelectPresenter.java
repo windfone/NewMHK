@@ -1,25 +1,25 @@
-package com.hlxyedu.mhk.ui.exercise.presenter;
+package com.hlxyedu.mhk.ui.select.presenter;
 
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.ui.exercise.contract.ETxtContract;
+import com.hlxyedu.mhk.ui.select.contract.ExerciseSelectContract;
 
 import javax.inject.Inject;
 
 /**
  * Created by zhangguihua
  */
-public class ETxtPresenter extends RxPresenter<ETxtContract.View> implements ETxtContract.Presenter {
+public class ExerciseSelectPresenter extends RxPresenter<ExerciseSelectContract.View> implements ExerciseSelectContract.Presenter {
     private DataManager mDataManager;
 
     @Inject
-    public ETxtPresenter(DataManager mDataManager) {
+    public ExerciseSelectPresenter(DataManager mDataManager) {
         super(mDataManager);
         this.mDataManager = mDataManager;
     }
 
     @Override
-    public void attachView(ETxtContract.View view) {
+    public void attachView(ExerciseSelectContract.View view) {
         super.attachView(view);
         registerEvent();
     }

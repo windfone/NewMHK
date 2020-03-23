@@ -1,25 +1,25 @@
-package com.hlxyedu.mhk.ui.exercise.presenter;
+package com.hlxyedu.mhk.ui.select.presenter;
 
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.ui.exercise.contract.ERepeatContract;
+import com.hlxyedu.mhk.ui.select.contract.OperationSelectContract;
 
 import javax.inject.Inject;
 
 /**
  * Created by zhangguihua
  */
-public class ERepeatPresenter extends RxPresenter<ERepeatContract.View> implements ERepeatContract.Presenter {
+public class OperationSelectPresenter extends RxPresenter<OperationSelectContract.View> implements OperationSelectContract.Presenter {
     private DataManager mDataManager;
 
     @Inject
-    public ERepeatPresenter(DataManager mDataManager) {
+    public OperationSelectPresenter(DataManager mDataManager) {
         super(mDataManager);
         this.mDataManager = mDataManager;
     }
 
     @Override
-    public void attachView(ERepeatContract.View view) {
+    public void attachView(OperationSelectContract.View view) {
         super.attachView(view);
         registerEvent();
     }
