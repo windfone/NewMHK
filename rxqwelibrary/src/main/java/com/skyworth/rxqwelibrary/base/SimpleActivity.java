@@ -53,6 +53,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
         // 沉浸式
         // keyboardEnable 解决软键盘与底部输入框冲突问题，默认为false
         ImmersionBar.with(this)
+                .statusBarDarkFont(true)
                 .transparentStatusBar().keyboardEnable(true).init();
 
        /* //设置透明通知栏

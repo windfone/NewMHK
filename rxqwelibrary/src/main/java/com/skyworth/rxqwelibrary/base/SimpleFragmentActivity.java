@@ -43,6 +43,7 @@ public abstract class SimpleFragmentActivity extends SupportAutoActivity {
 
         // 沉浸式
         ImmersionBar.with(this)
+                .statusBarDarkFont(true)
                 .transparentStatusBar().init();
 
         /*//设置透明通知栏
