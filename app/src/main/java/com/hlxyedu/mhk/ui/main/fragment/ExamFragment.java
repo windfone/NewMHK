@@ -57,6 +57,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     @Override
     public void onSupportVisible() {
         super.onSupportVisible();
+        dataVOList.clear();
         count = 1;
         pageSize = 20;
         mPresenter.getMockList(mPresenter.getID(), count, pageSize);
@@ -75,7 +76,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
+//        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {

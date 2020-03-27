@@ -80,6 +80,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     @Override
     public void onSupportVisible() {
         super.onSupportVisible();
+        dataVOList.clear();
         count = 1; // 当前页数;
         pageSize = 20;
         mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
@@ -105,7 +106,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
+//        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {

@@ -70,6 +70,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @Override
     public void onSupportVisible() {
         super.onSupportVisible();
+        dataVOList.clear();
         count = 1;
         pageSize = 20;
         mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
@@ -91,7 +92,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
+//        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {
