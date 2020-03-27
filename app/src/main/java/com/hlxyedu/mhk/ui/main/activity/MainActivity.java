@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
 import com.hlxyedu.mhk.ui.main.contract.MainContract;
@@ -18,7 +17,6 @@ import com.hlxyedu.mhk.ui.main.fragment.ExerciseFragment;
 import com.hlxyedu.mhk.ui.main.fragment.MineFragment;
 import com.hlxyedu.mhk.ui.main.fragment.OperationFragment;
 import com.hlxyedu.mhk.ui.main.presenter.MainPresenter;
-import com.hlxyedu.mhk.utils.PermissionRequestUtil;
 import com.hlxyedu.mhk.utils.PermissionSettingUtil;
 import com.hlxyedu.mhk.weight.bottombar.BottomBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -40,10 +38,10 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
     public static final int FOURTH = 3;
     @BindView(R.id.bottomBar)
     BottomBar mBottomBar;
-    private SupportFragment[] mFragments = new SupportFragment[4];
     List<String> navigations = Arrays.asList("练习", "作业", "考试", "我的");
     List<Integer> bottomIcons = Arrays.asList(R.drawable.icon_bar_selector_exercise, R.drawable.icon_bar_selector_operation,
             R.drawable.icon_bar_selector_exam, R.drawable.icon_bar_selector_mine);
+    private SupportFragment[] mFragments = new SupportFragment[4];
 //    @BindView(R.id.main_topbar)
 //    MainTopBar main_topbar;
 
@@ -148,7 +146,7 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
     }
 
     @SuppressLint("CheckResult")
-    public void checkPermissions(){
+    public void checkPermissions() {
         RxPermissions rxPermissions = new RxPermissions((FragmentActivity) this);
         rxPermissions.setLogging(true);
         rxPermissions

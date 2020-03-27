@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
@@ -102,6 +103,7 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     @Override
     public void loginSuccess() {
         startActivity(MainActivity.newInstance(this));
+        KeyboardUtils.hideSoftInput(this);
         finish();
     }
 

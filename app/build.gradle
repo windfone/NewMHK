@@ -173,7 +173,7 @@ dependencies {
     implementation files('libs/dom4j-1.6.1.jar')
     implementation files('libs/tm-extractors-0.4.jar')
 
-    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+//    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 }
 
 walle {
