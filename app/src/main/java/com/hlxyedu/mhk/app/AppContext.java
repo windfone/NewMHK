@@ -12,10 +12,13 @@ import com.hlxyedu.mhk.di.component.AppComponent;
 import com.hlxyedu.mhk.di.component.DaggerAppComponent;
 import com.hlxyedu.mhk.di.module.AppModule;
 import com.hlxyedu.mhk.di.module.HttpModule;
+import com.hlxyedu.mhk.model.bean.ExamProgressVO;
 import com.skyworth.rxqwelibrary.app.AppConfig;
 import com.skyworth.rxqwelibrary.app.BaseApplication;
 import com.skyworth.rxqwelibrary.app.CrashHandler;
 import com.skyworth.rxqwelibrary.service.InitializeService;
+
+import java.util.List;
 
 
 /**
@@ -73,24 +76,26 @@ public class AppContext extends BaseApplication {
         this.answer = answer;
     }
 
-    /*//用户uservo
-    private UserVO userVO;
+    private int currentPos;
 
-    public UserVO getUserVO() {
+    public int getCurrentPos() {
+        return currentPos;
+    }
 
-        if(userVO == null){
-            SharedPreferences mSPrefs = getSharedPreferences(SyncStateContract.Constants.BOSS, Context.MODE_PRIVATE);
-            String userinfo = mSPrefs.getString(Constants.USER_INFO, "");
-            try {
-                Gson gson = new Gson();
-                userVO = gson.fromJson(userinfo,UserVO.class);
-            }catch (JsonSyntaxException ex){
+    public void setCurrentPos(int currentPos) {
+        this.currentPos = currentPos;
+    }
 
-            }
-        }
+    // 考试流程需要的存取数据设置的数据
+    private List<ExamProgressVO> examProgressVOS;
 
-        return userVO;
-    }*/
+    public List<ExamProgressVO> getExamProgressVOS() {
+        return examProgressVOS;
+    }
+
+    public void setExamProgressVOS(List<ExamProgressVO> examProgressVOS) {
+        this.examProgressVOS = examProgressVOS;
+    }
 
     @Override
     protected void attachBaseContext(Context base) {

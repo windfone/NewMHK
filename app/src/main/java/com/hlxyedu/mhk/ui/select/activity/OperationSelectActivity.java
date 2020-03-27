@@ -77,23 +77,47 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
 
     }
 
-    @OnClick({ R.id.completed_cb, R.id.all_state_cb, R.id.undone_cb, R.id.confirm_btn})
+    @OnClick({R.id.completed_cb, R.id.all_state_cb, R.id.undone_cb, R.id.confirm_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.completed_cb:
-                hws = "D";
-                break;
             case R.id.all_state_cb:
-                hws = "A";
+                if (allStateCb.isChecked()) {
+                    hws = "A";
+                    setOtherCBState(true, false, false);
+                } else {
+                    hws = "";
+                    setOtherCBState(false, false, false);
+                }
+                break;
+            case R.id.completed_cb:
+                if (completedCb.isChecked()) {
+                    hws = "D";
+                    setOtherCBState(false, true, false);
+                } else {
+                    hws = "";
+                    setOtherCBState(false, false, false);
+                }
                 break;
             case R.id.undone_cb:
-                hws = "U";
+                if (undoneCb.isChecked()) {
+                    hws = "U";
+                    setOtherCBState(false, false, true);
+                } else {
+                    hws = "";
+                    setOtherCBState(false, false, false);
+                }
                 break;
             case R.id.confirm_btn:
                 RxBus.getDefault().post(new SelectEvent(SelectEvent.OPERATION_SEL, hws));
                 finish();
                 break;
         }
+    }
+
+    private void setOtherCBState(boolean QB, boolean YWC, boolean WWC) {
+        allStateCb.setChecked(QB);
+        completedCb.setChecked(YWC);
+        undoneCb.setChecked(WWC);
     }
 
     @Override

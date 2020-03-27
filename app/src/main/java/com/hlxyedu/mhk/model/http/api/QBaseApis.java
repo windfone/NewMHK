@@ -1,5 +1,6 @@
 package com.hlxyedu.mhk.model.http.api;
 
+import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
@@ -48,7 +49,7 @@ public interface QBaseApis {
     @POST("login/forgotPwordm.do")
     Flowable<HttpResponse<String>> postModifyPsdBody(@Field("mobile") String mobile, @Field("password") String password, @Field("idNum") String idNum);
 
-    // 获取习题列表
+    // 获取练习列表
     @GET("phone/getExamList.do")
     Flowable<HttpResponse<ExerciseListVO>> getExamList(@Query("examType") String examType, @Query("id") String id, @Query("pageNum") int pageNum, @Query("perpage") int perpage, @Query("version") String version);
 
@@ -56,10 +57,14 @@ public interface QBaseApis {
     @GET("phone/appAssig.do")
     Flowable<HttpResponse<List<OperationVO>>> getOperationList(@Query("userId") String userId, @Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize, @Query("hws") String hws);
 
-    // 练习-选择题提交答案获取成绩
+    // 获取考试列表
+    @GET("phone/getMockList.do")
+    Flowable<HttpResponse<List<ExamVO>>> getMockList(@Query("id") String id, @Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize);
+
+    // 提交答案获取成绩
     @FormUrlEncoded
     @POST("phone/calExamScore.do")      //id 为userId，此处比较混乱，特注明
-    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId);
+    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId, @Field("testId") String testId, @Field("type") String type);
 
 
     @Multipart
@@ -71,7 +76,6 @@ public interface QBaseApis {
                                               @Part("type") RequestBody type,
                                               @Part("fileName") RequestBody fileName,
                                               @Part MultipartBody.Part fileData);
-//                                              @Part("audioData") MultipartBody.Part fileData);
 }
 
 

@@ -1,8 +1,13 @@
 package com.hlxyedu.mhk.ui.main.contract;
 
+import com.hlxyedu.mhk.model.bean.ExamProgressVO;
+import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
+
+import java.util.List;
 
 /**
  * Created by zhangguihua
@@ -13,12 +18,15 @@ public interface ExamContract {
         //返回登陆结果
         void responeError(String errorMsg);
 
-        void onSuccess(ExerciseListVO exerciseListVO);
+        void onSuccess(List<ExamVO> examVOS);
+
+        void download();
     }
 
     interface Presenter extends BasePresenter<View> {
 
-        void getExamList(String examType, String id, int pageNum, int perpage, String version);
+        //useId
+        void getMockList(String id, int pageNumber, int pageSize);
 
         String getID();
 

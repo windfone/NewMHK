@@ -1,6 +1,7 @@
 package com.hlxyedu.mhk.model.http;
 
 
+import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
@@ -54,8 +55,13 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId) {
-        return qBaseApis.postExerciseScoreBody(userId,homeworkId,answer,examId);
+    public Flowable<HttpResponse<List<ExamVO>>> getMockList(String id, int pageNumber, int pageSize) {
+        return qBaseApis.getMockList(id,pageNumber,pageSize);
+    }
+
+    @Override
+    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId,String testId,String type) {
+        return qBaseApis.postExerciseScoreBody(userId,homeworkId,answer,examId,testId,type);
     }
 
     @Override

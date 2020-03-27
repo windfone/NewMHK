@@ -1,6 +1,7 @@
 package com.hlxyedu.mhk.ui.main.adapter;
 
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -17,6 +18,7 @@ import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.weight.listener.NoDoubleClickListener;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -71,35 +73,34 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
         String[] zipPaths = item.getZipPath().split("/");
         //压缩包名字
         String zipName = zipPaths[zipPaths.length - 1];
-//        String path = item.getExamname() + ".zip";
         // 可以做作业的状态
 
         Button button = helper.getView(R.id.positive_btn);
         if (StringUtils.equals(item.getState(), "1")) {
             button.setEnabled(true);
-            button.setOnClickListener(v -> {
-                if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
-                    if (StringUtils.equals(item.getExamType(), "TL")) {
-                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    } else if (StringUtils.equals(item.getExamType(), "KY")) {
-                        //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;    type = homeWork
-                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
-                    } else if (StringUtils.equals(item.getExamType(), "YD")) {
-                        //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
-                        mContext.startActivity(TestReadActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    } else if (StringUtils.equals(item.getExamType(), "SM")) {
-                        //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
-                        mContext.startActivity(TestBookActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
-                    } else if (StringUtils.equals(item.getExamType(), "ZW")) {
-                        //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
-                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId()));
+            button.setOnClickListener(new NoDoubleClickListener() {
+                @Override
+                protected void onNoDoubleClick(View v) {
+                    if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
+                        if (StringUtils.equals(item.getExamType(), "TL")) {
+                            mContext.startActivity(TestListeningActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
+                        } else if (StringUtils.equals(item.getExamType(), "KY")) {
+                            //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;    type = homeWork
+                            mContext.startActivity(TestSpeakActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
+                        } else if (StringUtils.equals(item.getExamType(), "YD")) {
+                            //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
+                            mContext.startActivity(TestReadActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
+                        } else if (StringUtils.equals(item.getExamType(), "SM")) {
+                            //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
+                            mContext.startActivity(TestBookActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
+                        } else if (StringUtils.equals(item.getExamType(), "ZW")) {
+                            //最后一个参数为 item.getId() 指的是homeworkId;   item.getExamId()是试卷id ;
+                            mContext.startActivity(TestTxtActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));
+                        }
+                    } else {
+                        RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_OPERATION, helper.getLayoutPosition(), item.getExamType(),
+                                ApiConstants.HOST + item.getZipPath(), zipName, item.getExamId(), item.getId()));
                     }
-//                mContext.startActivity(ExerciseActivity.newInstance(mContext, path));
-                } else {
-                    button.setText("下载中...");
-                    button.setEnabled(false);
-                    RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_OPERATION, helper.getLayoutPosition(),
-                            ApiConstants.HOST + item.getZipPath(), zipName));
                 }
             });
 

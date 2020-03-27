@@ -3,14 +3,10 @@ package com.hlxyedu.mhk.ui.espeak.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,14 +31,18 @@ import com.hlxyedu.mhk.model.event.EventsConfig;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
+import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.contract.TestSpeakContract;
 import com.hlxyedu.mhk.ui.espeak.fragment.SpeakFragment;
 import com.hlxyedu.mhk.ui.espeak.presenter.TestSpeakPresenter;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.utils.WeakReferenceHandler;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
-import com.hlxyedu.mhk.weight.view.TimerProgressBar;
 import com.hlxyedu.mhk.weight.view.WaveView;
 import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
 import com.skyworth.rxqwelibrary.app.AppConstants;
@@ -63,18 +63,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by zhangguihua
@@ -84,7 +79,12 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         TestSpeakContract.View, XBaseTopBarImp, IRecorderListener {
 
     private static final String TAG = TestSpeakActivity.class.getSimpleName();
-
+    private static final int MSG_START_RECORD = 10;
+    private static final int MSG_STOP_RECORD = 11;
+    private static final int MSG_VOLUME = 12;
+    private static final int MSG_START_OK = 13;
+    private static final int MSG_START_ERROR = 14;
+    private static final int MSG_FINISH = 15;
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
@@ -97,14 +97,11 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     RelativeLayout countdownRl;
     @BindView(R.id.waveview)
     WaveView waveview;
-
     //解析到的数据中心
     private List<PageModel> pageModels;
     //fragment 数组
     private List<SpeakFragment> speakFragments;
-
     private int currentItem = 0;
-
     // 录音控件
     private RecorderManager mRecorder;
     private Handler mRecordHandler;
@@ -112,22 +109,10 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     private AacFileWriter mAacFile;
     // speex 音频文件
     private SpeexFileWriter mSpeexFile;
-
     // 用户文件夹
     private String recordPath = "";
-
     private String recordUrl = "";
-
     private String mEvaluateFilePath;
-
-    private static final int MSG_START_RECORD = 10;
-    private static final int MSG_STOP_RECORD = 11;
-    private static final int MSG_VOLUME = 12;
-
-    private static final int MSG_START_OK = 13;
-    private static final int MSG_START_ERROR = 14;
-    private static final int MSG_FINISH = 15;
-
     private double MAX_VOL = 20000;
 
     private long mBeginTime;// 录制开始时间
@@ -149,6 +134,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     // 倒计时
     private int TIMER;
 
+    private int currentPos; // 当前是第几个答题包
+
 
     /**
      * 打开新Activity
@@ -156,7 +143,13 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
      * @param context
      * @return
      */
-    public static Intent newInstance(Context context, String from,String zipPath, String fileName, String examId) {
+    public static Intent newInstance(Context context, String from) {
+        Intent intent = new Intent(context, TestSpeakActivity.class);
+        intent.putExtra("from", from);
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestSpeakActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
@@ -165,7 +158,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         return intent;
     }
 
-    public static Intent newInstance(Context context,String from, String zipPath, String fileName, String examId, String homeworkId,String testType) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
         Intent intent = new Intent(context, TestSpeakActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
@@ -185,9 +178,22 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         examId = intent.getStringExtra("examId");
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
-        if (fileName.contains("KY")) {
-            questionTypeTv.setText("口语模拟大礼包");
+        questionTypeTv.setText("口语模拟大礼包");
+
+        if (from.equals("考试")) {
+            currentPos = AppContext.getInstance().getCurrentPos();
+            examId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getExamId();
+            testId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getId();
+            testType = AppContext.getInstance().getExamProgressVOS().get(currentPos).getType();
+
+            String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+            String[] strs = names.split("/");
+            names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
+            zipPath = names;
+            fileName = strs[strs.length - 1];
+
         }
+
         // 解压文件
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
@@ -209,7 +215,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         mRecordHandler = new RecordHandler(this);
         //1.需要创建这套题的答题包录音文件夹
         userDir = AppConstants.RECORD_PATH
-                + fileName.substring(0,fileName.length()-4) + File.separator;
+                + fileName.substring(0, fileName.length() - 4) + File.separator;
         LogUtils.d(TAG, "创建录音文件夹");
         FileUtils.createOrExistsDir(userDir);
     }
@@ -243,9 +249,9 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
 
-                // 结束的页面
-                if (currentItem == speakFragments.size() -1){
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,userDir,examId,homeworkId,testId,testType));
+                // 练习和作业 结束的页面
+                if (currentItem == speakFragments.size() - 1) {
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, userDir, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
@@ -258,11 +264,34 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
                     startTimeProgress(time);
                 }
                 break;
+            case EventsConfig.TEST_NEXT_ACTIVITY:
+                // 考试 模块是多个答题压缩包，答完一个接下一个
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1){
+                    //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    startActivity(ExamFinishActivity.newInstance(this));
+                }else {
+                    // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
+                    AppContext.getInstance().setCurrentPos(++currentPos);
+                    String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+                    if (names.contains("TL")){
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("KY") || names.contains("LD")){
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("YD")){
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("SM")){
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("ZW")){
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                    }
+                }
+                finish();
+                break;
             case EventsConfig.START_RECORD:
                 //waveformView.setVisibility(View.VISIBLE);
                 //recordingLayout.setVisibility(View.VISIBLE);
-                recordName = fileName.substring(0,fileName.length()-4)+ "_" +(String) event.getQuestionId()+AppConstants.AUDIO_FILE_SUFFIX;
-                int recordtime = (int)event.getData() + 1;
+                recordName = fileName.substring(0, fileName.length() - 4) + "_" + (String) event.getQuestionId() + AppConstants.AUDIO_FILE_SUFFIX;
+                int recordtime = (int) event.getData() + 1;
                 waveview.set_recordlength(recordtime);
                 mRecordHandler.sendEmptyMessage(MSG_START_RECORD);
                 waveview.setVisibility(View.VISIBLE);
@@ -281,15 +310,22 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
             //获取数据 并且 解析成功
             case EventsConfig.SUCCESS_SPEAK:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                for (int i = 0; i < pageModels.size(); i++) {
-                    SpeakFragment speakFragment = SpeakFragment.newInstance();
-                    speakFragment.setPageModel(pageModels.get(i));
-                    speakFragments.add(speakFragment);
+                if (from.equals("考试")){
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        SpeakFragment speakFragment = SpeakFragment.newInstance("考试");
+                        speakFragment.setPageModel(pageModels.get(i));
+                        speakFragments.add(speakFragment);
+                    }
+                }else {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        SpeakFragment speakFragment = SpeakFragment.newInstance();
+                        speakFragment.setPageModel(pageModels.get(i));
+                        speakFragments.add(speakFragment);
+                    }
                 }
 
                 viewPager.setAdapter(new MyFragmentPagerAdapter(
                         getSupportFragmentManager(), speakFragments));
-
                 stateMain();
                 break;
 //            case EventsConfig.TEST_NEXT_PART:
@@ -486,39 +522,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     // ********************** 录音部分 ************************** //
 
-    public static class RecordHandler extends WeakReferenceHandler<TestSpeakActivity> {
-
-        public RecordHandler(TestSpeakActivity activity) {
-            super(activity);
-        }
-
-        @Override
-        public void dispatchMessage(Message msg) {
-            TestSpeakActivity mForm;
-            mForm = getRef();
-            switch (msg.what) {
-                case MSG_START_RECORD:
-                    mForm.onStartRecord();
-                    break;
-                case MSG_STOP_RECORD:
-                    mForm.onStopRecord("录音停止", true);
-                    break;
-                case MSG_VOLUME:
-                    mForm.onVolumeUi(msg.arg1);
-                    break;
-                case MSG_FINISH:
-                    mForm.onMsgFinish();
-                    break;
-                case MSG_START_ERROR:
-                    mForm.onMsgError(msg.arg1);
-                    break;
-                case MSG_START_OK:
-                    mForm.onMsgStart((RecordParams) msg.obj);
-                    break;
-            }
-        }
-    }
-
     //正式加载数据
     private void loadData() {
 
@@ -608,28 +611,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     }
 
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
-    }
-
     //开始解压文件
     public void unZip(String zipFileName, String outputDirectory) {
         try {
@@ -700,22 +681,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
             return;
         }
     }
-
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_SPEAK));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
-        }
-    }
-
-    //--------------------------------------------------------------------------------------------------//
 
     /**
      * 解析第二部分
@@ -810,11 +775,9 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         pageModels.add(pageModel);
     }
 
-
-    //--------------------------------------------------------------------------------------------------//
-
     /**
      * 音量变化
+     *
      * @param volume
      */
     private void onVolumeUi(int volume) {
@@ -837,6 +800,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         super.onStop();
     }
 
+    //--------------------------------------------------------------------------------------------------//
+
     @Override
     protected void onDestroy() {
         mRecordHandler.removeCallbacksAndMessages(null);
@@ -844,6 +809,9 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         RxTimerUtil.cancel();
         super.onDestroy();
     }
+
+
+    //--------------------------------------------------------------------------------------------------//
 
     @Override
     public void responeError(String errorMsg) {
@@ -873,6 +841,75 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     @Override
     public void right() {
 
+    }
+
+    public static class RecordHandler extends WeakReferenceHandler<TestSpeakActivity> {
+
+        public RecordHandler(TestSpeakActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        public void dispatchMessage(Message msg) {
+            TestSpeakActivity mForm;
+            mForm = getRef();
+            switch (msg.what) {
+                case MSG_START_RECORD:
+                    mForm.onStartRecord();
+                    break;
+                case MSG_STOP_RECORD:
+                    mForm.onStopRecord("录音停止", true);
+                    break;
+                case MSG_VOLUME:
+                    mForm.onVolumeUi(msg.arg1);
+                    break;
+                case MSG_FINISH:
+                    mForm.onMsgFinish();
+                    break;
+                case MSG_START_ERROR:
+                    mForm.onMsgError(msg.arg1);
+                    break;
+                case MSG_START_OK:
+                    mForm.onMsgStart((RecordParams) msg.obj);
+                    break;
+            }
+        }
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_SPEAK));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
     }
 
 }

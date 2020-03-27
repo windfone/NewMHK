@@ -77,6 +77,9 @@ public class SpeakFragment extends RootFragment<SpeakPresenter> implements Speak
     private boolean isfirst = true;
     //判断欢迎页面
     private boolean isWelcome = true;
+
+    private String type;
+
     private AudioplayInterface audioPlayListen = new AudioplayInterface() {
 
         @Override
@@ -103,6 +106,14 @@ public class SpeakFragment extends RootFragment<SpeakPresenter> implements Speak
         return fragment;
     }
 
+    public static SpeakFragment newInstance(String type) {
+        Bundle args = new Bundle();
+        args.putString("type",type);
+        SpeakFragment fragment = new SpeakFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -120,17 +131,23 @@ public class SpeakFragment extends RootFragment<SpeakPresenter> implements Speak
 
     @Override
     public void commitSuccess() {
-        waitText.setVisibility(View.GONE);
-        successHintText.setVisibility(View.VISIBLE);
-        finishBtn.setVisibility(View.VISIBLE);
-        successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
-                "祝您取得理想的成绩！");
+        if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+        }else {
+            waitText.setVisibility(View.GONE);
+            successHintText.setVisibility(View.VISIBLE);
+            finishBtn.setVisibility(View.VISIBLE);
+            successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
+                    "祝您取得理想的成绩！");
+        }
     }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        type = getArguments().getString("type");
+
         //在此创建但是 不显示
         switch (pageModel.getType()) {
             //欢迎界面
@@ -146,13 +163,17 @@ public class SpeakFragment extends RootFragment<SpeakPresenter> implements Speak
                 break;
 
             case PageModel.jieshu:
-                view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
-                waitText = getView(view, R.id.wait_text);
-                successHintText = getView(view, R.id.success_hint_text);
-                finishBtn = getView(view, R.id.finish_btn);
-                finishBtn.setOnClickListener(v -> {
-                    mActivity.finish();
-                });
+                if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+                    view = View.inflate(getActivity(), R.layout.fragment_exam_finish, null);
+                }else {
+                    view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
+                    waitText = getView(view, R.id.wait_text);
+                    successHintText = getView(view, R.id.success_hint_text);
+                    finishBtn = getView(view, R.id.finish_btn);
+                    finishBtn.setOnClickListener(v -> {
+                        mActivity.finish();
+                    });
+                }
                 break;
         }
         return view;

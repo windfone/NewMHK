@@ -20,7 +20,6 @@ public interface TxtContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void cimmitAnswer(String finalAnswer,String paperId,String homeworkId);
 
         String getUserId();
 

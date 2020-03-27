@@ -16,12 +16,20 @@ public class CommitEvent {
 
     private String testType;
 
-    public CommitEvent(String type, Object answer,String examId,String homeworkId) {
+  /*  public CommitEvent(String type, Object answer,String examId,String homeworkId) {
         this.type = type;
         this.answer = answer;
         this.examId = examId;
         this.homeworkId = homeworkId;
-    }
+    }*/
+
+    /*public CommitEvent(String type, Object answer,String examId,String homeworkId,String testId) {
+        this.type = type;
+        this.answer = answer;
+        this.examId = examId;
+        this.homeworkId = homeworkId;
+        this.testId = testId;
+    }*/
 
     public CommitEvent(String type, Object answer,String examId,String homeworkId,String testId,String testType) {
         this.type = type;

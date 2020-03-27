@@ -23,6 +23,9 @@ public class EventsConfig {
     //下一模块
     public static final int TEST_NEXT_PART = 0x203;
 
+    // 考试模块 下一个答题包
+    public static final int TEST_NEXT_ACTIVITY = 0x204;
+
     //音频播放完成
     public static final int FINISH_PLAY = 0x906;
 

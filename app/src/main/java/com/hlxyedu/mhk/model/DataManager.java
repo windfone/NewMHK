@@ -1,5 +1,6 @@
 package com.hlxyedu.mhk.model;
 
+import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
@@ -98,17 +99,22 @@ public class DataManager implements HttpHelper, PreferencesHelper {
 
     @Override
     public Flowable<HttpResponse<List<OperationVO>>> getOperationList(String userId, int pageNumber, int pageSize, String hws) {
-        return mHttpHelper.getOperationList(userId,pageNumber,pageSize,hws);
+        return mHttpHelper.getOperationList(userId, pageNumber, pageSize, hws);
     }
 
     @Override
-    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId) {
-        return mHttpHelper.postExerciseScoreBody(userId,homeworkId,answer,examId);
+    public Flowable<HttpResponse<List<ExamVO>>> getMockList(String id, int pageNumber, int pageSize) {
+        return mHttpHelper.getMockList(id, pageNumber, pageSize);
+    }
+
+    @Override
+    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId,String testId,String type) {
+        return mHttpHelper.postExerciseScoreBody(userId, homeworkId, answer, examId,testId,type);
     }
 
     @Override
     public Flowable<HttpResponse<String>> uploadRecord(RequestBody userId, RequestBody examId, RequestBody homeworkId, RequestBody testId, RequestBody testType, RequestBody fileName, MultipartBody.Part fileData) {
-        return mHttpHelper.uploadRecord(userId,examId,homeworkId,testId,testType,fileName,fileData);
+        return mHttpHelper.uploadRecord(userId, examId, homeworkId, testId, testType, fileName, fileData);
     }
 
 }

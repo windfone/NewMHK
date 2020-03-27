@@ -1,9 +1,15 @@
 package com.hlxyedu.mhk.ui.main.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
 import com.hlxyedu.mhk.ui.main.contract.MainContract;
@@ -12,7 +18,10 @@ import com.hlxyedu.mhk.ui.main.fragment.ExerciseFragment;
 import com.hlxyedu.mhk.ui.main.fragment.MineFragment;
 import com.hlxyedu.mhk.ui.main.fragment.OperationFragment;
 import com.hlxyedu.mhk.ui.main.presenter.MainPresenter;
+import com.hlxyedu.mhk.utils.PermissionRequestUtil;
+import com.hlxyedu.mhk.utils.PermissionSettingUtil;
 import com.hlxyedu.mhk.weight.bottombar.BottomBar;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +96,8 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
 
         initView();
         mBottomBar.setCurrentItem(0);
+
+        checkPermissions();
     }
 
     private void initView() {
@@ -134,6 +145,46 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
     @Override
     public void responeError(String errorMsg) {
 
+    }
+
+    @SuppressLint("CheckResult")
+    public void checkPermissions(){
+        RxPermissions rxPermissions = new RxPermissions((FragmentActivity) this);
+        rxPermissions.setLogging(true);
+        rxPermissions
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.RECORD_AUDIO)
+                .subscribe(permission -> { // will emit 2 Permission objects
+                    if (permission.granted) {
+                        // 权限同意
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // Denied permission without ask never again
+                        // 禁止，但没有选择“以后不再询问”，以后申请权限，会继续弹出提示
+                    } else {
+                        // Denied permission with ask never again
+                        // Need to go to the settings
+                        // 禁止，但选择“以后不再询问”，以后申请权限，不会继续弹出提示
+                        // 需要到 设置里面 手动打开
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("权限申请");
+                        builder.setMessage("需要同意录音、存储、获取手机状态信息权限才能正常使用哦");
+                        builder.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PermissionSettingUtil.gotoPermission(MainActivity.this);
+                            }
+                        });
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        builder.show();
+                    }
+                });
     }
 
 }

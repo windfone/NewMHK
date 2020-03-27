@@ -89,7 +89,7 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
 
     @Override
     protected void initEventAndData() {
-        NetErrorDialog.getInstance().showNetErrorDialog(this);
+//        NetErrorDialog.getInstance().showNetErrorDialog(this);
         initUIState();
         initCode();
     }

@@ -1,6 +1,7 @@
 package com.hlxyedu.mhk.ui.main.contract;
 
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 
@@ -17,7 +18,8 @@ public interface ExerciseContract {
 
         void onSelect(String questionType);
 
-        void download(int pos,String downloadPath,String examName);
+//        void download(int pos,Object downloadPath,String type,String examName,String examId);
+        void download(DownLoadEvent downLoadEvent);
 
     }
 

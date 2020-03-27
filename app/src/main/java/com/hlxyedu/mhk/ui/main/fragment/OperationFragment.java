@@ -9,19 +9,19 @@ import android.widget.Button;
 import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.task.DownloadTask;
-import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.OperationVO;
-import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.ui.main.adapter.OperationAdapter;
 import com.hlxyedu.mhk.ui.main.contract.OperationContract;
 import com.hlxyedu.mhk.ui.main.presenter.OperationPresenter;
-import com.hlxyedu.mhk.ui.operation.activity.OperationSelectActivity;
+import com.hlxyedu.mhk.ui.select.activity.OperationSelectActivity;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
+import com.hlxyedu.mhk.weight.dialog.DownLoadDialog;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -47,9 +47,6 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     private int count = 1; // 当前页数;
 
     private String hws = "A";// 作业完成状态,默认全部
-
-    private List<String> examNames = new ArrayList<>();
-    private List<Integer> posis = new ArrayList<>();
 
 
     public static OperationFragment newInstance() {
@@ -100,8 +97,6 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         mAdapter.setOnLoadMoreListener(() -> {
             mPresenter.getOperationList(mPresenter.getID(), ++count, pageSize,hws);
         }, rlv);
-        mAdapter.setOnItemChildClickListener((adapter, view, position) ->
-                startActivity(ExerciseActivity.newInstance(mActivity,"")));
 
     }
 
@@ -120,13 +115,6 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     @Override
     public void onSuccess(List<OperationVO> operationListVOS) {
         if (!operationListVOS.isEmpty()) {
-//            // 为了好测试做些筛选，之后去掉
-//            for (int i = 0; i < operationListVOS.size(); i++) {
-//                if (operationListVOS.get(i).getExamType().equals("SM")){
-//                    dataVOList.add(operationListVOS.get(i));
-//                }
-//            }
-//            //
             dataVOList.addAll(operationListVOS);
             mAdapter.setNewData(dataVOList);
             if (operationListVOS.size() < pageSize) {
@@ -145,53 +133,14 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     }
 
     @Override
-    public void download(int posi,String downloadPath,String examName) {
-//        showDownloadDialog();
-        long taskId = Aria.download(this)
-                .load(downloadPath)     //读取下载地址
-                .setFilePath(AppConstants.FILE_DOWNLOAD_PATH + examName,true) //设置文件保存的完整路径
-                .create();   //创建并启动下载
-
-        examNames.add(examName);
-        posis.add(posi);
-    }
-
-    //在这里处理任务执行中的状态，如进度进度条的刷新
-    @Download.onTaskRunning
-    protected void running(DownloadTask task) {
-        int p = task.getPercent();	//任务进度百分比
-        Log.e("=============",p+"");
-
-    }
-
-    @Download.onTaskFail
-    void taskFail(DownloadTask task) {
-        for (int i = 0; i < examNames.size(); i++) {
-            if (task.getTaskName().equals(examNames.get(i))){
-                Button button = (Button) mAdapter.getViewByPosition(rlv,posis.get(i),R.id.positive_btn);
-                button.setEnabled(true);
-                ToastUtils.showShort("下载失败，重试");
-                button.setText("做作业");
-//                downloadDialog.dismiss();
-            }
-        }
-    }
-
-    @Download.onTaskComplete
-    void taskComplete(DownloadTask task) {
-        for (int i = 0; i < examNames.size(); i++) {
-            if (task.getTaskName().equals(examNames.get(i))){
-                Button button = (Button) mAdapter.getViewByPosition(rlv,posis.get(i),R.id.positive_btn);
-                button.setEnabled(true);
-                button.setText("做作业");
-//                downloadDialog.dismiss();
-            }
-        }
+    public void download(DownLoadEvent s) {
+        DownLoadDialog downloadDialog = new DownLoadDialog(mActivity, s);
+        downloadDialog.show();
     }
 
     @Override
     public void responeError(String errorMsg) {
-//        stateError();
+        stateError();
     }
 
     @Override

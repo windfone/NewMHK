@@ -92,30 +92,82 @@ public class ExerciseSelectActivity extends RootActivity<ExerciseSelectPresenter
     @OnClick({R.id.composition_cb, R.id.listening_cb, R.id.reading_cb, R.id.write_cb, R.id.oral_cb, R.id.complex_cb})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.composition_cb:
-                // 作文
-                questionType = "ZW";
-                break;
             case R.id.listening_cb:
                 // 听力理解
-                questionType = "TL";
+                if (listeningCb.isChecked()){
+                    questionType = "TL";
+                    setOtherCBState(true,false,false,false,false,false);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
                 break;
-            case R.id.reading_cb:
-                // 阅读理解
-                questionType = "YD";
-                break;
-            case R.id.write_cb:
-                // 书面表达
-                questionType = "SM";
-                break;
+
             case R.id.oral_cb:
                 // 口语听力
-                questionType = "KY";
+                if (oralCb.isChecked()){
+                    questionType = "KY";
+                    setOtherCBState(false,true,false,false,false,false);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
                 break;
+
+            case R.id.reading_cb:
+                // 阅读理解
+                if (readingCb.isChecked()){
+                    questionType = "YD";
+                    setOtherCBState(false,false,true,false,false,false);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
+                break;
+
+            case R.id.write_cb:
+                // 书面表达
+                if (writeCb.isChecked()){
+                    questionType = "SM";
+                    setOtherCBState(false,false,false,true,false,false);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
+                break;
+
+            case R.id.composition_cb:
+                // 作文
+                if (compositionCb.isChecked()){
+                    questionType = "ZW";
+                    setOtherCBState(false,false,false,false,true,false);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
+                break;
+
             case R.id.complex_cb:
-                // 综合
-                questionType = "ZH";
+                // 全部
+                if (complexCb.isChecked()){
+                    // 自己设定的，到 activity中再判断
+                    questionType = "1";
+                    setOtherCBState(false,false,false,false,false,true);
+                }else {
+                    questionType = "";
+                    setOtherCBState(false,false,false,false,false,false);
+                }
                 break;
         }
     }
+
+    private void setOtherCBState(boolean TL,boolean KY, boolean YD, boolean SM, boolean ZW, boolean QB){
+        listeningCb.setChecked(TL);
+        oralCb.setChecked(KY);
+        readingCb.setChecked(YD);
+        writeCb.setChecked(SM);
+        compositionCb.setChecked(ZW);
+        complexCb.setChecked(QB);
+    }
+
 }

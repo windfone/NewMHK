@@ -3,6 +3,7 @@ package com.hlxyedu.mhk.ui.elistening.fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,8 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     //第一次遍历数组
     private boolean isfirst = true;
 
+    private String type;
+
     private AudioplayInterface audioPlayListen = new AudioplayInterface() {
 
         @Override
@@ -90,6 +93,14 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     public static ListeningFragment newInstance() {
         Bundle args = new Bundle();
 
+        ListeningFragment fragment = new ListeningFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ListeningFragment newInstance(String type) {
+        Bundle args = new Bundle();
+        args.putString("type",type);
         ListeningFragment fragment = new ListeningFragment();
         fragment.setArguments(args);
         return fragment;
@@ -133,18 +144,23 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
-        waitText.setVisibility(View.GONE);
-        successHintText.setVisibility(View.VISIBLE);
-        finishBtn.setVisibility(View.VISIBLE);
-        successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
-                "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
-                "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
-
+        if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+        }else {
+            waitText.setVisibility(View.GONE);
+            successHintText.setVisibility(View.VISIBLE);
+            finishBtn.setVisibility(View.VISIBLE);
+            successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
+                    "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
+                    "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        type = getArguments().getString("type");
         //在此创建但是 不显示
         switch (pageModel.getType()) {
             //欢迎界面
@@ -159,13 +175,17 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                 break;
 
             case PageModel.jieshu:
-                view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
-                waitText = getView(view, R.id.wait_text);
-                successHintText = getView(view, R.id.success_hint_text);
-                finishBtn = getView(view, R.id.finish_btn);
-                finishBtn.setOnClickListener(v -> {
-                    mActivity.finish();
-                });
+                if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+                    view = View.inflate(getActivity(), R.layout.fragment_exam_finish, null);
+                }else {
+                    view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
+                    waitText = getView(view, R.id.wait_text);
+                    successHintText = getView(view, R.id.success_hint_text);
+                    finishBtn = getView(view, R.id.finish_btn);
+                    finishBtn.setOnClickListener(v -> {
+                        mActivity.finish();
+                    });
+                }
                 break;
         }
         return view;

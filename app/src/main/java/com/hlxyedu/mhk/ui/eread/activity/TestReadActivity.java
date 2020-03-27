@@ -3,7 +3,6 @@ package com.hlxyedu.mhk.ui.eread.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,10 +21,14 @@ import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.ListenQOptionModel;
 import com.hlxyedu.mhk.model.models.PageModel;
+import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.eread.contract.TestReadContract;
 import com.hlxyedu.mhk.ui.eread.fragment.ReadFragment;
 import com.hlxyedu.mhk.ui.eread.presenter.TestReadPresenter;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
@@ -52,7 +55,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by zhangguihua
@@ -61,7 +63,7 @@ import butterknife.ButterKnife;
 public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> implements TestReadContract.View, XBaseTopBarImp {
 
     private static final String TAG = TestReadActivity.class.getSimpleName();
-
+    public String answer = "";
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
@@ -72,24 +74,23 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     TextView countdownTv;
     @BindView(R.id.countdown_rl)
     RelativeLayout countdownRl;
-
     //解析到的数据中心
     private List<PageModel> pageModels;
     //fragment 数组
     private List<ReadFragment> readFragments;
-
     private int currentItem = 0;
-
-    public String answer = "";
-
-
     private String zipPath;// 压缩包路径
     private String fileName;// (压缩包名字 TLXXX.zip)也是解压后的文件夹名字 TLXXX.zip
     private String examId; // 试卷id
     private String homeworkId; // 作业id
+    private String testId; // 考试id
+    private String testType;
+
     // 倒计时
     private int TIMER;
     private String from;
+
+    private int currentPos; // 当前是第几个答题包
 
     /**
      * 打开新Activity
@@ -97,6 +98,12 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
      * @param context
      * @return
      */
+    public static Intent newInstance(Context context, String from) {
+        Intent intent = new Intent(context, TestReadActivity.class);
+        intent.putExtra("from", from);
+        return intent;
+    }
+
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestReadActivity.class);
         intent.putExtra("from", from);
@@ -106,13 +113,14 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId,String homeworkId) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId,String testType) {
         Intent intent = new Intent(context, TestReadActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
         intent.putExtra("examId", examId);
         intent.putExtra("homeworkId", homeworkId);
+        intent.putExtra("testType", testType);
         return intent;
     }
 
@@ -125,12 +133,24 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         examId = intent.getStringExtra("examId");
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
-        if (fileName.contains("YD")){
-            questionTypeTv.setText("阅读理解模拟大礼包");
+        testType = intent.getStringExtra("testType");
+//        if (fileName.contains("YD")){
+        questionTypeTv.setText("阅读理解模拟大礼包");
+//        }
+
+        if (from.equals("考试")) {
+            currentPos = AppContext.getInstance().getCurrentPos();
+            examId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getExamId();
+            testId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getId();
+            testType = AppContext.getInstance().getExamProgressVOS().get(currentPos).getType();
+
+            String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+            String[] strs = names.split("/");
+            names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
+            zipPath = names;
+            fileName = strs[strs.length - 1];
         }
-        else if (fileName.contains("SM")) {
-            questionTypeTv.setText("书面表达模拟大礼包");
-        }
+
         // 解压文件
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
@@ -157,23 +177,45 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
 
-                // 结束的页面
-                if (currentItem == readFragments.size() -1){
+                if (currentItem == readFragments.size() - 1) {
                     String final_answer = "";
-                    if (!StringUtils.equals(answer,"")){
+                    if (!StringUtils.equals(answer, "")) {
                         final_answer = answer.substring(0, answer.length() - 1) + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,final_answer,examId,homeworkId));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
                 clearTimeProgress();
                 int time = (int) event.getData();
                 // 暂停时间太短 1秒不显示倒计时时间
-                if (time > 1){
+                if (time > 1) {
 //                    countdownRl.setVisibility(View.VISIBLE);
                     startTimeProgress(time);
                 }
+                break;
+            case EventsConfig.TEST_NEXT_ACTIVITY:
+                // 考试 模块是多个答题压缩包，答完一个接下一个
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
+                    //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    startActivity(ExamFinishActivity.newInstance(this));
+                } else {
+                    // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
+                    AppContext.getInstance().setCurrentPos(++currentPos);
+                    String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+                    if (names.contains("TL")) {
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("KY") || names.contains("LD")) {
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("YD")) {
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("SM")) {
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("ZW")) {
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                    }
+                }
+                finish();
                 break;
 //            case EventsConfig.KILL_ACTIVITY:
 //                if (event.getData().equals("end")) {
@@ -188,12 +230,19 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //                break;
             case EventsConfig.SUCCESS_READ:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                for (int i = 0; i < pageModels.size(); i++) {
-                    ReadFragment readFragment = ReadFragment.newInstance();
-                    readFragment.setPageModel(pageModels.get(i));
-                    readFragments.add(readFragment);
+                if (from.equals("考试")) {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        ReadFragment readFragment = ReadFragment.newInstance("考试");
+                        readFragment.setPageModel(pageModels.get(i));
+                        readFragments.add(readFragment);
+                    }
+                } else {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        ReadFragment readFragment = ReadFragment.newInstance();
+                        readFragment.setPageModel(pageModels.get(i));
+                        readFragments.add(readFragment);
+                    }
                 }
-
                 viewPager.setAdapter(new MyFragmentPagerAdapter(
                         getSupportFragmentManager(), readFragments));
 
@@ -221,38 +270,16 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         TIMER = time;
         RxTimerUtil.interval(1000, number -> {
             TIMER--;
-            if (TIMER == 0 ){
+            if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
                 RxTimerUtil.cancel();
                 // 下一题
-            }else {
+            } else {
                 countdownRl.setVisibility(View.VISIBLE);
                 countdownTv.setText(TIMER + "S");
             }
         });
-    }
-
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
     }
 
     //开始解压文件
@@ -326,20 +353,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         }
     }
 
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_READ));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
-        }
-    }
-
     //正式加载数据
     private void loadData() {
         //读取本地数据
@@ -371,8 +384,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //            if (AppContext.getInstance().getProperty("examType").equals("ZH")){
 //                parts = root.elements("part").subList(5,7);
 //            }else {
-                // 获取特定名称的子元素
-                parts = root.elements("part");
+            // 获取特定名称的子元素
+            parts = root.elements("part");
 //            }
 
             for (int i = 0; i < parts.size(); i++) {
@@ -589,6 +602,42 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     @Override
     public void right() {
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_READ));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
     }
 
 }

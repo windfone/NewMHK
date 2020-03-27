@@ -4,17 +4,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.blankj.utilcode.util.AppUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.model.bean.ExerciseListVO;
-import com.hlxyedu.mhk.model.bean.ExerciseVO;
-import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
-import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
+import com.hlxyedu.mhk.model.bean.ExamVO;
+import com.hlxyedu.mhk.ui.main.adapter.ExamAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
-import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
+import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +21,7 @@ import butterknife.BindView;
 /**
  * Created by zhangguihua
  */
-public class ExamFragment extends RootFragment<ExamPresenter> implements ExamContract.View, XBaseTopBarImp {
+public class ExamFragment extends RootFragment<ExamPresenter> implements ExamContract.View {
 
 
     @BindView(R.id.rlv)
@@ -32,13 +29,12 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
 
-    private ExerciseAdapter mAdapter;
+    private ExamAdapter mAdapter;
 
-    private List<ExerciseVO> dataVOList = new ArrayList<>();
+    private List<ExamVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
-    private String examType;
 
     public static ExamFragment newInstance() {
         Bundle args = new Bundle();
@@ -59,12 +55,19 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
+    public void onSupportVisible() {
+        super.onSupportVisible();
+        count = 1;
+        pageSize = 20;
+        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
+    }
+
+    @Override
     protected void initEventAndData() {
         super.initEventAndData();
-        xbaseTopbar.setxBaseTopBarImp(this);
         stateLoading();
 
-        mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList);
+        mAdapter = new ExamAdapter(R.layout.item_exercise, dataVOList);
         rlv.setLayoutManager(new LinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
@@ -72,23 +75,21 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
+        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {
-            mPresenter.getExamList(examType, mPresenter.getID(), ++count, pageSize, AppUtils.getAppVersionName());
+            mPresenter.getMockList(mPresenter.getID(), ++count, pageSize);
         }, rlv);
-        mAdapter.setOnItemChildClickListener((adapter, view, position) ->
-                startActivity(ExerciseActivity.newInstance(mActivity,"")));
 
     }
 
     @Override
-    public void onSuccess(ExerciseListVO exerciseListVO) {
-        if (!exerciseListVO.getExam().isEmpty()) {
-            dataVOList.addAll(exerciseListVO.getExam());
+    public void onSuccess(List<ExamVO> examVOS) {
+        if (!examVOS.isEmpty()) {
+            dataVOList.addAll(examVOS);
             mAdapter.setNewData(dataVOList);
-            if (exerciseListVO.getExam().size() < pageSize) {
+            if (examVOS.size() < pageSize) {
                 mAdapter.loadMoreEnd();
             } else {
                 mAdapter.loadMoreComplete();
@@ -104,17 +105,16 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
+    public void download() {
+
+        MoreTaskDLDialog downloadDialog = new MoreTaskDLDialog(mActivity);
+        downloadDialog.show();
+
+    }
+
+    @Override
     public void responeError(String errorMsg) {
         stateError();
     }
 
-    @Override
-    public void left() {
-
-    }
-
-    @Override
-    public void right() {
-
-    }
 }

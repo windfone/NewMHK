@@ -75,7 +75,8 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
                 .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
                     @Override
                     public void onNext(DownLoadEvent s) {
-                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
+//                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
+                        mView.download(s);
                     }
 
                     @Override

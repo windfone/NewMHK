@@ -181,7 +181,7 @@ walle {
     apkOutputFolder = new File(project.rootProject.buildDir, "myapks")
     // 定制渠道包的APK的文件名称
 //    apkFileNameFormat = '${appName}-${packageName}-${channel}-${buildType}-v${versionName}-${versionCode}-${buildTime}.apk'
-    apkFileNameFormat = 'mhk-${buildTime}.apk'
+    apkFileNameFormat = 'newmhk-${buildTime}.apk'
     // 渠道配置文件
     channelFile = new File("${project.getProjectDir()}/channel")
 }

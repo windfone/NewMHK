@@ -8,16 +8,16 @@ import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
 import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
-import com.hlxyedu.mhk.ui.exercise.activity.ExerciseActivity;
-import com.hlxyedu.mhk.ui.exercise.activity.ExerciseSelectActivity;
+import com.hlxyedu.mhk.ui.select.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
-import com.hlxyedu.mhk.ui.operation.activity.OperationSelectActivity;
+import com.hlxyedu.mhk.ui.select.activity.OperationSelectActivity;
 import com.hlxyedu.mhk.ui.splash.activity.SplashActivity;
 
 import dagger.Component;
@@ -50,8 +50,6 @@ public interface ActivityComponent {
 
     void inject(FeedBackActivity feedBackActivity);
 
-    void inject(ExerciseActivity exerciseActivity);
-
     void inject(TestListeningActivity testListeningActivity);
 
     void inject(TestSpeakActivity testSpeakActivity);
@@ -61,5 +59,7 @@ public interface ActivityComponent {
     void inject(TestReadActivity testReadActivity);
 
     void inject(TestBookActivity testBookActivity);
+
+    void inject(ExamFinishActivity examFinishActivity);
 
 }

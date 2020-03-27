@@ -24,6 +24,11 @@ import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.ebook.contract.TestBookContract;
 import com.hlxyedu.mhk.ui.ebook.fragment.BookFragment;
 import com.hlxyedu.mhk.ui.ebook.presenter.TestBookPresenter;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
@@ -78,9 +83,14 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     private String fileName;// (压缩包名字 TLXXX.zip)也是解压后的文件夹名字 TLXXX.zip
     private String examId; // 试卷id
     private String homeworkId; // 作业id
+    private String testId; // 考试id
+    private String testType;
+
     // 倒计时
     private int TIMER;
     private String from;
+
+    private int currentPos; // 当前是第几个答题包
 
     /**
      * 打开新Activity
@@ -88,6 +98,12 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
      * @param context
      * @return
      */
+    public static Intent newInstance(Context context, String from) {
+        Intent intent = new Intent(context, TestBookActivity.class);
+        intent.putExtra("from", from);
+        return intent;
+    }
+
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestBookActivity.class);
         intent.putExtra("from", from);
@@ -97,13 +113,14 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId,String testType) {
         Intent intent = new Intent(context, TestBookActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
         intent.putExtra("examId", examId);
         intent.putExtra("homeworkId", homeworkId);
+        intent.putExtra("testType", testType);
         return intent;
     }
 
@@ -116,9 +133,24 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         examId = intent.getStringExtra("examId");
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
-        if (fileName.contains("SM")) {
+        testType = intent.getStringExtra("testType");
+//        if (fileName.contains("SM")) {
             questionTypeTv.setText("书面表达模拟大礼包");
+//        }
+
+        if (from.equals("考试")) {
+            currentPos = AppContext.getInstance().getCurrentPos();
+            examId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getExamId();
+            testId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getId();
+            testType = AppContext.getInstance().getExamProgressVOS().get(currentPos).getType();
+
+            String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+            String[] strs = names.split("/");
+            names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
+            zipPath = names;
+            fileName = strs[strs.length - 1];
         }
+
         // 解压文件
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
@@ -145,14 +177,15 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
 
-                // 结束的页面
+                // 练习和作业 结束的页面
                 if (currentItem == bookFragments.size() - 1) {
                     String final_answer = "";
                     if (!StringUtils.equals(answer, "")) {
                         final_answer = answer.substring(0, answer.length() - 1) + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId,testId, testType));
                 }
+
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
                 clearTimeProgress();
@@ -162,6 +195,29 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 //                    countdownRl.setVisibility(View.VISIBLE);
                     startTimeProgress(time);
                 }
+                break;
+            case EventsConfig.TEST_NEXT_ACTIVITY:
+                // 考试 模块是多个答题压缩包，答完一个接下一个
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1){
+                    //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    startActivity(ExamFinishActivity.newInstance(this));
+                }else {
+                    // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
+                    AppContext.getInstance().setCurrentPos(++currentPos);
+                    String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+                    if (names.contains("TL")){
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("KY") || names.contains("LD")){
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("YD")){
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("SM")){
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                    }else if (names.contains("ZW")){
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                    }
+                }
+                finish();
                 break;
 //            case EventsConfig.KILL_ACTIVITY:
 //                if (event.getData().equals("end")) {
@@ -176,10 +232,18 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 //                break;
             case EventsConfig.SUCCESS_BOOK:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                for (int i = 0; i < pageModels.size(); i++) {
-                    BookFragment bookFragment = BookFragment.newInstance();
-                    bookFragment.setPageModel(pageModels.get(i));
-                    bookFragments.add(bookFragment);
+                if (from.equals("考试")){
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        BookFragment bookFragment = BookFragment.newInstance("考试");
+                        bookFragment.setPageModel(pageModels.get(i));
+                        bookFragments.add(bookFragment);
+                    }
+                }else {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        BookFragment bookFragment = BookFragment.newInstance();
+                        bookFragment.setPageModel(pageModels.get(i));
+                        bookFragments.add(bookFragment);
+                    }
                 }
 
                 viewPager.setAdapter(new MyFragmentPagerAdapter(

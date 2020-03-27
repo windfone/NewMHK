@@ -73,9 +73,19 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     //数组长度
     private int op_long=0;
 
+    private String type;
+
     public static BookFragment newInstance() {
         Bundle args = new Bundle();
 
+        BookFragment fragment = new BookFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static BookFragment newInstance(String type) {
+        Bundle args = new Bundle();
+        args.putString("type",type);
         BookFragment fragment = new BookFragment();
         fragment.setArguments(args);
         return fragment;
@@ -97,18 +107,24 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
-        waitText.setVisibility(View.GONE);
-        successHintText.setVisibility(View.VISIBLE);
-        finishBtn.setVisibility(View.VISIBLE);
-        successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
-                "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
-                "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
+        if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+        }else {
+            waitText.setVisibility(View.GONE);
+            successHintText.setVisibility(View.VISIBLE);
+            finishBtn.setVisibility(View.VISIBLE);
+            successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
+                    "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
+                    "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
+        }
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        type = getArguments().getString("type");
+
         switch (pageModel.getType()) {
             //欢迎界面
             case PageModel.huanying:
@@ -124,13 +140,17 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                 break;
 
             case PageModel.jieshu:
-                view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
-                waitText = getView(view, R.id.wait_text);
-                successHintText = getView(view, R.id.success_hint_text);
-                finishBtn = getView(view, R.id.finish_btn);
-                finishBtn.setOnClickListener(v -> {
-                    mActivity.finish();
-                });
+                if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+                    view = View.inflate(getActivity(), R.layout.fragment_exam_finish, null);
+                }else {
+                    view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
+                    waitText = getView(view, R.id.wait_text);
+                    successHintText = getView(view, R.id.success_hint_text);
+                    finishBtn = getView(view, R.id.finish_btn);
+                    finishBtn.setOnClickListener(v -> {
+                        mActivity.finish();
+                    });
+                }
                 break;
         }
         return view;
@@ -267,10 +287,12 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
             case BasePageModel.WAIT:
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
-                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
+                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
-                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
+//                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
+                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;

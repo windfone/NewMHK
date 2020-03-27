@@ -3,11 +3,7 @@ package com.hlxyedu.mhk.ui.elistening.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +21,14 @@ import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.ListenQOptionModel;
 import com.hlxyedu.mhk.model.models.PageModel;
-import com.hlxyedu.mhk.ui.exercise.contract.TestListeningContract;
+import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
+import com.hlxyedu.mhk.ui.elistening.contract.TestListeningContract;
 import com.hlxyedu.mhk.ui.elistening.fragment.ListeningFragment;
-import com.hlxyedu.mhk.ui.exercise.presenter.TestListeningPresenter;
+import com.hlxyedu.mhk.ui.elistening.presenter.TestListeningPresenter;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
+import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
@@ -54,7 +55,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by zhangguihua
@@ -62,6 +62,7 @@ import butterknife.OnClick;
  */
 public class TestListeningActivity extends RootFragmentActivity<TestListeningPresenter> implements TestListeningContract.View, XBaseTopBarImp {
 
+    public String answer = "";
     @BindView(R.id.xbase_topbar)
     XBaseTopBar xbaseTopbar;
     @BindView(R.id.question_type_tv)
@@ -72,26 +73,23 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     TextView countdownTv;
     @BindView(R.id.countdown_rl)
     RelativeLayout countdownRl;
-
     //解析到的数据中心
     private List<PageModel> pageModels;
     //fragment 数组
     private List<ListeningFragment> testListenFragments;
-
     private int currentItem = 0;
-
     private String zipPath;// 压缩包路径
     private String fileName;// (压缩包名字 TLXXX.zip)也是解压后的文件夹名字 TLXXX.zip
     private String examId; // 试卷id
     private String homeworkId; // 作业id
+    private String testId; // 考试id
+    private String testType;
 
     // 倒计时
     private int TIMER;
-
     private String from;
 
-    public String answer = "";
-
+    private int currentPos; // 当前是第几个答题包
 
     /**
      * 打开新Activity
@@ -99,7 +97,13 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
      * @param context
      * @return
      */
-    public static Intent newInstance(Context context, String from,String zipPath, String fileName,String examId) {
+    public static Intent newInstance(Context context, String from) {
+        Intent intent = new Intent(context, TestListeningActivity.class);
+        intent.putExtra("from", from);
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestListeningActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
@@ -114,13 +118,14 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
      * @param context
      * @return
      */
-    public static Intent newInstance(Context context, String from,String zipPath, String fileName,String examId,String homeworkId) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
         Intent intent = new Intent(context, TestListeningActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
         intent.putExtra("examId", examId);
         intent.putExtra("homeworkId", homeworkId);
+        intent.putExtra("testType", testType);
         return intent;
     }
 
@@ -133,8 +138,22 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         examId = intent.getStringExtra("examId");
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
-        if (fileName.contains("TL")){
-            questionTypeTv.setText("听力模拟大礼包");
+        testType = intent.getStringExtra("testType");
+//        if (fileName.contains("TL")) {
+        questionTypeTv.setText("听力模拟大礼包");
+//        }
+
+        if (from.equals("考试")) {
+            currentPos = AppContext.getInstance().getCurrentPos();
+            examId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getExamId();
+            testId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getId();
+            testType = AppContext.getInstance().getExamProgressVOS().get(currentPos).getType();
+
+            String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+            String[] strs = names.split("/");
+            names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
+            zipPath = names;
+            fileName = strs[strs.length - 1];
         }
         // 解压文件
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
@@ -162,12 +181,12 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         TIMER = time;
         RxTimerUtil.interval(1000, number -> {
             TIMER--;
-            if (TIMER == 0 ){
+            if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
                 RxTimerUtil.cancel();
                 // 下一题
-            }else {
+            } else {
                 countdownRl.setVisibility(View.VISIBLE);
                 countdownTv.setText(TIMER + "S");
             }
@@ -184,10 +203,10 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 notouchVp.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
 
-                // 结束的页面
-                if (currentItem == testListenFragments.size() -1){
+                // 练习 作业 结束的页面
+                if (currentItem == testListenFragments.size() - 1) {
                     String final_answer = answer.substring(0, answer.length() - 1) + "finished";
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,final_answer,examId,homeworkId));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
                 break;
             //显示倒计时
@@ -195,10 +214,33 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 clearTimeProgress();
                 int time = (int) event.getData();
                 // 暂停时间太短 1秒不显示倒计时时间
-                if (time > 1){
+                if (time > 1) {
 //                    countdownRl.setVisibility(View.VISIBLE);
                     startTimeProgress(time);
                 }
+                break;
+            case EventsConfig.TEST_NEXT_ACTIVITY:
+                // 考试 模块是多个答题压缩包，答完一个接下一个
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
+                    //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    startActivity(ExamFinishActivity.newInstance(this));
+                } else {
+                    // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
+                    AppContext.getInstance().setCurrentPos(++currentPos);
+                    String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+                    if (names.contains("TL")) {
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("KY") || names.contains("LD")) {
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("YD")) {
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("SM")) {
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("ZW")) {
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                    }
+                }
+                finish();
                 break;
 //            case EventsConfig.SHOW_AUDIO_VIEW:
 //                clearTimeProgress();
@@ -217,13 +259,21 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 //                openActivity(FinalScoreActivity_.class, bundle);
 //                killActivity(this);
                 break;
-             //听力题解析成功
+            //听力题解析成功
             case EventsConfig.SUCCESS_LISTEN:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                for (int i = 0; i < pageModels.size(); i++) {
-                    ListeningFragment testListenFragment =ListeningFragment.newInstance();
-                    testListenFragment.setPageModel(pageModels.get(i));
-                    testListenFragments.add(testListenFragment);
+                if (from.equals("考试")) {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        ListeningFragment testListenFragment = ListeningFragment.newInstance("考试");
+                        testListenFragment.setPageModel(pageModels.get(i));
+                        testListenFragments.add(testListenFragment);
+                    }
+                } else {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        ListeningFragment testListenFragment = ListeningFragment.newInstance();
+                        testListenFragment.setPageModel(pageModels.get(i));
+                        testListenFragments.add(testListenFragment);
+                    }
                 }
                 notouchVp.setAdapter(new MyFragmentPagerAdapter(
                         getSupportFragmentManager(), testListenFragments));
@@ -243,28 +293,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     public void responeError(String errorMsg) {
 
-    }
-
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
     }
 
     //开始解压文件
@@ -335,20 +363,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             // 创建文件夹出现异常
             Toast.makeText(this, "创建文件夹出现异常", Toast.LENGTH_LONG).show();
             return;
-        }
-    }
-
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_LISTEN));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
         }
     }
 
@@ -730,6 +744,42 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     protected int getLayout() {
         return R.layout.activity_test_listening;
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_LISTEN));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
     }
 
 }

@@ -51,11 +51,11 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                     @Override
                     public void onNext(CommitEvent s) {
 
-                        if(!mView.isShow()){
+                        if (!mView.isShow()) {
                             return;
                         }
 
-                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId());
+                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
                     }
 
                     @Override
@@ -66,10 +66,9 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
         );
     }
 
-    @Override
-    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId) {
+    public void cimmitAnswer(String finalAnswer, String paperId, String homeworkId, String testId, String type) {
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId)
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
@@ -97,7 +96,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
 
     @Override
     public String getUserId() {
-        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(),UserVO.class);
+        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
         return userVO.getId();
     }
 

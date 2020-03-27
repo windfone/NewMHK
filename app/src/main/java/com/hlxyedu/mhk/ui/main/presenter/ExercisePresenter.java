@@ -74,7 +74,8 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                 .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
                     @Override
                     public void onNext(DownLoadEvent s) {
-                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
+//                        mView.download(s.getPos(),s.getDownloadPath(),s.getType(),s.getExamName(),s.getExamId());
+                        mView.download(s);
                     }
 
                     @Override
@@ -83,6 +84,7 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                     }
                 })
         );
+
     }
 
     @Override

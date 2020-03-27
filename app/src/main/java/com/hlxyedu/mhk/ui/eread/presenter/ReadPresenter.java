@@ -56,7 +56,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
                         if(!mView.isShow()){
                             return;
                         }
-                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId());
+                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId(),s.getTestId(),s.getTestType());
                     }
 
                     @Override
@@ -67,10 +67,9 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
         );
     }
 
-    @Override
-    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId) {
+    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId,String testId,String type) {
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId)
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId,testId,type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(

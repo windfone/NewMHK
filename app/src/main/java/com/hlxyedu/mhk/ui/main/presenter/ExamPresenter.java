@@ -2,18 +2,25 @@ package com.hlxyedu.mhk.ui.main.presenter;
 
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
+import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Predicate;
 import retrofit2.adapter.rxjava2.HttpException;
 
 /**
@@ -35,20 +42,40 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
     }
 
     private void registerEvent() {
+        //下载指令
+        addSubscribe(RxBus.getDefault().toFlowable(DownLoadEvent.class)
+                .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
+                .filter(new Predicate<DownLoadEvent>() {
+                    @Override
+                    public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
+                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER_EXAM);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
+                    @Override
+                    public void onNext(DownLoadEvent s) {
+                        mView.download();
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
     }
 
     @Override
-    public void getExamList(String examType, String id, int pageNum, int perpage, String version) {
+    public void getMockList(String id, int pageNumber, int pageSize) {
         addSubscribe(
-                mDataManager.getExamList(examType,id,pageNum,perpage, version)
+                mDataManager.getMockList(id,pageNumber,pageSize)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
-                                new CommonSubscriber<ExerciseListVO>(mView) {
+                                new CommonSubscriber<List<ExamVO>>(mView) {
                                     @Override
-                                    public void onNext(ExerciseListVO exerciseListVO) {
-                                        mView.onSuccess(exerciseListVO);
+                                    public void onNext(List<ExamVO> examVOS) {
+                                        mView.onSuccess(examVOS);
                                     }
 
                                     @Override

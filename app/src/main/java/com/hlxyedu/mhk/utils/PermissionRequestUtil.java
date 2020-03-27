@@ -76,8 +76,8 @@ public class PermissionRequestUtil {
                         // 禁止，但选择“以后不再询问”，以后申请权限，不会继续弹出提示
                         // 需要到 设置里面 手动打开
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("权限设置");
-                        builder.setMessage("需要同意录音、读取手机存储信息、获取手机状态信息权限才能使用录音功能");
+                        builder.setTitle("权限申请");
+                        builder.setMessage("需要同意录音、存储、获取手机状态信息权限才能正常使用哦");
                         builder.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

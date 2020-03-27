@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whitefff"
-    tools:context=".ui.operation.activity.OperationSelectActivity">
+    tools:context=".ui.select.activity.OperationSelectActivity">
 
     <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
         android:id="@+id/xbase_topbar"

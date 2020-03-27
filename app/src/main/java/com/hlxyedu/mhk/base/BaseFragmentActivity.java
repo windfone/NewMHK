@@ -15,7 +15,6 @@ import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.di.component.ActivityComponent;
 import com.hlxyedu.mhk.di.component.DaggerActivityComponent;
 import com.hlxyedu.mhk.di.module.ActivityModule;
-import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
@@ -35,14 +34,14 @@ public abstract class BaseFragmentActivity<T extends BasePresenter> extends Simp
     @Inject
     protected T mPresenter;
 
-    protected ActivityComponent getActivityComponent(){
-        return  DaggerActivityComponent.builder()
+    protected ActivityComponent getActivityComponent() {
+        return DaggerActivityComponent.builder()
                 .appComponent(AppContext.getAppComponent())
                 .activityModule(getActivityModule())
                 .build();
     }
 
-    protected ActivityModule getActivityModule(){
+    protected ActivityModule getActivityModule() {
         return new ActivityModule(this);
     }
 
@@ -94,8 +93,8 @@ public abstract class BaseFragmentActivity<T extends BasePresenter> extends Simp
         setBackHint();
     }
 
-    private void setBackHint(){
-        WindowManager windowManager = (WindowManager)this
+    private void setBackHint() {
+        WindowManager windowManager = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
 

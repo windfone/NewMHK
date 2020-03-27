@@ -5,14 +5,22 @@
     android:layout_height="67dp"
     android:background="@color/whitefff">
 
-    <ImageView
-        android:id="@+id/img_topbar_left"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="15dp"
-        android:src="@drawable/icon_back" />
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/img_topbar_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="15dp"
+            android:src="@drawable/icon_back" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/txt_topbar_name"
@@ -35,7 +43,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="@color/gray8F8"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray8F8" />
 
 </RelativeLayout>

@@ -1,5 +1,7 @@
 package com.hlxyedu.mhk.ui.ebook.presenter;
 
+import android.util.Log;
+
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxBus;
@@ -55,7 +57,7 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
                         if(!mView.isShow()){
                             return;
                         }
-                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId());
+                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId(),s.getTestId(),s.getTestType());
                     }
 
                     @Override
@@ -66,10 +68,9 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
         );
     }
 
-    @Override
-    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId) {
+    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId,String testId,String type) {
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId)
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId,testId,type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(

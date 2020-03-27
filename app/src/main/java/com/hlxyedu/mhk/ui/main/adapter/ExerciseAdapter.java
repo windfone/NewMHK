@@ -1,6 +1,7 @@
 package com.hlxyedu.mhk.ui.main.adapter;
 
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -17,6 +18,7 @@ import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.weight.listener.NoDoubleClickListener;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
         helper.setText(R.id.title_tv,item.getExamname())
               .setText(R.id.exercise_number_tv,item.getTimes()+"");
 
-        if (item.getExamname().contains("口语")) { //口语
+        if (item.getExamname().contains("口语") || item.getExamname().contains("朗读")) { //口语
             helper.setImageResource(R.id.question_type_iv, R.drawable.icon_speak);
         } else if (item.getExamname().contains("阅读")) { //阅读
             helper.setImageResource(R.id.question_type_iv, R.drawable.icon_read);
@@ -62,33 +64,36 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
         }
 
         Button button = helper.getView(R.id.positive_btn);
-        button.setOnClickListener(v -> {
-            if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
-                if(item.getExamname().contains("听力"))
-                {
-                    mContext.startActivity(TestListeningActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
-                }else if (item.getExamname().contains("口语"))
-                {
-                    //最后一个参数为 item.getId() 指的是examId
-                    mContext.startActivity(TestSpeakActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
-                }else if (item.getExamname().contains("阅读"))
-                {
-                    //最后一个参数为 item.getId() 指的是examId
-                    mContext.startActivity(TestReadActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
-                } else if (item.getExamname().contains("书面"))
-                {
-                    //最后一个参数为 item.getId() 指的是examId
-                    mContext.startActivity(TestBookActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
-                } else if (item.getExamname().contains("作文"))
-                {
-                    //最后一个参数为 item.getId() 指的是examId
-                    mContext.startActivity(TestTxtActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+        button.setOnClickListener(new NoDoubleClickListener() {
+            @Override
+            protected void onNoDoubleClick(View v) {
+                if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
+                    if(item.getExamname().contains("听力"))
+                    {
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    }else if (item.getExamname().contains("口语") || item.getExamname().contains("朗读"))
+                    {
+                        //最后一个参数为 item.getId() 指的是examId
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    }else if (item.getExamname().contains("阅读"))
+                    {
+                        //最后一个参数为 item.getId() 指的是examId
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    } else if (item.getExamname().contains("书面"))
+                    {
+                        //最后一个参数为 item.getId() 指的是examId
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    } else if (item.getExamname().contains("作文"))
+                    {
+                        //最后一个参数为 item.getId() 指的是examId
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "练习",AppConstants.FILE_DOWNLOAD_PATH + zipName,zipName,item.getId()));
+                    }
+                } else {
+//                button.setText("下载中...");
+//                button.setEnabled(false);
+                    RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE,helper.getLayoutPosition(),item.getExamname(),
+                            ApiConstants.HOST + item.getZip_path(),zipName,item.getId(),""));
                 }
-            } else {
-                button.setText("下载中...");
-                button.setEnabled(false);
-                RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE,helper.getLayoutPosition(),
-                        ApiConstants.HOST + item.getZip_path(),zipName));
             }
         });
 

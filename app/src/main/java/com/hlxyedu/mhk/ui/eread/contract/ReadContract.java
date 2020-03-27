@@ -19,7 +19,6 @@ public interface ReadContract {
     }
 
     interface Presenter extends BasePresenter<View> {
-        void cimmitAnswer(String finalAnswer,String paperId,String homeworkId);
 
         String getUserId();
     }

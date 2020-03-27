@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.hlxyedu.mhk.R;
+import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
@@ -18,10 +19,14 @@ import com.hlxyedu.mhk.model.event.EventsConfig;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
+import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TestTxtContract;
 import com.hlxyedu.mhk.ui.ecomposition.fragment.TxtFragment;
 import com.hlxyedu.mhk.ui.ecomposition.presenter.TestTxtPresenter;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
+import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
@@ -74,9 +79,14 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     private String fileName;// (压缩包名字 TLXXX.zip)也是解压后的文件夹名字 TLXXX.zip
     private String examId; // 试卷id
     private String homeworkId; // 作业id
+    private String testId; // 考试id
+    private String testType;
+
     // 倒计时
     private int TIMER;
     private String from;
+
+    private int currentPos; // 当前是第几个答题包
 
     /**
      * 打开新Activity
@@ -84,6 +94,12 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
      * @param context
      * @return
      */
+    public static Intent newInstance(Context context, String from) {
+        Intent intent = new Intent(context, TestTxtActivity.class);
+        intent.putExtra("from", from);
+        return intent;
+    }
+
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestTxtActivity.class);
         intent.putExtra("from", from);
@@ -93,13 +109,14 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
         Intent intent = new Intent(context, TestTxtActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
         intent.putExtra("fileName", fileName);
         intent.putExtra("examId", examId);
         intent.putExtra("homeworkId", homeworkId);
+        intent.putExtra("testType", testType);
         return intent;
     }
 
@@ -125,10 +142,23 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         examId = intent.getStringExtra("examId");
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
-        if (fileName.contains("ZW")) {
-            questionTypeTv.setText("作文模拟大礼包");
-        }
+        testType = intent.getStringExtra("testType");
+//        if (fileName.contains("ZW")) {
+        questionTypeTv.setText("作文模拟大礼包");
+//        }
 
+        if (from.equals("考试")) {
+            currentPos = AppContext.getInstance().getCurrentPos();
+            examId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getExamId();
+            testId = AppContext.getInstance().getExamProgressVOS().get(currentPos).getId();
+            testType = AppContext.getInstance().getExamProgressVOS().get(currentPos).getType();
+
+            String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+            String[] strs = names.split("/");
+            names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
+            zipPath = names;
+            fileName = strs[strs.length - 1];
+        }
 
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
@@ -161,12 +191,15 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             case EventsConfig.TEST_NEXT_PAGE:
                 clearTimeProgress();
                 viewPager.setCurrentItem(++currentItem);
+                // TODO 新增
+                AppContext.getInstance().setCurrentItem(currentItem);
 
                 // 结束的页面
-                if (currentItem == txtFragments.size() -1){
+                if (currentItem == txtFragments.size() - 1) {
                     String final_answer = (String) event.getData();
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,final_answer,examId,homeworkId));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
+
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
                 clearTimeProgress();
@@ -174,6 +207,29 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 if (time > 1) {
                     startTimeProgress(time);
                 }
+                break;
+            case EventsConfig.TEST_NEXT_ACTIVITY:
+                // 考试 模块是多个答题压缩包，答完一个接下一个
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
+                    //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    startActivity(ExamFinishActivity.newInstance(this));
+                } else {
+                    // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
+                    AppContext.getInstance().setCurrentPos(++currentPos);
+                    String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
+                    if (names.contains("TL")) {
+                        mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("KY") || names.contains("LD")) {
+                        mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("YD")) {
+                        mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("SM")) {
+                        mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                    } else if (names.contains("ZW")) {
+                        mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                    }
+                }
+                finish();
                 break;
             case EventsConfig.KILL_ACTIVITY:
 //                if(event.getData().equals("end")){
@@ -183,10 +239,20 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 break;
             //获取数据 并且 解析成功
             case EventsConfig.SUCCESS_WRITE:
-                for (int i = 0; i < pageModels.size(); i++) {
-                    TxtFragment txtFragment = TxtFragment.newInstance();
-                    txtFragment.setPageModel(pageModels.get(i));
-                    txtFragments.add(txtFragment);
+                // TODO 新增
+                AppContext.getInstance().setAllItem(pageModels.size());
+                if (from.equals("考试")) {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        TxtFragment txtFragment = TxtFragment.newInstance("考试");
+                        txtFragment.setPageModel(pageModels.get(i));
+                        txtFragments.add(txtFragment);
+                    }
+                } else {
+                    for (int i = 0; i < pageModels.size(); i++) {
+                        TxtFragment txtFragment = TxtFragment.newInstance();
+                        txtFragment.setPageModel(pageModels.get(i));
+                        txtFragments.add(txtFragment);
+                    }
                 }
 
                 viewPager.setAdapter(new MyFragmentPagerAdapter(
@@ -447,6 +513,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     public void left() {
         mMaterialDialog.show();
     }
+
     @Override
     public void right() {
 

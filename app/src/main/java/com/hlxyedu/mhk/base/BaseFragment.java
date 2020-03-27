@@ -1,14 +1,21 @@
 package com.hlxyedu.mhk.base;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 
-
+import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.di.component.DaggerFragmentComponent;
 import com.hlxyedu.mhk.di.component.FragmentComponent;
 import com.hlxyedu.mhk.di.module.FragmentModule;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 import com.skyworth.rxqwelibrary.base.SimpleFragment;
@@ -24,14 +31,14 @@ public abstract class BaseFragment<T extends BasePresenter> extends SimpleFragme
     @Inject
     protected T mPresenter;
 
-    protected FragmentComponent getFragmentComponent(){
+    protected FragmentComponent getFragmentComponent() {
         return DaggerFragmentComponent.builder()
                 .appComponent(AppContext.getAppComponent())
                 .fragmentModule(getFragmentModule())
                 .build();
     }
 
-    protected FragmentModule getFragmentModule(){
+    protected FragmentModule getFragmentModule() {
         return new FragmentModule(this);
     }
 
@@ -75,4 +82,5 @@ public abstract class BaseFragment<T extends BasePresenter> extends SimpleFragme
     }
 
     protected abstract void initInject();
+
 }

@@ -1,6 +1,7 @@
 package com.hlxyedu.mhk.ui.main.contract;
 
 import com.hlxyedu.mhk.model.bean.OperationVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 
@@ -19,7 +20,8 @@ public interface OperationContract {
 
         void onSelect(String hws); // 作业完成状态
 
-        void download(int pos,String downloadPath,String examName);
+//        void download(int pos,Object downloadPath,String type,String examName,String examId,String homeworkId);
+        void download(DownLoadEvent downLoadEvent);
     }
 
     interface Presenter extends BasePresenter<View> {
