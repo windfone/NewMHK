@@ -1,7 +1,6 @@
 package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.blankj.utilcode.util.AppUtils;
@@ -15,6 +14,7 @@ import com.hlxyedu.mhk.ui.main.adapter.ExerciseAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExercisePresenter;
 import com.hlxyedu.mhk.ui.select.activity.ExerciseSelectActivity;
+import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 import com.hlxyedu.mhk.weight.dialog.DownLoadDialog;
@@ -99,7 +99,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         stateLoading();
 
         mAdapter = new ExerciseAdapter(R.layout.item_exercise, dataVOList);
-        rlv.setLayoutManager(new LinearLayoutManager(mActivity));
+        rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
         count = 1;
@@ -147,6 +147,6 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
 
     @Override
     public void right() {
-        startActivity(ExerciseSelectActivity.newInstance(mActivity));
+        startActivity(ExerciseSelectActivity.newInstance(mActivity,examType));
     }
 }

@@ -3,7 +3,8 @@
 
     <item android:id="@android:id/background">
         <shape>
-            <solid android:color="@color/graya9a" />
+            <solid android:color="@color/whitefff" />
+            <corners android:radius="4dp"/>
         </shape>
     </item>
     <!-- 进度条 -->
@@ -11,6 +12,7 @@
         <clip>
             <shape>
                 <solid android:color="@color/themeColor" />
+                <corners android:radius="4dp"/>
             </shape>
         </clip>
     </item>

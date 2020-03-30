@@ -89,10 +89,10 @@ public class MoreTaskDLDialog extends Dialog {
 
     private void init() {
         this.setCanceledOnTouchOutside(false);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams dialogParams = getWindow().getAttributes();
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.8);
-        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.1);
-        dialogParams.width = width;
+        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.17);
+        dialogParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         dialogParams.height = height;
 
         Aria.download(this).register();
@@ -179,6 +179,7 @@ public class MoreTaskDLDialog extends Dialog {
                         // 权限同意,而且是权限全部同意才下载，这样做 防止只同意存储权限可以下载，但是不能录音，到口语 题型的时候不能录音还得再次申请
                         if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE && RECORD_AUDIO && READ_PHONE_STATE) {
                             mTaskId = Aria.download(this)
+//                                    .setMaxSpeed(0) // 0表示不限速
                                     .loadGroup(downUrlLists)
                                     .setDirPath(AppConstants.FILE_DOWNLOAD_PATH)
                                     .setSubFileName(examNameLists)

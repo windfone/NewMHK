@@ -2,36 +2,58 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/shape_radius_4dp"
-    android:orientation="horizontal">
+    android:background="@color/transparent">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="100dp"
-        android:layout_height="4dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:max="100"
-        android:progressDrawable="@drawable/progress_test" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/precent_tv"
-        style="@style/textSize_black949_14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/progressBar"
-        android:text="0%" />
+        <TextView
+            android:id="@+id/notice_tv"
+            style="@style/textSize_whitefff_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingStart="55dp"
+            android:paddingEnd="55dp"
+            android:text="@string/loading_paper" />
 
-    <TextView
-        android:id="@+id/size_tv"
-        style="@style/textSize_black949_14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/progressBar"
-        android:text="0mb" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="4dp"
+                android:layout_centerInParent="true"
+                android:max="100"
+                android:progressDrawable="@drawable/progress_test" />
+
+            <TextView
+                android:id="@+id/precent_tv"
+                style="@style/textSize_whitefff_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/progressBar" />
+
+            <TextView
+                android:id="@+id/size_tv"
+                style="@style/textSize_whitefff_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/progressBar" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

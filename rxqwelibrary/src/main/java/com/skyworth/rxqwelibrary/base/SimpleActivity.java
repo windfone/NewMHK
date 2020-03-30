@@ -1,21 +1,15 @@
 package com.skyworth.rxqwelibrary.base;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
-
+import com.blankj.utilcode.util.NetworkUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.skyworth.rxqwelibrary.managers.AppManagers;
+import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -28,10 +22,9 @@ import butterknife.Unbinder;
 
 public abstract class SimpleActivity extends AppCompatActivity {
 
+    protected Activity mContext;
     //退出事件
     private long exitTime = 0;
-
-    protected Activity mContext;
     private Unbinder mUnBinder;
 
     @Override
@@ -39,8 +32,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         try {
             getSupportActionBar().hide();
-        }catch (Exception ex)
-        {
+        } catch (Exception ex) {
 
         }
         setContentView(getLayout());
@@ -55,6 +47,9 @@ public abstract class SimpleActivity extends AppCompatActivity {
         ImmersionBar.with(this)
                 .statusBarDarkFont(true)
                 .transparentStatusBar().keyboardEnable(true).init();
+        if (!NetworkUtils.isConnected()) {
+            NetErrorDialog.getInstance().showNetErrorDialog(this);
+        }
 
        /* //设置透明通知栏
         if (Build.VERSION.SDK_INT >= 21) {
@@ -80,6 +75,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
     }
 
     protected abstract int getLayout();
+
     protected abstract void initEventAndData();
 
     //-------------------------------------------------------------------//
@@ -97,6 +93,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
         super.onResume();
         MobclickAgent.onResume(this);
     }
+
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);

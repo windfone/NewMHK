@@ -3,7 +3,6 @@ package com.hlxyedu.mhk.ui.login.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
@@ -24,10 +24,9 @@ import com.hlxyedu.mhk.ui.login.presenter.LoginPresenter;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.utils.CodeUtils;
 import com.hlxyedu.mhk.utils.ForResultUtils;
-import com.hlxyedu.mhk.weight.dialog.NetErrorDialog;
+import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -131,6 +130,10 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
                 startActivityForResult(FoundPsdActivity.newInstance(this), ForResultUtils.REQUEST_CODE);
                 break;
             case R.id.login_btn:
+                if (!NetworkUtils.isConnected()) {
+                    NetErrorDialog.getInstance().showNetErrorDialog(this);
+                    return;
+                }
                 String mobile = userNameEdit.getText().toString().trim();
                 String password = psdEdit.getText().toString().trim();
                 mPresenter.login(mobile, password);

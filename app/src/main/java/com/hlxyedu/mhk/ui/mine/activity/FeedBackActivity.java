@@ -2,13 +2,13 @@ package com.hlxyedu.mhk.ui.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
@@ -18,7 +18,6 @@ import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -80,6 +79,12 @@ public class FeedBackActivity extends RootActivity<FeedBackPresenter> implements
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(detailEdit.getText().toString())) {
+                    confirmBtn.setEnabled(true);
+                } else {
+                    confirmBtn.setEnabled(false);
+                }
+
                 if (s.length() > 16) {
                     titleEdit.setText(s.toString().substring(0, 16));
                     titleEdit.setSelection(16);
@@ -104,9 +109,15 @@ public class FeedBackActivity extends RootActivity<FeedBackPresenter> implements
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(titleEdit.getText().toString())) {
+                    confirmBtn.setEnabled(true);
+                } else {
+                    confirmBtn.setEnabled(false);
+                }
+
                 if (s.length() > 200) {
-                    titleEdit.setText(s.toString().substring(0, 200));
-                    titleEdit.setSelection(200);
+                    detailEdit.setText(s.toString().substring(0, 200));
+                    detailEdit.setSelection(200);
                     ToastUtils.showShort("最多可输入200字");
                     return;
                 } else {

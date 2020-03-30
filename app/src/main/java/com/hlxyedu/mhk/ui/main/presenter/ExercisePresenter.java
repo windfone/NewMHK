@@ -8,7 +8,6 @@ import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
-import com.hlxyedu.mhk.model.event.LoginEvent;
 import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
@@ -64,25 +63,25 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
         );
 
         addSubscribe(RxBus.getDefault().toFlowable(DownLoadEvent.class)
-                .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
-                .filter(new Predicate<DownLoadEvent>() {
-                    @Override
-                    public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
-                        return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE);
-                    }
-                })
-                .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
-                    @Override
-                    public void onNext(DownLoadEvent s) {
+                        .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
+                        .filter(new Predicate<DownLoadEvent>() {
+                            @Override
+                            public boolean test(@NonNull DownLoadEvent downLoadEvent) throws Exception {
+                                return downLoadEvent.getType().equals(DownLoadEvent.DOWNLOAD_PAPER_EXERCISE);
+                            }
+                        })
+                        .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
+                            @Override
+                            public void onNext(DownLoadEvent s) {
 //                        mView.download(s.getPos(),s.getDownloadPath(),s.getType(),s.getExamName(),s.getExamId());
-                        mView.download(s);
-                    }
+                                mView.download(s);
+                            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                    }
-                })
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                            }
+                        })
         );
 
     }
@@ -102,6 +101,10 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        if (e.toString().contains("UnknownHostException")) {
+                                            mView.responeError("数据请求失败，请检查网络！");
+                                            return;
+                                        }
                                         ToastUtils.showShort(e.getMessage());
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {

@@ -6,7 +6,6 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.ExamVO;
-import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
@@ -68,7 +67,7 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
     @Override
     public void getMockList(String id, int pageNumber, int pageSize) {
         addSubscribe(
-                mDataManager.getMockList(id,pageNumber,pageSize)
+                mDataManager.getMockList(id, pageNumber, pageSize)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
@@ -80,6 +79,10 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        if (e.toString().contains("UnknownHostException")) {
+                                            mView.responeError("数据请求失败，请检查网络！");
+                                            return;
+                                        }
                                         ToastUtils.showShort(e.getMessage());
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {

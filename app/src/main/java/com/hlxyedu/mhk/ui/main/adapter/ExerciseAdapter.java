@@ -37,7 +37,7 @@ public class ExerciseAdapter extends BaseQuickAdapter<ExerciseVO, BaseViewHolder
     @Override
     protected void convert(BaseViewHolder helper, ExerciseVO item) {
         helper.setText(R.id.title_tv,item.getExamname())
-              .setText(R.id.exercise_number_tv,item.getTimes()+"");
+              .setText(R.id.exercise_number_tv,item.getTimes()+"次练习");
 
         if (item.getExamname().contains("口语") || item.getExamname().contains("朗读")) { //口语
             helper.setImageResource(R.id.question_type_iv, R.drawable.icon_speak);

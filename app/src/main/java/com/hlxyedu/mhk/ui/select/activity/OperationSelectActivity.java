@@ -52,8 +52,9 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
      * @param context
      * @return
      */
-    public static Intent newInstance(Context context) {
+    public static Intent newInstance(Context context, String hws) {
         Intent intent = new Intent(context, OperationSelectActivity.class);
+        intent.putExtra("hws", hws);
         return intent;
     }
 
@@ -70,6 +71,18 @@ public class OperationSelectActivity extends RootActivity<OperationSelectPresent
     @Override
     protected void initEventAndData() {
         xbaseTopbar.setxBaseTopBarImp(this);
+        hws = getIntent().getStringExtra("hws");
+        switch (hws) {
+            case "A":
+                allStateCb.performClick();
+                break;
+            case "D":
+                completedCb.performClick();
+                break;
+            case "U":
+                undoneCb.performClick();
+                break;
+        }
     }
 
     @Override

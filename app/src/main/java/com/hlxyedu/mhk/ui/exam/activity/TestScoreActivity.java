@@ -11,6 +11,7 @@ import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exam.adapter.TestScoreAdapter;
 import com.hlxyedu.mhk.ui.exam.contract.TestScoreContract;
 import com.hlxyedu.mhk.ui.exam.presenter.TestScorePresenter;
+import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
@@ -66,7 +67,7 @@ public class TestScoreActivity extends RootActivity<TestScorePresenter> implemen
         dataVOList.add(new OperationVO());
 
         mAdapter = new TestScoreAdapter(R.layout.item_test_score, dataVOList, "获取");
-        rlv.setLayoutManager(new LinearLayoutManager(this));
+        rlv.setLayoutManager(new MyLinearLayoutManager(this));
         rlv.setAdapter(mAdapter);
     }
 

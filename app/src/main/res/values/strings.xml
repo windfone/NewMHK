@@ -84,6 +84,7 @@
 
     <!--activity_feedback-->
     <string name="input_description">请输入简述</string>
+    <string name="input_description_detail">请输入详细</string>
 
     <!--activity_exercise-->
     <string name="exercise_more">（随机出题，可多次练习）</string>
@@ -98,9 +99,10 @@
     <string name="commit_answer">提交答卷</string>
     <string name="upload_pic">拍照并上传</string>
 
-    <!--dialog_download_a-->
+    <!--dialog_download-->
     <string name="stop">停止</string>
     <string name="resume">恢复</string>
     <string name="start">开始</string>
+    <string name="loading_paper">加载试卷中，请稍等...</string>
 
 </resources>

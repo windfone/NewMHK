@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.ui.exam.adapter.TestScoreAdapter;
 import com.hlxyedu.mhk.ui.mine.contract.GradeContract;
 import com.hlxyedu.mhk.ui.mine.presenter.GradePresenter;
+import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 
@@ -73,7 +73,7 @@ public class GradeActivity extends RootActivity<GradePresenter> implements Grade
         finishPagerTv = view.findViewById(R.id.finished_pager_tv);
         mAdapter = new TestScoreAdapter(R.layout.item_test_score, OperationVOList, "获取");
         mAdapter.addHeaderView(view);
-        rlv.setLayoutManager(new LinearLayoutManager(this));
+        rlv.setLayoutManager(new MyLinearLayoutManager(this));
         rlv.setAdapter(mAdapter);
     }
 

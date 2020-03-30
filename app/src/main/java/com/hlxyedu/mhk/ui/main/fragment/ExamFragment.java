@@ -1,7 +1,6 @@
 package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.hlxyedu.mhk.R;
@@ -10,6 +9,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.ui.main.adapter.ExamAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
+import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
 
@@ -69,7 +69,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         stateLoading();
 
         mAdapter = new ExamAdapter(R.layout.item_exercise, dataVOList);
-        rlv.setLayoutManager(new LinearLayoutManager(mActivity));
+        rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
         count = 1;

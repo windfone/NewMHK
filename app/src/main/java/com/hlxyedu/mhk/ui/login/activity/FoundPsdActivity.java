@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.login.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
@@ -17,10 +17,9 @@ import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.login.contract.FoundPsdContract;
 import com.hlxyedu.mhk.ui.login.presenter.FoundPsdPresenter;
 import com.hlxyedu.mhk.utils.ForResultUtils;
-import com.hlxyedu.mhk.weight.dialog.NetErrorDialog;
+import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -80,7 +79,6 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     @Override
     protected void initEventAndData() {
-//        NetErrorDialog.getInstance().showNetErrorDialog(this);
         initUIState();
 
     }
@@ -102,6 +100,19 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     @OnClick(R.id.confirm_btn)
     public void onViewClicked() {
+        if (!NetworkUtils.isConnected()) {
+            NetErrorDialog.getInstance().showNetErrorDialog(this);
+            return;
+        }
+
+        // 身份证号不是18位 不合格
+        if (IDCardErrTv.toString().trim().length() != 18) {
+            IDCardErrTv.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            IDCardErrTv.setVisibility(View.INVISIBLE);
+        }
+
         mobile = userNameEdit.getText().toString().trim();
         psd = newPsdEdit.getText().toString().trim();
         newPsd = newPsdAgainEdit.getText().toString().trim();
@@ -221,6 +232,13 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() >= 6 && s.toString().trim().length() <= 16) {
+                    requirementsTv.setVisibility(View.INVISIBLE);
+
+                } else {
+                    requirementsTv.setVisibility(View.VISIBLE);
+                }
+
                 if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(userNameEdit.getText().toString())
                         && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
                         && !StringUtils.isTrimEmpty(newPsdAgainEdit.getText().toString())) {

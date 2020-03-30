@@ -75,7 +75,6 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
                 .subscribeWith(new CommonSubscriber<DownLoadEvent>(mView) {
                     @Override
                     public void onNext(DownLoadEvent s) {
-//                        mView.download(s.getPos(),s.getDownloadPath(),s.getExamName());
                         mView.download(s);
                     }
 
@@ -102,6 +101,10 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        if (e.toString().contains("UnknownHostException")) {
+                                            mView.responeError("数据请求失败，请检查网络！");
+                                            return;
+                                        }
                                         ToastUtils.showShort(e.getMessage());
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
