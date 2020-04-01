@@ -68,7 +68,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         super.initEventAndData();
         stateLoading();
 
-        mAdapter = new ExamAdapter(R.layout.item_exam, dataVOList);
+        mAdapter = new ExamAdapter(R.layout.item_exercise, dataVOList);
         rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
