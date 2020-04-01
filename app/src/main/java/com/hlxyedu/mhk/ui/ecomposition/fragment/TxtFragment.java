@@ -23,6 +23,7 @@ import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.EventsConfig;
+import com.hlxyedu.mhk.model.event.ExamEvent;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
@@ -129,7 +130,10 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                     waitText = getView(view, R.id.wait_text);
                     successHintText = getView(view, R.id.success_hint_text);
                     finishBtn = getView(view, R.id.finish_btn);
-                    finishBtn.setOnClickListener(v -> mActivity.finish());
+                    finishBtn.setOnClickListener(v -> {
+                        RxBus.getDefault().post(new ExamEvent(ExamEvent.EXAM_FINISH));
+                        mActivity.finish();
+                    });
                 }
                 break;
         }

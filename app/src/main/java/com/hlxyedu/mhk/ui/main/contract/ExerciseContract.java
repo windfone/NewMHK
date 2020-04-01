@@ -21,6 +21,9 @@ public interface ExerciseContract {
 //        void download(int pos,Object downloadPath,String type,String examName,String examId);
         void download(DownLoadEvent downLoadEvent);
 
+        void getClickPos(int pos);
+
+        void examFinish();
     }
 
     interface Presenter extends BasePresenter<View> {

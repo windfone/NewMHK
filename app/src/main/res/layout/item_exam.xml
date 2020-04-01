@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="112dp">
+
+    <ImageView
+        android:id="@+id/question_type_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="5dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <Button
+        android:id="@+id/positive_btn"
+        style="@style/textSize_whitefff_13"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/orange_btn_bg" />
+
+    <TextView
+        android:id="@+id/title_tv"
+        style="@style/textSize_black303_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4sp"
+        android:layout_marginTop="19dp"
+        android:layout_toStartOf="@+id/positive_btn"
+        android:layout_toEndOf="@+id/question_type_iv"
+        android:text="哈哈哈哈哈哈哈哈" />
+
+    <TextView
+        android:id="@+id/exercise_number_tv"
+        style="@style/textSize_gray696_13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/title_tv"
+        android:layout_marginTop="55dp"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/author_tv"
+        style="@style/textSize_gray696_13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exercise_number_tv"
+        android:layout_alignStart="@+id/title_tv"
+        android:layout_marginTop="3dp"
+        android:layout_toStartOf="@+id/positive_btn" />
+
+    <TextView
+        android:id="@+id/end_time_tv"
+        style="@style/textSize_gray696_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/positive_btn"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:singleLine="true" />
+
+    <View
+        android:id="@+id/psd_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray8F8" />
+
+</RelativeLayout>

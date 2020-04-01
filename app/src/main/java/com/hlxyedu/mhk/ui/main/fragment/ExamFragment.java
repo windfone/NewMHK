@@ -54,21 +54,21 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         return R.layout.fragment_exam;
     }
 
-    @Override
+/*    @Override
     public void onSupportVisible() {
         super.onSupportVisible();
         dataVOList.clear();
         count = 1;
         pageSize = 20;
         mPresenter.getMockList(mPresenter.getID(), count, pageSize);
-    }
+    }*/
 
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
         stateLoading();
 
-        mAdapter = new ExamAdapter(R.layout.item_exercise, dataVOList);
+        mAdapter = new ExamAdapter(R.layout.item_exam, dataVOList);
         rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
@@ -76,7 +76,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-//        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
+        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {

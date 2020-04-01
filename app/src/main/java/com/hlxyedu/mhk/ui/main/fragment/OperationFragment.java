@@ -60,14 +60,17 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         return R.layout.fragment_operation;
     }
 
-    @Override
+    /**
+     *  放弃使用此方法的原因是 筛选，返回页面后会重复请求两次接口
+     */
+    /*@Override
     public void onSupportVisible() {
         super.onSupportVisible();
         dataVOList.clear();
         count = 1;
         pageSize = 20;
         mPresenter.getOperationList(mPresenter.getID(), count, pageSize, hws);
-    }
+    }*/
 
     @Override
     protected void initEventAndData() {
@@ -83,7 +86,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-//        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
+        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {

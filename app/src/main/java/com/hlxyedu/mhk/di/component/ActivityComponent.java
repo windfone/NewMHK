@@ -10,6 +10,8 @@ import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.hlxyedu.mhk.ui.exam.activity.ExamFinishActivity;
 import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
+import com.hlxyedu.mhk.ui.mine.activity.AboutUsActivity;
+import com.hlxyedu.mhk.ui.mine.activity.ServiceTermsActivity;
 import com.hlxyedu.mhk.ui.select.activity.ExerciseSelectActivity;
 import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.login.activity.FoundPsdActivity;
@@ -61,5 +63,9 @@ public interface ActivityComponent {
     void inject(TestBookActivity testBookActivity);
 
     void inject(ExamFinishActivity examFinishActivity);
+
+    void inject(ServiceTermsActivity serviceTermsActivity);
+
+    void inject(AboutUsActivity aboutUsActivity);
 
 }

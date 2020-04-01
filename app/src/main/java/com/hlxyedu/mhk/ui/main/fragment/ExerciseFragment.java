@@ -38,10 +38,12 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     private ExerciseAdapter mAdapter;
 
     private List<ExerciseVO> dataVOList = new ArrayList<>();
-    private int pageSize = 100;
+    private int pageSize = 20;
     private int count = 1; // 当前页数;
 
     private String examType;
+
+    private int clickPos;
 
     public static ExerciseFragment newInstance() {
         Bundle args = new Bundle();
@@ -62,6 +64,18 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
     }
 
     @Override
+    public void getClickPos(int pos) {
+        clickPos = pos;
+    }
+
+    @Override
+    public void examFinish() {
+        int times = dataVOList.get(clickPos).getTimes();
+        dataVOList.get(clickPos).setTimes(++times);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onSelect(String questionType) {
         if (StringUtils.isEmpty(questionType)) {
             return;
@@ -77,14 +91,14 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
     }
 
-    @Override
+/*    @Override
     public void onSupportVisible() {
         super.onSupportVisible();
         dataVOList.clear();
         count = 1; // 当前页数;
         pageSize = 20;
         mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
-    }
+    }*/
 
     @Override
     public void download(DownLoadEvent s) {
@@ -106,7 +120,7 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-//        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
+        mPresenter.getExamList(examType, mPresenter.getID(), count, pageSize, AppUtils.getAppVersionName());
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {
@@ -147,6 +161,6 @@ public class ExerciseFragment extends RootFragment<ExercisePresenter> implements
 
     @Override
     public void right() {
-        startActivity(ExerciseSelectActivity.newInstance(mActivity,examType));
+        startActivity(ExerciseSelectActivity.newInstance(mActivity, examType));
     }
 }

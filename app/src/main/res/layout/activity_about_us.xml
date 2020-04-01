@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitefff"
+    android:orientation="vertical"
+    tools:context=".ui.mine.activity.AboutUsActivity">
+
+    <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
+        android:id="@+id/xbase_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isShowLeft_x="true"
+        app:isShowRight_x="false"
+        app:middleText_x="@string/about_us" />
+
+    <TextView
+        android:id="@+id/terms_detail_tv"
+        style="@style/textSize_blackb4b_12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:text="公司名称：天津翰林新语教育科技有限公司\n\n企业电话：022-58173441\n\n公司地址：天津自贸试验区（空港经济区）环河北路与中心大道交口空港商务园东区8-1，2-802
+" />
+
+</LinearLayout>

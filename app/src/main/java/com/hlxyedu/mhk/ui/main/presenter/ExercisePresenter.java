@@ -7,7 +7,9 @@ import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.event.ClickEvent;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
+import com.hlxyedu.mhk.model.event.ExamEvent;
 import com.hlxyedu.mhk.model.event.SelectEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExerciseContract;
@@ -62,6 +64,7 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                 })
         );
 
+        // 下载试卷
         addSubscribe(RxBus.getDefault().toFlowable(DownLoadEvent.class)
                         .compose(RxUtil.<DownLoadEvent>rxSchedulerHelper())
                         .filter(new Predicate<DownLoadEvent>() {
@@ -84,6 +87,49 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
                         })
         );
 
+        // 记录点击的 item position 到fragment
+        addSubscribe(RxBus.getDefault().toFlowable(ClickEvent.class)
+                .compose(RxUtil.<ClickEvent>rxSchedulerHelper())
+                .filter(new Predicate<ClickEvent>() {
+                    @Override
+                    public boolean test(@NonNull ClickEvent clickEvent) throws Exception {
+                        return clickEvent.getType().equals(ClickEvent.CLICK_POS);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<ClickEvent>(mView) {
+                    @Override
+                    public void onNext(ClickEvent s) {
+                        mView.getClickPos(s.getPos());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        // 练习完成 提交答案成功通知，练习次数 + 1
+        addSubscribe(RxBus.getDefault().toFlowable(ExamEvent.class)
+                .compose(RxUtil.<ExamEvent>rxSchedulerHelper())
+                .filter(new Predicate<ExamEvent>() {
+                    @Override
+                    public boolean test(@NonNull ExamEvent examEvent) throws Exception {
+                        return examEvent.getType().equals(ExamEvent.EXAM_FINISH);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<ExamEvent>(mView) {
+                    @Override
+                    public void onNext(ExamEvent s) {
+                        mView.examFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
     }
 
     @Override
@@ -101,7 +147,7 @@ public class ExercisePresenter extends RxPresenter<ExerciseContract.View> implem
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        if (e.toString().contains("UnknownHostException")) {
+                                        if (e.toString().contains("UnknownHostException") || e.toString().contains("ConnectException")) {
                                             mView.responeError("数据请求失败，请检查网络！");
                                             return;
                                         }

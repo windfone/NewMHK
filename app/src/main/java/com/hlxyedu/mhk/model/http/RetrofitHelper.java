@@ -5,6 +5,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
+import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.api.ManageApis;
 import com.hlxyedu.mhk.model.http.api.QBaseApis;
@@ -62,6 +63,11 @@ public class RetrofitHelper implements HttpHelper {
     @Override
     public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId,String testId,String type) {
         return qBaseApis.postExerciseScoreBody(userId,homeworkId,answer,examId,testId,type);
+    }
+
+    @Override
+    public Flowable<HttpResponse<TotalScoreVO>> getTotalScore(String userId) {
+        return qBaseApis.getTotalScore(userId);
     }
 
     @Override

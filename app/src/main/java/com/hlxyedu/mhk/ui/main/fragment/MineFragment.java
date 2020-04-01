@@ -4,9 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,20 +15,18 @@ import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
-import com.hlxyedu.mhk.ui.exam.activity.TestScoreActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.contract.MineContract;
 import com.hlxyedu.mhk.ui.main.presenter.MinePresenter;
+import com.hlxyedu.mhk.ui.mine.activity.AboutUsActivity;
 import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
+import com.hlxyedu.mhk.ui.mine.activity.ServiceTermsActivity;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
-import com.skyworth.rxqwelibrary.managers.AppManagers;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * Created by zhangguihua
@@ -95,13 +91,16 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
                 startActivity(FeedBackActivity.newInstance(mActivity));
                 break;
             case R.id.terms_of_service_rl:
+                startActivity(ServiceTermsActivity.newInstance(mActivity));
                 break;
             case R.id.about_us_rl:
+                startActivity(AboutUsActivity.newInstance(mActivity));
                 break;
             case R.id.version_rl:
+                ToastUtils.showShort("当前已经是最新版本");
                 break;
             case R.id.exit_btn:
-                WindowManager windowManager = (WindowManager)mActivity
+                WindowManager windowManager = (WindowManager) mActivity
                         .getSystemService(Context.WINDOW_SERVICE);
                 Display display = windowManager.getDefaultDisplay();
 

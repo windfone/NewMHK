@@ -4,6 +4,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
+import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
@@ -61,21 +62,27 @@ public interface QBaseApis {
     @GET("phone/getMockList.do")
     Flowable<HttpResponse<List<ExamVO>>> getMockList(@Query("id") String id, @Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize);
 
+    // 获取我的 --- 答题成绩
+    @FormUrlEncoded
+    @POST("phone/queryScore.do")
+    Flowable<HttpResponse<TotalScoreVO>> getTotalScore(@Field("id") String userId);
+
     // 提交答案获取成绩
     @FormUrlEncoded
-    @POST("phone/calExamScore.do")      //id 为userId，此处比较混乱，特注明
+    @POST("phone/calExamScore.do")
+    //id 为userId，此处比较混乱，特注明
     Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId, @Field("testId") String testId, @Field("type") String type);
 
 
     @Multipart
     @POST("phone/uploadRec.do")
     Flowable<HttpResponse<String>> uploadRecord(@Part("id") RequestBody userId,
-                                              @Part("examId") RequestBody examId,
-                                              @Part("homeworkId") RequestBody homeworkId,
-                                              @Part("testId") RequestBody testId,
-                                              @Part("type") RequestBody type,
-                                              @Part("fileName") RequestBody fileName,
-                                              @Part MultipartBody.Part fileData);
+                                                @Part("examId") RequestBody examId,
+                                                @Part("homeworkId") RequestBody homeworkId,
+                                                @Part("testId") RequestBody testId,
+                                                @Part("type") RequestBody type,
+                                                @Part("fileName") RequestBody fileName,
+                                                @Part MultipartBody.Part fileData);
 }
 
 

@@ -8,6 +8,7 @@ package com.hlxyedu.mhk.model.http.response;
 public class HttpResponse<T> {
 
     private String msg;
+    private String message;
     private int code;
     private T data;
 
@@ -35,4 +36,11 @@ public class HttpResponse<T> {
         this.code = code;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

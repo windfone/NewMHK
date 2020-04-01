@@ -166,6 +166,8 @@ dependencies {
     annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
     implementation rootProject.ext.dependencies["dagger"]
     annotationProcessor rootProject.ext.dependencies["dagger-compiler"]
+    //ui
+    implementation rootProject.ext.dependencies["bgaBanner"]
     //other
     implementation rootProject.ext.dependencies["walle"]
     compile project(path: ':rxqwelibrary')

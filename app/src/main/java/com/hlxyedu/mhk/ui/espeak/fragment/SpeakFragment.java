@@ -23,6 +23,7 @@ import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.EventsConfig;
+import com.hlxyedu.mhk.model.event.ExamEvent;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.espeak.contract.SpeakContract;
@@ -171,6 +172,7 @@ public class SpeakFragment extends RootFragment<SpeakPresenter> implements Speak
                     successHintText = getView(view, R.id.success_hint_text);
                     finishBtn = getView(view, R.id.finish_btn);
                     finishBtn.setOnClickListener(v -> {
+                        RxBus.getDefault().post(new ExamEvent(ExamEvent.EXAM_FINISH));
                         mActivity.finish();
                     });
                 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitefff"
+    android:orientation="vertical"
+    tools:context=".ui.mine.activity.ServiceTermsActivity">
+
+    <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
+        android:id="@+id/xbase_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isShowLeft_x="true"
+        app:isShowRight_x="false"
+        app:middleText_x="@string/service_terms" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <TextView
+            android:id="@+id/terms_detail_tv"
+            style="@style/textSize_blackb4b_12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp" />
+
+    </ScrollView>
+
+</LinearLayout>

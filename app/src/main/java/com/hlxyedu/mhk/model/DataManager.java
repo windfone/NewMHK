@@ -4,6 +4,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
+import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.HttpHelper;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
@@ -110,6 +111,11 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     @Override
     public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId,String testId,String type) {
         return mHttpHelper.postExerciseScoreBody(userId, homeworkId, answer, examId,testId,type);
+    }
+
+    @Override
+    public Flowable<HttpResponse<TotalScoreVO>> getTotalScore(String userId) {
+        return mHttpHelper.getTotalScore(userId);
     }
 
     @Override

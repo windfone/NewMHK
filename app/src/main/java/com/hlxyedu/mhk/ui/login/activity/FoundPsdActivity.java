@@ -100,28 +100,34 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     @OnClick(R.id.confirm_btn)
     public void onViewClicked() {
+        // 先验证网络
         if (!NetworkUtils.isConnected()) {
             NetErrorDialog.getInstance().showNetErrorDialog(this);
             return;
         }
 
-        // 身份证号不是18位 不合格
-        if (IDCardErrTv.toString().trim().length() != 18) {
+       /* // 身份证号不是18位 不合格
+        if (IDCardEdit.getText().toString().trim().length() != 18) {
             IDCardErrTv.setVisibility(View.VISIBLE);
             return;
         } else {
             IDCardErrTv.setVisibility(View.INVISIBLE);
-        }
+        }*/
 
         mobile = userNameEdit.getText().toString().trim();
         psd = newPsdEdit.getText().toString().trim();
         newPsd = newPsdAgainEdit.getText().toString().trim();
-        idCard = IDCardEdit.getText().toString().trim();
-        if (!StringUtils.equals(psd, newPsd)) {
+//      if  idCard = IDCardEdit.getText().toString().trim();
+
+        if (psd.length() < 6 || psd.length() > 16){
+            return;
+        }
+
+        if (StringUtils.equals(psd, newPsd)) {
+            psdDifferentTv.setVisibility(View.INVISIBLE);
+        } else {
             psdDifferentTv.setVisibility(View.VISIBLE);
             return;
-        } else {
-            psdDifferentTv.setVisibility(View.INVISIBLE);
         }
         mPresenter.foundPsd(mobile, psd, idCard);
     }
@@ -138,7 +144,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
                 }
             }
         });
-        IDCardEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      /*  IDCardEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -148,7 +154,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
                     newPsdAgainLine.setBackgroundColor(getResources().getColor(R.color.gray9D9));
                 }
             }
-        });
+        });*/
         newPsdEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -186,7 +192,8 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
+//                if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
+                if (s.toString().trim().length() > 0
                         && !StringUtils.isTrimEmpty(newPsdEdit.getText().toString())
                         && !StringUtils.isTrimEmpty(newPsdAgainEdit.getText().toString())) {
                     confirmBtn.setEnabled(true);
@@ -196,7 +203,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
             }
         });
 
-        IDCardEdit.addTextChangedListener(new TextWatcher() {
+        /*IDCardEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -217,7 +224,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
                     confirmBtn.setEnabled(false);
                 }
             }
-        });
+        });*/
 
         newPsdEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -240,7 +247,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
                 }
 
                 if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(userNameEdit.getText().toString())
-                        && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
+//                        && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
                         && !StringUtils.isTrimEmpty(newPsdAgainEdit.getText().toString())) {
                     confirmBtn.setEnabled(true);
                 } else {
@@ -263,7 +270,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().trim().length() > 0 && !StringUtils.isTrimEmpty(userNameEdit.getText().toString())
-                        && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
+//                        && !StringUtils.isTrimEmpty(IDCardEdit.getText().toString())
                         && !StringUtils.isTrimEmpty(newPsdEdit.getText().toString())) {
                     confirmBtn.setEnabled(true);
                 } else {

@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -20,6 +21,7 @@ import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.hlxyedu.mhk.weight.listener.NoDoubleClickListener;
 import com.skyworth.rxqwelibrary.app.AppConstants;
+import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,7 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
 
         helper.addOnClickListener(R.id.positive_btn)
                 .setText(R.id.title_tv, item.getHomeworkName())
-                .setText(R.id.author_tv, item.getTeacherName() + "");
+                .setText(R.id.author_tv, item.getTeacherName() + "老师");
 
         if (StringUtils.equals(item.getExamType(), "KY")) { //口语
             helper.setImageResource(R.id.question_type_iv, R.drawable.icon_speak);
@@ -81,6 +83,11 @@ public class OperationAdapter extends BaseQuickAdapter<OperationVO, BaseViewHold
             button.setOnClickListener(new NoDoubleClickListener() {
                 @Override
                 protected void onNoDoubleClick(View v) {
+                    if (!NetworkUtils.isConnected()) {
+                        NetErrorDialog.getInstance().showNetErrorDialog(mContext);
+                        return;
+                    }
+
                     if (FileUtils.isFileExists(AppConstants.FILE_DOWNLOAD_PATH + zipName)) {
                         if (StringUtils.equals(item.getExamType(), "TL")) {
                             mContext.startActivity(TestListeningActivity.newInstance(mContext, "作业", AppConstants.FILE_DOWNLOAD_PATH + zipName, zipName, item.getExamId(), item.getId(), "homeWork"));

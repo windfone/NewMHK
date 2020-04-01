@@ -65,7 +65,7 @@ public class RxUtil {
                         if(httpResponse.getCode() == -1 ){
                             return createData(httpResponse.getData());
                         }else {
-                            return Flowable.error(new ApiException( httpResponse.getMsg(),httpResponse.getCode()));
+                            return Flowable.error(new ApiException(httpResponse.getMessage(),httpResponse.getCode()));
                         }
 
 //                        if(httpResponse.getErrorCode() == 0) {

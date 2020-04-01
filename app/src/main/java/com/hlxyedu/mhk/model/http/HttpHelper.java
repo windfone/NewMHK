@@ -4,6 +4,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
+import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
@@ -32,7 +33,9 @@ public interface HttpHelper {
 
     Flowable<HttpResponse<List<ExamVO>>> getMockList(String id, int pageNumber, int pageSize);
 
-    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String id, String homeworkId, String answer, String examId,String testId,String type);
+    Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String id, String homeworkId, String answer, String examId, String testId, String type);
+
+    Flowable<HttpResponse<TotalScoreVO>> getTotalScore(String userId);
 
     Flowable<HttpResponse<String>> uploadRecord(RequestBody userId,
                                                 RequestBody examId,

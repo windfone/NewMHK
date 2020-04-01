@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
@@ -14,17 +18,27 @@ import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.splash.contract.SplashContract;
 import com.hlxyedu.mhk.ui.splash.presenter.SplashPresenter;
 
+import butterknife.BindView;
+import cn.bingoogolapple.bgabanner.BGABanner;
+
 /**
  * Created by zhangguihua
  */
 public class SplashActivity extends RootActivity<SplashPresenter> implements SplashContract.View {
 
-    /**
-     * 打开新Activity
-     *
-     * @param context
-     * @return
-     */
+    @BindView(R.id.splash_iv)
+    ImageView splash_iv;
+
+    @BindView(R.id.banner_guide)
+    RelativeLayout banner_guide;
+
+    @BindView(R.id.banner_guide_background)
+    BGABanner mBackgroundBanner;
+
+    @BindView(R.id.banner_guide_foreground)
+    BGABanner mForegroundBanner;
+
+
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
         return intent;
@@ -54,24 +68,53 @@ public class SplashActivity extends RootActivity<SplashPresenter> implements Spl
             return;
         }
 
-        new Handler().postDelayed(() -> {
-//            startActivity(LoginActivity.newInstance(getBaseContext()));
-            if (mPresenter.isLogin()) {
-                startActivity(MainActivity.newInstance(getBaseContext()));
-            } else {
-                startActivity(LoginActivity.newInstance(getBaseContext()));
-            }
-            finish();
+        //第二次进入跳转
+        splash_iv.setVisibility(View.VISIBLE);
 
-        },1000);
-
-        /*findViewById(R.id.jump_tv).setOnClickListener(new View.OnClickListener() {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.app_start_anim);
+        animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(LoginActivity.newInstance(SplashActivity.this));
-                finish();
+            public void onAnimationStart(Animation animation) {
+
             }
-        });*/
+
+            //动画完成
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                initApp(animation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        splash_iv.setAnimation(animation);
+
+//        new Handler().postDelayed(() -> {
+////            startActivity(LoginActivity.newInstance(getBaseContext()));
+//            if (mPresenter.isLogin()) {
+//                startActivity(MainActivity.newInstance(getBaseContext()));
+//            } else {
+//                startActivity(LoginActivity.newInstance(getBaseContext()));
+//            }
+//            finish();
+//
+//        }, 1000);
+
+    }
+
+    private void initApp(Animation animation) {
+
+//        startActivity(MainActivity.newInstance(getApplicationContext()));
+//        startActivity(LoginActivity.newInstance(getApplicationContext()));
+
+        if (mPresenter.isLogin()) {
+            startActivity(MainActivity.newInstance(getApplicationContext()));
+        } else {
+            startActivity(LoginActivity.newInstance(getApplicationContext()));
+        }
+        finish();
     }
 
     @Override

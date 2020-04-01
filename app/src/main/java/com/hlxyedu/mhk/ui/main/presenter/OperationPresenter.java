@@ -87,9 +87,9 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
     }
 
     @Override
-    public void getOperationList(String userId,int pageNumber,int pageSize,String hws) {
+    public void getOperationList(String userId, int pageNumber, int pageSize, String hws) {
         addSubscribe(
-                mDataManager.getOperationList(userId,pageNumber,pageSize,hws)
+                mDataManager.getOperationList(userId, pageNumber, pageSize, hws)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
@@ -101,7 +101,7 @@ public class OperationPresenter extends RxPresenter<OperationContract.View> impl
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        if (e.toString().contains("UnknownHostException")) {
+                                        if (e.toString().contains("UnknownHostException") || e.toString().contains("ConnectException")) {
                                             mView.responeError("数据请求失败，请检查网络！");
                                             return;
                                         }

@@ -2,10 +2,14 @@ package com.hlxyedu.mhk.ui.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
@@ -22,6 +26,8 @@ import butterknife.OnClick;
 
 /**
  * Created by zhangguihua
+ *
+ * 意见反馈 待完成，具体查看代码
  */
 public class FeedBackActivity extends RootActivity<FeedBackPresenter> implements FeedBackContract.View, XBaseTopBarImp {
 
@@ -37,6 +43,10 @@ public class FeedBackActivity extends RootActivity<FeedBackPresenter> implements
     TextView detailNumberTv;
     @BindView(R.id.confirm_btn)
     Button confirmBtn;
+    @BindView(R.id.feedback_suc_ll)
+    LinearLayout feedbackSucLl;
+    @BindView(R.id.scrollv)
+    ScrollView scrollv;
 
     /**
      * 打开新Activity
@@ -136,7 +146,10 @@ public class FeedBackActivity extends RootActivity<FeedBackPresenter> implements
 
     @OnClick(R.id.confirm_btn)
     public void onViewClicked() {
-
+        new Handler().postDelayed(() -> {
+            scrollv.setVisibility(View.GONE);
+            feedbackSucLl.setVisibility(View.VISIBLE);
+        }, 400);
     }
 
 

@@ -79,7 +79,7 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        if (e.toString().contains("UnknownHostException")) {
+                                        if (e.toString().contains("UnknownHostException") || e.toString().contains("ConnectException")) {
                                             mView.responeError("数据请求失败，请检查网络！");
                                             return;
                                         }
