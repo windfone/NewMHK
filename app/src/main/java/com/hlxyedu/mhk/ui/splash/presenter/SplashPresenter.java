@@ -24,9 +24,16 @@ public class SplashPresenter extends RxPresenter<SplashContract.View> implements
         registerEvent();
     }
 
+
     @Override
     public boolean isLogin() {
         return mDataManager.getLoginStatus();
+    }
+
+    @Override
+    public boolean isFirst() {
+        boolean b = mDataManager.getIsFrist();
+        return b;
     }
 
     private void registerEvent() {

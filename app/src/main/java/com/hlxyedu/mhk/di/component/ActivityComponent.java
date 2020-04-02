@@ -20,6 +20,7 @@ import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.mine.activity.FeedBackActivity;
 import com.hlxyedu.mhk.ui.mine.activity.GradeActivity;
 import com.hlxyedu.mhk.ui.select.activity.OperationSelectActivity;
+import com.hlxyedu.mhk.ui.splash.activity.GuideActivity;
 import com.hlxyedu.mhk.ui.splash.activity.SplashActivity;
 
 import dagger.Component;
@@ -33,6 +34,8 @@ import dagger.Component;
 public interface ActivityComponent {
 
     Activity getActivity();
+
+    void inject(GuideActivity guideActivity);
 
     void inject(SplashActivity splashActivity);
 

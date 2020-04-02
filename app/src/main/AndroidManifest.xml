@@ -40,6 +40,10 @@
         </activity>
 
         <activity
+            android:name=".ui.splash.activity.GuideActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.main.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
