@@ -44,6 +44,7 @@ ext{
             //EasyRefreshLayout：这个库让你轻松实现下拉刷新和上拉更多
             //EasySwipeMenuLayout：独立的侧滑删除
             "BaseRecyclerViewAdapterHelper": "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.21",
+            "smartRefresh"                 : 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2',
             //https://github.com/bingoogolapple/BGABanner-Android
             "bgaBanner"                         :"cn.bingoogolapple:bga-banner:2.2.5",
             //腾讯组件皮肤
