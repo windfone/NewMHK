@@ -87,7 +87,9 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     private String testType;
 
     // 倒计时
+    private RxTimerUtil rxTimer;
     private int TIMER;
+
     private String from;
 
     private int currentPos; // 当前是第几个答题包
@@ -113,7 +115,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId,String testType) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
         Intent intent = new Intent(context, TestBookActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
@@ -135,7 +137,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
 //        if (fileName.contains("SM")) {
-            questionTypeTv.setText("书面表达模拟大礼包");
+        questionTypeTv.setText("书面表达模拟大礼包");
 //        }
 
         if (from.equals("考试")) {
@@ -161,6 +163,9 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         super.initEventAndData();
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
+
+        rxTimer = new RxTimerUtil();
+
         pageModels = new ArrayList<PageModel>();
         bookFragments = new ArrayList<BookFragment>();
 
@@ -183,7 +188,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                     if (!StringUtils.equals(answer, "")) {
                         final_answer = answer.substring(0, answer.length() - 1) + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId,testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
 
                 break;
@@ -198,22 +203,22 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 break;
             case EventsConfig.TEST_NEXT_ACTIVITY:
                 // 考试 模块是多个答题压缩包，答完一个接下一个
-                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1){
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
                     //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
                     startActivity(ExamFinishActivity.newInstance(this));
-                }else {
+                } else {
                     // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
                     AppContext.getInstance().setCurrentPos(++currentPos);
                     String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
-                    if (names.contains("TL")){
+                    if (names.contains("TL")) {
                         mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("KY") || names.contains("LD")){
+                    } else if (names.contains("KY") || names.contains("LD")) {
                         mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("YD")){
+                    } else if (names.contains("YD")) {
                         mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("SM")){
+                    } else if (names.contains("SM")) {
                         mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("ZW")){
+                    } else if (names.contains("ZW")) {
                         mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
                     }
                 }
@@ -232,13 +237,13 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 //                break;
             case EventsConfig.SUCCESS_BOOK:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                if (from.equals("考试")){
+                if (from.equals("考试")) {
                     for (int i = 0; i < pageModels.size(); i++) {
                         BookFragment bookFragment = BookFragment.newInstance("考试");
                         bookFragment.setPageModel(pageModels.get(i));
                         bookFragments.add(bookFragment);
                     }
-                }else {
+                } else {
                     for (int i = 0; i < pageModels.size(); i++) {
                         BookFragment bookFragment = BookFragment.newInstance();
                         bookFragment.setPageModel(pageModels.get(i));
@@ -266,17 +271,17 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
     }
 
     private void startTimeProgress(int time) {
         TIMER = time;
-        RxTimerUtil.interval(1000, number -> {
+        rxTimer.interval(1000, number -> {
             TIMER--;
             if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                RxTimerUtil.cancel();
+                rxTimer.cancel();
                 // 下一题
             } else {
                 countdownRl.setVisibility(View.VISIBLE);
@@ -409,13 +414,13 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 for (int j = 0; j < pages.size(); j++) {
                     Element page = pages.get(j);
                     //1.解析欢迎数据
-                    switch (sectionName){
+                    switch (sectionName) {
                         case PageModel.huanying:
                         case PageModel.jieshu:
-                            AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels,fileName,page, partName, sectionName);
+                            AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels, fileName, page, partName, sectionName);
                             break;
                         case PageModel.BOOK_shumianbiaoda:
-                            encodepageModel(page, partName, sectionName,j);
+                            encodepageModel(page, partName, sectionName, j);
                             break;
 
                     }
@@ -437,10 +442,11 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
     /**
      * 书面表达
+     *
      * @param page
      * @param type
      */
-    private void encodepageModel(Element page,String type,String section_name,int pagenumber){
+    private void encodepageModel(Element page, String type, String section_name, int pagenumber) {
         //第二部分的解析和第一部分有区别
         //以每个page 为一页
 
@@ -455,26 +461,24 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         pageModel.setSection(section_name);
 
         //1.先解析开始部分，和欢迎部分是一样的
-        for (int i=0;i<elements.size();i++) {
+        for (int i = 0; i < elements.size(); i++) {
 
             Element element = elements.get(i);
             BasePageModel basePageModel = new BasePageModel();
             basePageModel.setCurrent(current++);
             basePageModel.setType(element.getName());
 
-            switch (element.getName()){
+            switch (element.getName()) {
                 case BasePageModel.TEXT:
                     basePageModel.setContent(element.getStringValue());
                     pageModel.addVO(basePageModel);
                     break;
                 case BasePageModel.RICHTEXT:
-                    if(pagenumber == 0)
-                    {
-                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),true));
+                    if (pagenumber == 0) {
+                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), true));
                         basePageModel.setSuffix("png");
-                    }else
-                    {
-                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),false));
+                    } else {
+                        basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), false));
                     }
 
                     pageModel.addVO(basePageModel);
@@ -487,21 +491,19 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
                 case BasePageModel.QUESTIONS:
                     List<Element> questions = element.elements();
-                    for (int j=0;j<questions.size();j++)
-                    {
+                    for (int j = 0; j < questions.size(); j++) {
                         Element question = questions.get(j);
                         BasePageModel questionsModel = new BasePageModel();
                         questionsModel.setCurrent(current++);
                         questionsModel.setType(question.getName());
 
-                        switch (question.getName())
-                        {
+                        switch (question.getName()) {
                             case BasePageModel.TEXT:
                                 questionsModel.setContent(question.getStringValue());
                                 pageModel.addVO(questionsModel);
                                 break;
                             case BasePageModel.RICHTEXT:
-                                questionsModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question.attributeValue("src"),false));
+                                questionsModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question.attributeValue("src"), false));
                                 pageModel.addVO(questionsModel);
                                 break;
                             case BasePageModel.QUESTION:
@@ -509,8 +511,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
                                 String qustionid = question.attributeValue("id");
 
-                                for (int j_1=0;j_1<questions_1.size();j_1++)
-                                {
+                                for (int j_1 = 0; j_1 < questions_1.size(); j_1++) {
                                     Element question_1 = questions_1.get(j_1);
                                     BasePageModel questionModel = new BasePageModel();
                                     questionModel.setCurrent(current++);
@@ -518,18 +519,17 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
                                     questionModel.setQuestionid(qustionid);
 
-                                    switch (question_1.getName())
-                                    {
+                                    switch (question_1.getName()) {
                                         case BasePageModel.TEXT:
                                             questionModel.setContent(question_1.getStringValue());
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.RICHTEXT:
-                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question_1.attributeValue("src"),false));
+                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question_1.attributeValue("src"), false));
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.AUDIO:
-                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,question_1.attributeValue("src"),false));
+                                            questionModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, question_1.attributeValue("src"), false));
                                             pageModel.addVO(questionModel);
                                             break;
                                         case BasePageModel.WAIT:
@@ -538,10 +538,10 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                                             break;
                                         case BasePageModel.SELECT:
 
-                                            List<Element> options =  question_1.elements("option");
+                                            List<Element> options = question_1.elements("option");
 
                                             List<ListenQOptionModel> listenQOptionModels = new ArrayList<ListenQOptionModel>();
-                                            for (int k = 0;k<options.size();k++){
+                                            for (int k = 0; k < options.size(); k++) {
                                                 ListenQOptionModel listenQOptionModel = new ListenQOptionModel();
 
                                                 Element option = options.get(k);
@@ -567,7 +567,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                     //question 中会有其他参数
                     break;
                 case BasePageModel.AUDIO:
-                    basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName,element.attributeValue("src"),false));
+                    basePageModel.setSrc(AnalyticXMLUtils.getFileUrl(fileName, element.attributeValue("src"), false));
                     pageModel.addVO(basePageModel);
                     break;
             }
@@ -578,7 +578,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
     @Override
     protected void onDestroy() {
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
         super.onDestroy();
     }
 

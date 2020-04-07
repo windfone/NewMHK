@@ -13,18 +13,20 @@ import io.reactivex.disposables.Disposable;
 /**
  * 作者：skyworth on 2017/9/26 20:46
  * 邮箱：dqwei@iflytek.com
+ *
+ * 不用之前的静态变量形式的方法了，避免内存泄漏
  */
 
 public class RxTimerUtil {
 
-    private static Disposable mDisposable;
+    private Disposable mDisposable;
 
     /** milliseconds毫秒后执行next操作
     *
     * @param milliseconds
     * @param next
     */
-    public static void timer(long milliseconds,final IRxNext next) {
+    public void timer(long milliseconds,final IRxNext next) {
         Observable.timer(milliseconds, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
@@ -59,7 +61,7 @@ public class RxTimerUtil {
         * @param milliseconds
         * @param next
         */
-    public static void interval(long milliseconds,final IRxNext next){
+    public void interval(long milliseconds,final IRxNext next){
 
             Observable.interval(milliseconds, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +90,7 @@ public class RxTimerUtil {
     /**
         * 取消订阅
         */
-    public static void cancel(){
+    public void cancel(){
 
         if(mDisposable!=null&&!mDisposable.isDisposed()){
             mDisposable.dispose();

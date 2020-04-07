@@ -2,6 +2,7 @@ package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
@@ -12,6 +13,10 @@ import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
 import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
+import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +28,8 @@ import butterknife.BindView;
  */
 public class ExamFragment extends RootFragment<ExamPresenter> implements ExamContract.View {
 
-
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
     @BindView(R.id.rlv)
     RecyclerView rlv;
     @BindView(R.id.xbase_topbar)
@@ -83,10 +89,29 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
             mPresenter.getMockList(mPresenter.getID(), ++count, pageSize);
         }, rlv);
 
+        // 双击标题栏 返回列表顶部
+        xbaseTopbar.setOnClickListener(new DoubleClickListener() {
+            @Override
+            protected void onDoubleClick(View v) {
+                rlv.smoothScrollToPosition(0);
+            }
+        });
+
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                count = 1;
+                dataVOList.clear();
+                mPresenter.getMockList(mPresenter.getID(), count, pageSize);
+            }
+        });
+
     }
 
     @Override
     public void onSuccess(List<ExamVO> examVOS) {
+        refreshLayout.finishRefresh();
+
         if (!examVOS.isEmpty()) {
             dataVOList.addAll(examVOS);
             mAdapter.setNewData(dataVOList);

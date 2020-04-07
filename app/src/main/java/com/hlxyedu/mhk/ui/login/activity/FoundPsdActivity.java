@@ -17,6 +17,7 @@ import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.login.contract.FoundPsdContract;
 import com.hlxyedu.mhk.ui.login.presenter.FoundPsdPresenter;
 import com.hlxyedu.mhk.utils.ForResultUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import butterknife.BindView;
@@ -56,6 +57,8 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     private String mobile, psd, newPsd, idCard;
 
+    private QMUITipDialog tipDialog;
+
     /**
      * 打开新Activity
      *
@@ -85,12 +88,12 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
 
     @Override
     public void responeError(String errorMsg) {
-
+        tipDialog.dismiss();
     }
 
     @Override
     public void foundPsdSuccess() {
-        ToastUtils.showShort("密码重置成功");
+        tipDialog.dismiss();
         Intent i = new Intent();
         i.putExtra("mobile", mobile);
         i.putExtra("password", psd);
@@ -129,6 +132,13 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
             psdDifferentTv.setVisibility(View.VISIBLE);
             return;
         }
+
+        tipDialog = new QMUITipDialog.Builder(FoundPsdActivity.this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("正在重置")
+                .create();
+        tipDialog.show();
+
         mPresenter.foundPsd(mobile, psd, idCard);
     }
 

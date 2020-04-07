@@ -87,7 +87,9 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     private String testType;
 
     // 倒计时
+    private RxTimerUtil rxTimer;
     private int TIMER;
+
     private String from;
 
     private int currentPos; // 当前是第几个答题包
@@ -113,7 +115,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return intent;
     }
 
-    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId,String testType) {
+    public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId, String homeworkId, String testType) {
         Intent intent = new Intent(context, TestReadActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("zipPath", zipPath);
@@ -134,9 +136,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
-//        if (fileName.contains("YD")){
         questionTypeTv.setText("阅读理解模拟大礼包");
-//        }
 
         if (from.equals("考试")) {
             currentPos = AppContext.getInstance().getCurrentPos();
@@ -161,6 +161,9 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         super.initEventAndData();
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
+
+        rxTimer = new RxTimerUtil();
+
         pageModels = new ArrayList<PageModel>();
         readFragments = new ArrayList<ReadFragment>();
 
@@ -263,17 +266,17 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
     }
 
     private void startTimeProgress(int time) {
         TIMER = time;
-        RxTimerUtil.interval(1000, number -> {
+        rxTimer.interval(1000, number -> {
             TIMER--;
             if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                RxTimerUtil.cancel();
+                rxTimer.cancel();
                 // 下一题
             } else {
                 countdownRl.setVisibility(View.VISIBLE);
@@ -571,7 +574,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     @Override
     protected void onDestroy() {
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
         super.onDestroy();
     }
 

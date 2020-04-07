@@ -132,6 +132,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     private String userDir; // 录音文件夹
 
     // 倒计时
+    private RxTimerUtil rxTimer;
     private int TIMER;
 
     private int currentPos; // 当前是第几个答题包
@@ -205,6 +206,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
 
+        rxTimer = new RxTimerUtil();
+
         pageModels = new ArrayList<PageModel>();
         speakFragments = new ArrayList<SpeakFragment>();
         viewPager.setNoScroll(true);
@@ -222,17 +225,17 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
     }
 
     private void startTimeProgress(int time) {
         TIMER = time;
-        RxTimerUtil.interval(1000, number -> {
+        rxTimer.interval(1000, number -> {
             TIMER--;
             if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                RxTimerUtil.cancel();
+                rxTimer.cancel();
                 // 下一题
             } else {
                 countdownRl.setVisibility(View.VISIBLE);
@@ -266,22 +269,22 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
                 break;
             case EventsConfig.TEST_NEXT_ACTIVITY:
                 // 考试 模块是多个答题压缩包，答完一个接下一个
-                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1){
+                if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
                     //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
                     startActivity(ExamFinishActivity.newInstance(this));
-                }else {
+                } else {
                     // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
                     AppContext.getInstance().setCurrentPos(++currentPos);
                     String names = AppContext.getInstance().getExamProgressVOS().get(currentPos).getZipPath();
-                    if (names.contains("TL")){
+                    if (names.contains("TL")) {
                         mContext.startActivity(TestListeningActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("KY") || names.contains("LD")){
+                    } else if (names.contains("KY") || names.contains("LD")) {
                         mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("YD")){
+                    } else if (names.contains("YD")) {
                         mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("SM")){
+                    } else if (names.contains("SM")) {
                         mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
-                    }else if (names.contains("ZW")){
+                    } else if (names.contains("ZW")) {
                         mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
                     }
                 }
@@ -310,13 +313,13 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
             //获取数据 并且 解析成功
             case EventsConfig.SUCCESS_SPEAK:
                 AppContext.getInstance().setAllItem(pageModels.size());
-                if (from.equals("考试")){
+                if (from.equals("考试")) {
                     for (int i = 0; i < pageModels.size(); i++) {
                         SpeakFragment speakFragment = SpeakFragment.newInstance("考试");
                         speakFragment.setPageModel(pageModels.get(i));
                         speakFragments.add(speakFragment);
                     }
-                }else {
+                } else {
                     for (int i = 0; i < pageModels.size(); i++) {
                         SpeakFragment speakFragment = SpeakFragment.newInstance();
                         speakFragment.setPageModel(pageModels.get(i));
@@ -806,7 +809,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     protected void onDestroy() {
         mRecordHandler.removeCallbacksAndMessages(null);
 //        mRecorder.destroy();
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
         super.onDestroy();
     }
 

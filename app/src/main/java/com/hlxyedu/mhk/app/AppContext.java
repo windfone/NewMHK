@@ -7,12 +7,18 @@ import android.support.multidex.MultiDex;
 
 
 import com.fifedu.record.recinbox.bl.record.RecorderManager;
+import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.api.Constants;
 import com.hlxyedu.mhk.di.component.AppComponent;
 import com.hlxyedu.mhk.di.component.DaggerAppComponent;
 import com.hlxyedu.mhk.di.module.AppModule;
 import com.hlxyedu.mhk.di.module.HttpModule;
 import com.hlxyedu.mhk.model.bean.ExamProgressVO;
+import com.hlxyedu.mhk.weight.material.MaterialHeader;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.skyworth.rxqwelibrary.app.AppConfig;
 import com.skyworth.rxqwelibrary.app.BaseApplication;
 import com.skyworth.rxqwelibrary.app.CrashHandler;
@@ -187,6 +193,32 @@ public class AppContext extends BaseApplication {
 
         AppConfig.getAppConfig(this);
 
+    }
+
+    static {//使用static代码段可以防止内存泄漏
+
+//        //设置全局默认配置（优先级最低，会被其他设置覆盖）
+//        SmartRefreshLayout.setDefaultRefreshInitializer(new DefaultRefreshInitializer() {
+//            @Override
+//            public void initialize(@NonNull Context context, @NonNull RefreshLayout layout) {
+//                //开始设置全局的基本参数（可以被下面的DefaultRefreshHeaderCreator覆盖）
+//                layout.setReboundDuration(1000);
+//                layout.setReboundInterpolator(new DropBounceInterpolator());
+//                layout.setFooterHeight(100);
+//                layout.setDisableContentWhenLoading(false);
+//                layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
+//            }
+//        });
+
+        //全局设置默认的 Header
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
+            @Override
+            public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
+                //开始设置全局的基本参数（这里设置的属性只跟下面的MaterialHeader绑定，其他Header不会生效，能覆盖DefaultRefreshInitializer的属性和Xml设置的属性）
+                layout.setEnableHeaderTranslationContent(false);
+                return new MaterialHeader(context).setColorSchemeResources(R.color.colorRed,R.color.colorGreen,R.color.colorBlue);
+            }
+        });
     }
 
 }

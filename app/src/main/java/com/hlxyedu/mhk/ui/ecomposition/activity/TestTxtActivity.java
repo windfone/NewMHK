@@ -83,7 +83,9 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     private String testType;
 
     // 倒计时
+    private RxTimerUtil rxTimer;
     private int TIMER;
+
     private String from;
 
     private int currentPos; // 当前是第几个答题包
@@ -126,6 +128,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
 
+        rxTimer = new RxTimerUtil();
+
         pageModels = new ArrayList<PageModel>();
         txtFragments = new ArrayList<TxtFragment>();
 
@@ -166,17 +170,17 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
     }
 
     private void startTimeProgress(int time) {
         TIMER = time;
-        RxTimerUtil.interval(1000, number -> {
+        rxTimer.interval(1000, number -> {
             TIMER--;
             if (TIMER == 0) {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                RxTimerUtil.cancel();
+                rxTimer.cancel();
                 // 下一题
             } else {
                 countdownRl.setVisibility(View.VISIBLE);
@@ -505,7 +509,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     @Override
     protected void onDestroy() {
-        RxTimerUtil.cancel();
+        rxTimer.cancel();
         super.onDestroy();
     }
 

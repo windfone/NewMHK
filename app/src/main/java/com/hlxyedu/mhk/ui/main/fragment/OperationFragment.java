@@ -2,6 +2,7 @@ package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
@@ -16,6 +17,10 @@ import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 import com.hlxyedu.mhk.weight.dialog.DownLoadDialog;
+import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +32,8 @@ import butterknife.BindView;
  */
 public class OperationFragment extends RootFragment<OperationPresenter> implements OperationContract.View, XBaseTopBarImp {
 
-
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
     @BindView(R.id.rlv)
     RecyclerView rlv;
     @BindView(R.id.xbase_topbar)
@@ -61,7 +67,7 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
     }
 
     /**
-     *  放弃使用此方法的原因是 筛选，返回页面后会重复请求两次接口
+     * 放弃使用此方法的原因是 筛选，返回页面后会重复请求两次接口
      */
     /*@Override
     public void onSupportVisible() {
@@ -71,7 +77,6 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         pageSize = 20;
         mPresenter.getOperationList(mPresenter.getID(), count, pageSize, hws);
     }*/
-
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
@@ -86,13 +91,28 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getOperationList(mPresenter.getID(), count, pageSize,hws);
+        mPresenter.getOperationList(mPresenter.getID(), count, pageSize, hws);
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {
             mPresenter.getOperationList(mPresenter.getID(), ++count, pageSize, hws);
         }, rlv);
 
+        xbaseTopbar.setOnClickListener(new DoubleClickListener() {
+            @Override
+            protected void onDoubleClick(View v) {
+                rlv.smoothScrollToPosition(0);
+            }
+        });
+
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                count = 1;
+                dataVOList.clear();
+                mPresenter.getOperationList(mPresenter.getID(), count, pageSize, hws);
+            }
+        });
     }
 
     @Override
@@ -109,6 +129,8 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
 
     @Override
     public void onSuccess(List<OperationVO> operationListVOS) {
+        refreshLayout.finishRefresh();
+
         if (!operationListVOS.isEmpty()) {
             dataVOList.addAll(operationListVOS);
             mAdapter.setNewData(dataVOList);
@@ -145,6 +167,6 @@ public class OperationFragment extends RootFragment<OperationPresenter> implemen
 
     @Override
     public void right() {
-        startActivity(OperationSelectActivity.newInstance(mActivity,hws));
+        startActivity(OperationSelectActivity.newInstance(mActivity, hws));
     }
 }

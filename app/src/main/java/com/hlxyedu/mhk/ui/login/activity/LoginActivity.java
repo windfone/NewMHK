@@ -24,6 +24,7 @@ import com.hlxyedu.mhk.ui.login.presenter.LoginPresenter;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.utils.CodeUtils;
 import com.hlxyedu.mhk.utils.ForResultUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import butterknife.BindView;
@@ -66,6 +67,8 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     private Bitmap bitmap;
     private String code;
 
+    private QMUITipDialog tipDialog;
+
     /**
      * 打开新Activity
      *
@@ -89,18 +92,18 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
 
     @Override
     protected void initEventAndData() {
-//        NetErrorDialog.getInstance().showNetErrorDialog(this);
         initUIState();
         initCode();
     }
 
     @Override
     public void responeError(String errorMsg) {
-
+        tipDialog.dismiss();
     }
 
     @Override
     public void loginSuccess() {
+        tipDialog.dismiss();
         startActivity(MainActivity.newInstance(this));
         KeyboardUtils.hideSoftInput(this);
         finish();
@@ -134,6 +137,13 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
                     NetErrorDialog.getInstance().showNetErrorDialog(this);
                     return;
                 }
+
+                tipDialog = new QMUITipDialog.Builder(LoginActivity.this)
+                        .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                        .setTipWord("正在登录")
+                        .create();
+                tipDialog.show();
+
                 String mobile = userNameEdit.getText().toString().trim();
                 String password = psdEdit.getText().toString().trim();
                 mPresenter.login(mobile, password);

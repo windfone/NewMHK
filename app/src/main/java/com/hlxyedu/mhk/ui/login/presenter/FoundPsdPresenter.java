@@ -54,7 +54,7 @@ public class FoundPsdPresenter extends RxPresenter<FoundPsdContract.View> implem
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        ToastUtils.showShort(e.getMessage());
+//                                        ToastUtils.showShort(e.getMessage());
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
                                             HttpResponseCode httpResponseCode = RegUtils

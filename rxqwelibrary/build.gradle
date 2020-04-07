@@ -94,6 +94,8 @@ dependencies {
 
     //adapter
     api rootProject.ext.dependencies["BaseRecyclerViewAdapterHelper"]
+    // 刷新
+    api rootProject.ext.dependencies["smartRefresh"]
     //友盟
 //    api files('libs/umeng-analytics-8.0.2.jar')
 //    api files('libs/umeng-common-2.0.2.jar')

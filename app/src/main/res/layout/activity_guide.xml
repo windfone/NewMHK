@@ -35,7 +35,7 @@
         android:id="@+id/tv_guide_skip"
         style="@style/WrapWrap"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="5dp"
         android:padding="10dp"
         android:text="点击跳过 >"
@@ -53,7 +53,7 @@
         android:paddingTop="10dp"
         android:paddingRight="16dp"
         android:paddingBottom="10dp"
-        android:text="进入主界面"
+        android:text="立即体验"
         android:textColor="@color/whitefff"
         android:visibility="gone"
         tools:visibility="visible" />

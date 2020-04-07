@@ -168,6 +168,7 @@ dependencies {
     annotationProcessor rootProject.ext.dependencies["dagger-compiler"]
     //ui
     implementation rootProject.ext.dependencies["bgaBanner"]
+    implementation rootProject.ext.dependencies["qmui"]
     //other
     implementation rootProject.ext.dependencies["walle"]
     compile project(path: ':rxqwelibrary')

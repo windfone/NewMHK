@@ -9,6 +9,11 @@
     <!--主题色-->
     <color name="themeColor">#0294FF</color>
 
+    <!--refresh-->
+    <color name="colorRed">#ffff0000</color>
+    <color name="colorGreen">#ff00ff00</color>
+    <color name="colorBlue">#ff0000ff</color>
+
     <!--红色-->
     <color name="redE90">#E90000</color>
 
