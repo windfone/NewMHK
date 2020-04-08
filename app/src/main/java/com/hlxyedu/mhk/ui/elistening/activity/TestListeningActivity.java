@@ -210,7 +210,8 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
                 // 练习 作业 结束的页面
                 if (currentItem == testListenFragments.size() - 1) {
-                    String final_answer = answer.substring(0, answer.length() - 1) + "finished";
+//                    String final_answer = answer.substring(0, answer.length() - 1) + "finished";
+                    String final_answer = answer + "finished";
                     RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
                 break;

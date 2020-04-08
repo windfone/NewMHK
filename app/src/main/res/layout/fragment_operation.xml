@@ -15,7 +15,7 @@
         app:isShowRight_x="true"
         app:middleText_x="@string/operation" />
 
-
+    <!--这里没有把刷新layout放到 状态布局中，为了可以再空布局状态下可以下拉刷新-->
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"

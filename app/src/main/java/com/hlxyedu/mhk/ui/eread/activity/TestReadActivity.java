@@ -183,7 +183,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 if (currentItem == readFragments.size() - 1) {
                     String final_answer = "";
                     if (!StringUtils.equals(answer, "")) {
-                        final_answer = answer.substring(0, answer.length() - 1) + "finished";
+//                        final_answer = answer.substring(0, answer.length() - 1) + "finished";
+                        final_answer = answer + "finished";
                     }
                     RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
