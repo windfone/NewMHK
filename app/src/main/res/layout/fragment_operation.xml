@@ -15,24 +15,25 @@
         app:isShowRight_x="true"
         app:middleText_x="@string/operation" />
 
-    <LinearLayout
-        android:id="@+id/view_main"
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/xbase_topbar">
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
-            android:id="@+id/refreshLayout"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rlv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rlv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/view_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/xbase_topbar"
+        android:orientation="vertical" />
 
 </RelativeLayout>
