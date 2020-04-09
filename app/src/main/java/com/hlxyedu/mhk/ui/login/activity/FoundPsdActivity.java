@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
 import com.hlxyedu.mhk.ui.login.contract.FoundPsdContract;
@@ -122,7 +121,7 @@ public class FoundPsdActivity extends RootActivity<FoundPsdPresenter> implements
         newPsd = newPsdAgainEdit.getText().toString().trim();
 //      if  idCard = IDCardEdit.getText().toString().trim();
 
-        if (psd.length() < 6 || psd.length() > 16){
+        if (psd.length() < 6 || psd.length() > 16) {
             return;
         }
 

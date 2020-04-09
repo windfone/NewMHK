@@ -1,7 +1,5 @@
 package com.hlxyedu.mhk.ui.eread.presenter;
 
-import android.util.Log;
-
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxBus;
@@ -53,10 +51,10 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
                     @Override
                     public void onNext(CommitEvent s) {
 
-                        if(!mView.isShow()){
+                        if (!mView.isShow()) {
                             return;
                         }
-                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId(),s.getTestId(),s.getTestType());
+                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
                     }
 
                     @Override
@@ -67,9 +65,9 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
         );
     }
 
-    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId,String testId,String type) {
+    public void cimmitAnswer(String finalAnswer, String paperId, String homeworkId, String testId, String type) {
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId,testId,type)
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
@@ -97,7 +95,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
 
     @Override
     public String getUserId() {
-        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(),UserVO.class);
+        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
         return userVO.getId();
     }
 

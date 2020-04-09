@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.login.presenter;
 
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
@@ -62,7 +61,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
     }
 
     @Override
-    public void login(String mobile,String psd) {
+    public void login(String mobile, String psd) {
         addSubscribe(
                 mDataManager.postLoginBody(mobile, psd)
                         .compose(RxUtil.rxSchedulerHelper())

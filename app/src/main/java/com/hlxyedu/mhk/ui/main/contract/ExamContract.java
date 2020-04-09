@@ -1,9 +1,6 @@
 package com.hlxyedu.mhk.ui.main.contract;
 
-import com.hlxyedu.mhk.model.bean.ExamProgressVO;
 import com.hlxyedu.mhk.model.bean.ExamVO;
-import com.hlxyedu.mhk.model.bean.ExerciseListVO;
-import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 

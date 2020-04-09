@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.exam.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.hlxyedu.mhk.R;

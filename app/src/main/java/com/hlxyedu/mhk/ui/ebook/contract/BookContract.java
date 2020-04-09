@@ -1,7 +1,6 @@
 package com.hlxyedu.mhk.ui.ebook.contract;
 
 import com.hlxyedu.mhk.model.bean.ScoreVO;
-import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 

@@ -1,9 +1,5 @@
 package com.hlxyedu.mhk.model.event;
 
-import com.hlxyedu.mhk.model.bean.ExamProgressVO;
-
-import java.util.List;
-
 public class DownLoadEvent {
 
     public static final String DOWNLOAD_PAPER_EXERCISE = "DOWNLOAD_PAPER_EXERCISE";

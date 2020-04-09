@@ -1,10 +1,7 @@
 package com.hlxyedu.mhk.ui.login.presenter;
 
-import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.login.contract.FoundPsdContract;
 import com.hlxyedu.mhk.utils.RegUtils;
@@ -40,7 +37,7 @@ public class FoundPsdPresenter extends RxPresenter<FoundPsdContract.View> implem
     @Override
     public void foundPsd(String mobile, String password, String idNum) {
         addSubscribe(
-                mDataManager.postModifyPsdBody(mobile, password,idNum)
+                mDataManager.postModifyPsdBody(mobile, password, idNum)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(

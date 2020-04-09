@@ -3,7 +3,6 @@ package com.hlxyedu.mhk.ui.elistening.fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +100,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     public static ListeningFragment newInstance(String type) {
         Bundle args = new Bundle();
-        args.putString("type",type);
+        args.putString("type", type);
         ListeningFragment fragment = new ListeningFragment();
         fragment.setArguments(args);
         return fragment;
@@ -145,9 +144,9 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
-        if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+        if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
             RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
-        }else {
+        } else {
             waitText.setVisibility(View.GONE);
             successHintText.setVisibility(View.VISIBLE);
             finishBtn.setVisibility(View.VISIBLE);
@@ -176,9 +175,9 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                 break;
 
             case PageModel.jieshu:
-                if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+                if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
                     view = View.inflate(getActivity(), R.layout.fragment_exam_finish, null);
-                }else {
+                } else {
                     view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
                     waitText = getView(view, R.id.wait_text);
                     successHintText = getView(view, R.id.success_hint_text);

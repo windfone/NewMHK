@@ -1,6 +1,5 @@
 package com.hlxyedu.mhk.ui.ecomposition.contract;
 
-import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 

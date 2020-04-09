@@ -1,15 +1,11 @@
 package com.hlxyedu.mhk.ui.espeak.presenter;
 
-import android.util.Log;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.JsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
-import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
@@ -40,7 +36,7 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
     private List<File> files = new ArrayList<>();
     private int current = 0;
 
-    private String fileName, examId, homeworkId, testId, testType ;
+    private String fileName, examId, homeworkId, testId, testType;
 
     @Inject
     public SpeakPresenter(DataManager mDataManager) {
@@ -67,7 +63,7 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
                     @Override
                     public void onNext(CommitEvent s) {
 
-                        if(!mView.isShow()){
+                        if (!mView.isShow()) {
                             return;
                         }
 
@@ -88,18 +84,18 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
         );
     }
 
-//String fileName,String examId,String homeworkId,String testId,String testType
+    //String fileName,String examId,String homeworkId,String testId,String testType
     public void cimmitAnswer() {
-        fileName = files.get(current).getName().substring(0,files.get(current).getName().length()-4);
+        fileName = files.get(current).getName().substring(0, files.get(current).getName().length() - 4);
         RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), getUserId());
         RequestBody examIdBody = RequestBody.create(MediaType.parse("text/plain"), examId);
-        if (homeworkId == null){
+        if (homeworkId == null) {
             homeworkId = "";
         }
-        if (testId == null){
+        if (testId == null) {
             testId = "";
         }
-        if (testType == null){
+        if (testType == null) {
             testType = "";
         }
         RequestBody homeworkIdBody = RequestBody.create(MediaType.parse("text/plain"), homeworkId);
@@ -113,7 +109,7 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
 
 //        MultipartBody.Part filePart = MultipartBody.Part.createFormData("audioData", file.getName(),
 //                RequestBody.create(MediaType.parse("image/*"), file));
-        addSubscribe(mDataManager.uploadRecord(userIdBody,examIdBody,homeworkIdBody,testIdBody,testTypeBody,fileNameBody,fileData)
+        addSubscribe(mDataManager.uploadRecord(userIdBody, examIdBody, homeworkIdBody, testIdBody, testTypeBody, fileNameBody, fileData)
                 .compose(RxUtil.rxSchedulerHelper())
                 .compose(RxUtil.handleTestResult())
                 .subscribeWith(
@@ -138,9 +134,9 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
                             public void onComplete() {
                                 super.onComplete();
                                 current++;
-                                if (current < files.size()){
+                                if (current < files.size()) {
                                     cimmitAnswer();
-                                }else {
+                                } else {
                                     mView.commitSuccess();
                                 }
                             }
@@ -180,7 +176,7 @@ public class SpeakPresenter extends RxPresenter<SpeakContract.View> implements S
 
     @Override
     public String getUserId() {
-        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(),UserVO.class);
+        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
         return userVO.getId();
     }
 

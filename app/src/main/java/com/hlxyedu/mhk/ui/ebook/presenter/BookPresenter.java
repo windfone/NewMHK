@@ -1,7 +1,5 @@
 package com.hlxyedu.mhk.ui.ebook.presenter;
 
-import android.util.Log;
-
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.base.RxBus;
@@ -12,7 +10,6 @@ import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.ebook.contract.BookContract;
-import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
@@ -54,10 +51,10 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
                     @Override
                     public void onNext(CommitEvent s) {
 
-                        if(!mView.isShow()){
+                        if (!mView.isShow()) {
                             return;
                         }
-                        cimmitAnswer((String) s.getAnswer(),s.getExamId(),s.getHomeworkId(),s.getTestId(),s.getTestType());
+                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
                     }
 
                     @Override
@@ -68,9 +65,9 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
         );
     }
 
-    public void cimmitAnswer(String finalAnswer,String paperId,String homeworkId,String testId,String type) {
+    public void cimmitAnswer(String finalAnswer, String paperId, String homeworkId, String testId, String type) {
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId,finalAnswer, paperId,testId,type)
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
@@ -98,7 +95,7 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
 
     @Override
     public String getUserId() {
-        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(),UserVO.class);
+        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
         return userVO.getId();
     }
 
