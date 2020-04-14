@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'walle'
 apply plugin: 'com.jakewharton.butterknife'
 //   执行打包命令  ./gradlew clean assembleReleaseChannels
-//未签名包        ./gradlew clean assembleRelease
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion

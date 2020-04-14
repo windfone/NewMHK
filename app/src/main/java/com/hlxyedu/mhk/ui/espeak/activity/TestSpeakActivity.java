@@ -370,7 +370,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
             mRecorder.stopRecord(this);
 //            record_iv.setVisibility(View.GONE);
 //            record_tv.setVisibility(View.VISIBLE);
-            ToastUtils.showShort("录音完成");
+//            ToastUtils.showShort("录音完成");
         } else {
             mRecorder.stopRecord(null);
         }
@@ -382,7 +382,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     public void onMsgFinish() {
 //        record_view.setVisibility(View.GONE);
 //        waveview.clear();
-        ToastUtils.showShort("录音完成");
+//        ToastUtils.showShort("录音完成");
     }
 
     public void onMsgError(int arg1) {

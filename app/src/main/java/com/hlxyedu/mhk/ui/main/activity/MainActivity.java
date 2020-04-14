@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 
@@ -147,6 +148,9 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
 
     @SuppressLint("CheckResult")
     public void checkPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
         RxPermissions rxPermissions = new RxPermissions((FragmentActivity) this);
         rxPermissions.setLogging(true);
         rxPermissions
