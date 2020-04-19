@@ -8,13 +8,26 @@
     android:orientation="vertical"
     tools:context=".ui.ebook.activity.TestBookActivity">
 
-    <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
-        android:id="@+id/xbase_topbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:isShowLeft_x="true"
-        app:isShowRight_x="false"
-        app:middleText_x="@string/exercise" />
+        android:layout_height="67dp">
+
+        <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
+            android:id="@+id/xbase_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isShowLeft_x="true"
+            app:isShowRight_x="false"
+            app:middleText_x="@string/exercise" />
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll"
@@ -58,9 +71,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="45dp"
             android:layout_marginEnd="35dp"
-            android:layout_alignParentBottom="true"
             android:layout_marginBottom="70dp"
             android:visibility="gone">
 

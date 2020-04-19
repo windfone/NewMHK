@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/whitefff"
     android:orientation="vertical"
     tools:context=".ui.ecomposition.activity.TestTxtActivity">
 
-    <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
-        android:id="@+id/xbase_topbar"
-        app:isShowLeft_x="true"
-        app:isShowRight_x="false"
-        app:middleText_x="@string/exercise"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="67dp">
+
+        <com.hlxyedu.mhk.weight.actionbar.XBaseTopBar
+            android:id="@+id/xbase_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isShowLeft_x="true"
+            app:isShowRight_x="false"
+            app:middleText_x="@string/exercise" />
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll"

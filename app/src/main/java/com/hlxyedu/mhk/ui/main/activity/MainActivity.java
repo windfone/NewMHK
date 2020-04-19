@@ -154,7 +154,8 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
         RxPermissions rxPermissions = new RxPermissions((FragmentActivity) this);
         rxPermissions.setLogging(true);
         rxPermissions
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
+                .requestEach(Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.RECORD_AUDIO)
