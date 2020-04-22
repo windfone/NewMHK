@@ -83,6 +83,26 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
+    public void saveOfflineData(String dataVO) {
+        mPreferencesHelper.saveOfflineData(dataVO);
+    }
+
+    @Override
+    public String getOfflineData() {
+        return mPreferencesHelper.getOfflineData();
+    }
+
+    @Override
+    public void saveReExamComposition(String txt) {
+        mPreferencesHelper.saveReExamComposition(txt);
+    }
+
+    @Override
+    public String getReExamComposition() {
+        return mPreferencesHelper.getReExamComposition();
+    }
+
+    @Override
     public Flowable<HttpResponse<UserVO>> postLoginBody(String mobile, String pwd) {
         return mHttpHelper.postLoginBody(mobile, pwd);
     }
@@ -109,8 +129,8 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
-    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId,String testId,String type) {
-        return mHttpHelper.postExerciseScoreBody(userId, homeworkId, answer, examId,testId,type);
+    public Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(String userId, String homeworkId, String answer, String examId, String testId, String type) {
+        return mHttpHelper.postExerciseScoreBody(userId, homeworkId, answer, examId, testId, type);
     }
 
     @Override

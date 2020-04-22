@@ -6,7 +6,11 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.event.EventsConfig;
+import com.hlxyedu.mhk.model.event.ExitCommitEvent;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
@@ -45,6 +50,8 @@ import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 import com.hlxyedu.mhk.weight.view.WaveView;
 import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
@@ -833,11 +840,43 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     @Override
     public void onBackPressedSupport() {
-        mMaterialDialog.show();
+        setBackHint();
+//        mMaterialDialog.show();
     }
 
     @Override
     public void left() {
+//        mMaterialDialog.show();
+        setBackHint();
+    }
+
+    private DialogPlus mMaterialDialog;
+    private void setBackHint() {
+        WindowManager windowManager = (WindowManager) this
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        mMaterialDialog = DialogPlus.newDialog(this)
+                .setGravity(Gravity.CENTER)
+                .setContentHolder(new ViewHolder(R.layout.dialog_logout))
+                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                .setContentWidth((int) (display
+                        .getWidth() * 0.8))
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setCancelable(false)//设置不可取消   可以取消
+                .setOnClickListener((dialog, view1) -> {
+                    switch (view1.getId()) {
+                        case R.id.btn_neg:
+                            dialog.dismiss();
+                            break;
+                        case R.id.btn_pos:
+                            dialog.dismiss();
+                            finish();
+                            break;
+                    }
+                }).create();
+        TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+        textView.setText("是否退出？");
         mMaterialDialog.show();
     }
 

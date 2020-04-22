@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +29,8 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.event.EventsConfig;
+import com.hlxyedu.mhk.model.event.ExitCommitEvent;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.ListenQOptionModel;
@@ -43,6 +50,8 @@ import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
 import com.lansosdk.videoeditor.LanSoEditor;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.libyuv.LibyuvUtil;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.zhaoss.weixinrecorded.util.CameraHelp;
@@ -110,6 +119,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     private int currentPos; // 当前是第几个答题包
 
+    private int num; // 这套试卷总共有几道题
+
     /**
      * 打开新Activity
      *
@@ -165,8 +176,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
             names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
             zipPath = names;
             fileName = strs[strs.length - 1];
-
-            initVideo();
+//            initVideo();
         }
 
         // 解压文件
@@ -188,6 +198,14 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         viewPager.setNoScroll(true);
         loadDataAndRefreshView();
 
+    }
+
+    // 点Home 键退出，添加续考功能
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.READ));
+        finish();
     }
 
     @Override
@@ -397,7 +415,14 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
             // 获取根元素
             Element root = document.getRootElement();
-            //System.out.println("Root: " + root.getName());
+            // 获取此套试卷有多少道题
+            try {
+                num = Integer.parseInt(root.attributeValue("examnum"));
+            }catch (NumberFormatException e){
+                ToastUtils.showShort("加载试卷失败");
+                return;
+            }
+
             // 获取所有子元素
             List<Element> childList = root.elements();
             //System.out.println("total child count: " + childList.size());
@@ -620,6 +645,58 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     @Override
     public void left() {
+        setBackHint();
+//        mMaterialDialog.show();
+    }
+
+    private DialogPlus mMaterialDialog;
+    private void setBackHint() {
+        WindowManager windowManager = (WindowManager) this
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        mMaterialDialog = DialogPlus.newDialog(this)
+                .setGravity(Gravity.CENTER)
+                .setContentHolder(new ViewHolder(R.layout.dialog_logout))
+                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                .setContentWidth((int) (display
+                        .getWidth() * 0.8))
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setCancelable(false)//设置不可取消   可以取消
+                .setOnClickListener((dialog, view1) -> {
+                    switch (view1.getId()) {
+                        case R.id.btn_neg:
+                            dialog.dismiss();
+                            break;
+                        case R.id.btn_pos:
+                            // 如果答案为空，则说明好在 欢迎界面 还没答题就点了退出键，answer就全部为拼为空
+                            if (StringUtils.isEmpty(answer)){
+                                for (int i = 1; i <= num; i++) {
+                                    if (i == num){
+                                        answer += (i < 10 ? ("0" + i) : i) + "=|" + "finished";
+                                    }else {
+                                        answer += (i < 10 ? ("0" + i) : i) + "=|";
+                                    }
+                                }
+                            }else {
+                                String[] strs = answer.split("\\|");
+                                for (int i = strs.length + 1; i <= num; i++) {
+                                    if (i == num){
+                                        answer += (i < 10 ? ("0" + i) : i) + "=|" + "finished";
+                                    }else {
+                                        answer += (i < 10 ? ("0" + i) : i) + "=|";
+                                    }
+                                }
+                            }
+
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, answer, examId, homeworkId, testId, testType));
+                            dialog.dismiss();
+//                            finish();
+                            break;
+                    }
+                }).create();
+        TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+        textView.setText("是否要提前交卷？");
         mMaterialDialog.show();
     }
 
@@ -944,7 +1021,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     @Override
     public void onBackPressedSupport() {
-        mMaterialDialog.show();
+        setBackHint();
+//        mMaterialDialog.show();
 
         executeCount = segmentList.size() + 4;
         finishVideo();

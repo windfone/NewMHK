@@ -3,6 +3,7 @@ package com.skyworth.rxqwelibrary.base;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.NetworkUtils;
@@ -46,16 +47,8 @@ public abstract class SimpleFragmentActivity extends SupportAutoActivity {
             NetErrorDialog.getInstance().showNetErrorDialog(this);
         }
 
-        /*//设置透明通知栏
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();*/
+        // 禁止截屏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     protected void onViewCreated() {

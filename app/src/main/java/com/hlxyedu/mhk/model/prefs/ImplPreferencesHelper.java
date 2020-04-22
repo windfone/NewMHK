@@ -46,23 +46,23 @@ public class ImplPreferencesHelper implements PreferencesHelper {
     }
 
     @Override
-    public void setLoginStatus(boolean isLogin) {
-        mSPrefs.edit().putBoolean(Constants.LOGIN_STATUS, isLogin).apply();
-    }
-
-    @Override
     public boolean getLoginStatus() {
         return mSPrefs.getBoolean(Constants.LOGIN_STATUS, false);
     }
 
     @Override
-    public void setIsFrist(boolean isFrist) {
-        mSPrefs.edit().putBoolean(Constants.IS_FRIST, isFrist).apply();
+    public void setLoginStatus(boolean isLogin) {
+        mSPrefs.edit().putBoolean(Constants.LOGIN_STATUS, isLogin).apply();
     }
 
     @Override
     public boolean getIsFrist() {
         return mSPrefs.getBoolean(Constants.IS_FRIST, true);
+    }
+
+    @Override
+    public void setIsFrist(boolean isFrist) {
+        mSPrefs.edit().putBoolean(Constants.IS_FRIST, isFrist).apply();
     }
 
     @Override
@@ -80,6 +80,26 @@ public class ImplPreferencesHelper implements PreferencesHelper {
         mSPrefs.edit().remove(Constants.UID).apply();
         mSPrefs.edit().remove(Constants.USER_INFO).apply();
         mSPrefs.edit().remove(Constants.LOGIN_STATUS).apply();
+    }
+
+    @Override
+    public void saveOfflineData(String dataVO) {
+        mSPrefs.edit().putString(Constants.EXAM_DATA, dataVO).apply();
+    }
+
+    @Override
+    public String getOfflineData() {
+        return mSPrefs.getString(Constants.EXAM_DATA, "");
+    }
+
+    @Override
+    public void saveReExamComposition(String txt) {
+        mSPrefs.edit().putString(Constants.REEXAM_COMPOSITION, txt).apply();
+    }
+
+    @Override
+    public String getReExamComposition() {
+        return mSPrefs.getString(Constants.REEXAM_COMPOSITION, "");
     }
 
     @Override

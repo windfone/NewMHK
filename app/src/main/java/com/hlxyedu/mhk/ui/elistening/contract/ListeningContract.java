@@ -15,11 +15,22 @@ public interface ListeningContract {
 
         void commitSuccess(ScoreVO scoreVO);
 
+        void onFinish();
+
         boolean isShow();
+
+        void reUploadAnswer(String s);
+
+        void exitReUploadAnswer(String s);
     }
 
     interface Presenter extends BasePresenter<View> {
 
         String getUserId();
+
+        void cimmitAnswer();
+
+        void exitCommitAnswer();
+
     }
 }

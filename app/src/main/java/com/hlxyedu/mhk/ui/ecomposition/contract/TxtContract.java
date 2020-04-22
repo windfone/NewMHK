@@ -15,12 +15,31 @@ public interface TxtContract {
         void commitSuccess();
 
         boolean isShow();
+
+        void getExitAnswer();
+
+        void onFinish(String str);
+
+        void reUploadAnswer(String s);
+
+        void exitReUploadAnswer(String s);
+
     }
 
     interface Presenter extends BasePresenter<View> {
 
 
         String getUserId();
+
+        void saveReExamCompositon(String txt);
+
+        String getReExamComposition();
+
+        void toExitAnswer(String exitAnswer);
+
+        void cimmitAnswer();
+
+        void exitCommitAnswer(String exitAnswer);
 
     }
 

@@ -1,11 +1,15 @@
 package com.hlxyedu.mhk.ui.elistening.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +36,9 @@ import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.FileUtil;
 import com.hlxyedu.mhk.utils.StringUtils;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -71,6 +78,9 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     private boolean isfirst = true;
 
     private String type;
+
+    // 倒计时
+    private RxTimerUtil rxTimer;
 
     private AudioplayInterface audioPlayListen = new AudioplayInterface() {
 
@@ -143,6 +153,11 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     }
 
     @Override
+    public void onFinish() {
+        mActivity.finish();
+    }
+
+    @Override
     public void commitSuccess(ScoreVO scoreVO) {
         if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
             RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
@@ -154,6 +169,70 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                     "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
                     "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
         }
+    }
+
+    @Override
+    public void reUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus mMaterialDialog = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)//设置不可取消   可以取消
+                        .setOnClickListener((dialog, view1) -> {
+                            switch (view1.getId()) {
+                                case R.id.re_commit_btn:
+                                    mPresenter.cimmitAnswer();
+                                    dialog.dismiss();
+                                    rxTimer.cancel();
+                                    break;
+                            }
+                        }).create();
+                TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                mMaterialDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void exitReUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus dialogPlus = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)
+                        .setOnClickListener((dialog, view) -> {
+                            if (view.getId() == R.id.re_commit_btn) {
+                                mPresenter.exitCommitAnswer();
+                                dialog.dismiss();
+                                rxTimer.cancel();
+                            }
+                        }).create();
+                TextView textView = (TextView) dialogPlus.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                dialogPlus.show();
+            }
+        });
     }
 
     @Nullable
@@ -407,7 +486,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     protected void initEventAndData() {
-
+        rxTimer = new RxTimerUtil();
     }
 
     @Override

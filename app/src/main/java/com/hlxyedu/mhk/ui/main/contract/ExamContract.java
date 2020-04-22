@@ -18,6 +18,8 @@ public interface ExamContract {
         void onSuccess(List<ExamVO> examVOS);
 
         void download();
+
+        void reExamination(String questionType);
     }
 
     interface Presenter extends BasePresenter<View> {

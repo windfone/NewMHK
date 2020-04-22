@@ -2,11 +2,17 @@ package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.ExamVO;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
+import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
+import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
+import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
+import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExamAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
@@ -17,6 +23,7 @@ import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,8 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     private List<ExamVO> dataVOList = new ArrayList<>();
     private int pageSize = 20;
     private int count = 1; // 当前页数;
+
+    private RxTimerUtil rxTimerUtil;
 
 
     public static ExamFragment newInstance() {
@@ -106,6 +115,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
             }
         });
 
+        rxTimerUtil = new RxTimerUtil();
     }
 
     @Override
@@ -136,6 +146,52 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         MoreTaskDLDialog downloadDialog = new MoreTaskDLDialog(mActivity);
         downloadDialog.show();
 
+    }
+
+    @Override
+    public void reExamination(String questionType) {
+        switch (questionType) {
+            case ReExamEvent.LISTENING:
+                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                    @Override
+                    public void doNext(long number) {
+                        startActivity(TestListeningActivity.newInstance(mContext, "考试"));
+                        rxTimerUtil.cancel();
+                    }
+                });
+
+                break;
+            case ReExamEvent.READ:
+                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                    @Override
+                    public void doNext(long number) {
+                        startActivity(TestReadActivity.newInstance(mContext, "考试"));
+                        rxTimerUtil.cancel();
+                    }
+                });
+
+                break;
+            case ReExamEvent.BOOK:
+                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                    @Override
+                    public void doNext(long number) {
+                        startActivity(TestBookActivity.newInstance(mContext, "考试"));
+                        rxTimerUtil.cancel();
+                    }
+                });
+
+                break;
+            case ReExamEvent.COMPOSITION:
+                rxTimerUtil.interval(800, new RxTimerUtil.IRxNext() {
+                    @Override
+                    public void doNext(long number) {
+                        startActivity(TestTxtActivity.newInstance(mContext, "考试"));
+                        rxTimerUtil.cancel();
+                    }
+                });
+
+                break;
+        }
     }
 
     @Override

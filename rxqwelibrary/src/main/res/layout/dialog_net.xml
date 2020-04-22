@@ -22,7 +22,7 @@
         android:layout_marginTop="22dp"
         android:paddingStart="51dp"
         android:paddingEnd="51dp"
-        android:text="您的网络不给力啊，快去查看下手机设置吧"
+        android:text="您的网络不给力啊，快去查看下网络设置吧"
         android:textColor="#494949"
         android:textSize="14sp" />
 

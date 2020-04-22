@@ -56,7 +56,7 @@ public class NetErrorDialog {
                 .setContentWidth((int) (display
                         .getWidth() * 0.8))
                 .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
-                .setCancelable(true)
+                .setCancelable(false)
                 .setOnClickListener((dialog, view) -> {
                     if (view.getId() == R.id.confirm_btn) {
                         dialog.dismiss();

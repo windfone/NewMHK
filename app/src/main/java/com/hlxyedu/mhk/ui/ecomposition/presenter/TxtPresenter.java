@@ -1,13 +1,17 @@
 package com.hlxyedu.mhk.ui.ecomposition.presenter;
 
+import android.util.Log;
+
 import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.CommitEvent;
+import com.hlxyedu.mhk.model.event.ExitCommitEvent;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
 import com.hlxyedu.mhk.utils.RegUtils;
@@ -26,6 +30,10 @@ import retrofit2.adapter.rxjava2.HttpException;
 public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtContract.Presenter {
     private DataManager mDataManager;
 
+    private CommitEvent commitEvent;
+
+    private ExitCommitEvent exitCommitEvent;
+
     @Inject
     public TxtPresenter(DataManager mDataManager) {
         super(mDataManager);
@@ -41,20 +49,71 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
     private void registerEvent() {
 
         addSubscribe(RxBus.getDefault().toFlowable(CommitEvent.class)
-                .compose(RxUtil.<CommitEvent>rxSchedulerHelper())
-                .filter(new Predicate<CommitEvent>() {
+                        .compose(RxUtil.<CommitEvent>rxSchedulerHelper())
+                        .filter(new Predicate<CommitEvent>() {
+                            @Override
+                            public boolean test(@NonNull CommitEvent commitEvent) throws Exception {
+                                return commitEvent.getType().equals(CommitEvent.COMMIT);
+                            }
+                        })
+                        .subscribeWith(new CommonSubscriber<CommitEvent>(mView) {
+                            @Override
+                            public void onNext(CommitEvent s) {
+                                if (!mView.isShow()) {
+                                    return;
+                                }
+                                commitEvent = s;
+                                cimmitAnswer();
+//                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                            }
+                        })
+        );
+
+        addSubscribe(RxBus.getDefault().toFlowable(ExitCommitEvent.class)
+                .compose(RxUtil.<ExitCommitEvent>rxSchedulerHelper())
+                .filter(new Predicate<ExitCommitEvent>() {
                     @Override
-                    public boolean test(@NonNull CommitEvent commitEvent) throws Exception {
-                        return commitEvent.getType().equals(CommitEvent.COMMIT);
+                    public boolean test(@NonNull ExitCommitEvent exitCommitEvent) throws Exception {
+                        return exitCommitEvent.getType().equals(ExitCommitEvent.EXIT_COMMIT);
                     }
                 })
-                .subscribeWith(new CommonSubscriber<CommitEvent>(mView) {
+                .subscribeWith(new CommonSubscriber<ExitCommitEvent>(mView) {
                     @Override
-                    public void onNext(CommitEvent s) {
+                    public void onNext(ExitCommitEvent s) {
                         if (!mView.isShow()) {
                             return;
                         }
-                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
+                        exitCommitEvent = s;
+                        mView.getExitAnswer();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        addSubscribe(RxBus.getDefault().toFlowable(ReExamEvent.class)
+                .compose(RxUtil.<ReExamEvent>rxSchedulerHelper())
+                .filter(new Predicate<ReExamEvent>() {
+                    @Override
+                    public boolean test(@NonNull ReExamEvent reExamEvent) throws Exception {
+                        return reExamEvent.getType().equals(ReExamEvent.SAVE_COMPOSITION);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<ReExamEvent>(mView) {
+                    @Override
+                    public void onNext(ReExamEvent s) {
+                        if (!mView.isShow()) {
+                            return;
+                        }
+                        mView.onFinish("save_answer");
                     }
 
                     @Override
@@ -66,7 +125,17 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
 
     }
 
-    public void cimmitAnswer(String finalAnswer, String paperId, String homeworkId, String testId, String type) {
+    @Override
+    public void cimmitAnswer() {
+        if (!NetworkUtils.isConnected()) {
+            mView.reUploadAnswer("未检测到网络，请连网后重新上传");
+            return;
+        }
+        String finalAnswer = (String) commitEvent.getAnswer();
+        String paperId = commitEvent.getExamId();
+        String homeworkId = commitEvent.getHomeworkId();
+        String testId = commitEvent.getTestId();
+        String type = commitEvent.getTestType();
         addSubscribe(
                 mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
                         .compose(RxUtil.rxSchedulerHelper())
@@ -75,12 +144,64 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        // 提交成功 清空中途程序挂起存储的作文
+                                        mDataManager.saveReExamComposition("");
                                         mView.commitSuccess();
                                     }
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        ToastUtils.showShort(e.getMessage());
+                                        mView.reUploadAnswer("答案上传失败，请重新上传答案");
+                                        //当数据返回为null时 做特殊处理
+                                        if (e instanceof HttpException) {
+                                            HttpResponseCode httpResponseCode = RegUtils
+                                                    .onError((HttpException) e);
+//                                            ToastUtils.showShort(httpResponseCode.getMsg());
+                                        }
+                                        mView.responeError("数据请求失败，请检查网络！");
+                                    }
+
+                                }
+                        )
+        );
+
+
+    }
+
+    @Override
+    public void toExitAnswer(String exitAnswer) {
+//        exitCommitAnswer(exitAnswer, exitCommitEvent.getExamId(), exitCommitEvent.getHomeworkId(), exitCommitEvent.getTestId(), exitCommitEvent.getTestType());
+        exitCommitAnswer(exitAnswer);
+    }
+
+    @Override
+    public void exitCommitAnswer(String exitAnswer) {
+        if (!NetworkUtils.isConnected()) {
+            mView.exitReUploadAnswer("未检测到网络，请连网后重新上传");
+            return;
+        }
+        String finalAnswer = exitAnswer;
+        String paperId = exitCommitEvent.getExamId();
+        String homeworkId = exitCommitEvent.getHomeworkId();
+        String testId = exitCommitEvent.getTestId();
+        String type = exitCommitEvent.getTestType();
+
+        addSubscribe(
+                mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
+                        .compose(RxUtil.rxSchedulerHelper())
+                        .compose(RxUtil.handleTestResult())
+                        .subscribeWith(
+                                new CommonSubscriber<ScoreVO>(mView) {
+                                    @Override
+                                    public void onNext(ScoreVO scoreVO) {
+                                        // 提交成功 清空中途程序挂起存储的作文
+                                        mDataManager.saveReExamComposition("");
+                                        mView.onFinish("");
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        mView.exitReUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
                                             HttpResponseCode httpResponseCode = RegUtils
@@ -99,6 +220,17 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
     public String getUserId() {
         UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
         return userVO.getId();
+    }
+
+    @Override
+    public void saveReExamCompositon(String txt) {
+        mDataManager.saveReExamComposition(txt);
+    }
+
+    @Override
+    public String getReExamComposition() {
+        String txt = mDataManager.getReExamComposition();
+        return txt;
     }
 
 }

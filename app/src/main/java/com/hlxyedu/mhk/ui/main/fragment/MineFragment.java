@@ -111,7 +111,7 @@ public class MineFragment extends RootFragment<MinePresenter> implements MineCon
                         .setContentWidth((int) (display
                                 .getWidth() * 0.8))
                         .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
-                        .setCancelable(true)//设置不可取消   可以取消
+                        .setCancelable(false)//设置不可取消   可以取消
                         .setOnClickListener((dialog, view1) -> {
                             switch (view1.getId()) {
                                 case R.id.btn_neg:

@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +21,6 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
@@ -24,6 +28,8 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.event.EventsConfig;
+import com.hlxyedu.mhk.model.event.ExitCommitEvent;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
@@ -42,6 +48,8 @@ import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
 import com.lansosdk.videoeditor.LanSoEditor;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.libyuv.LibyuvUtil;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.zhaoss.weixinrecorded.util.CameraHelp;
@@ -107,6 +115,30 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     private int currentPos; // 当前是第几个答题包
 
+    private String final_answer = "";// 最终提交的答案 字符串
+    private SurfaceView surfaceView;
+    private ArrayList<String> segmentList = new ArrayList<>();//分段视频地址
+    private ArrayList<String> aacList = new ArrayList<>();//分段音频地址
+    private ArrayList<Long> timeList = new ArrayList<>();//分段录制时间
+    //是否在录制视频
+    private AtomicBoolean isRecordVideo = new AtomicBoolean(false);
+    //拍照
+    private CameraHelp mCameraHelp = new CameraHelp();
+    private SurfaceHolder mSurfaceHolder;
+    private MyVideoEditor mVideoEditor = new MyVideoEditor();
+    private RecordUtil recordUtil;
+    //    private int executeCount;//总编译次数
+//    private float executeProgress;//编译进度
+    private String audioPath;
+    private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
+    private String videos;
+    private long videoDuration;
+    private long recordTime;
+
+    //--------------------------------------------------------------------------------------------------//
+    private String videoPath;
+    //--------------------------------------------------------------------------------------------------//
+
     /**
      * 打开新Activity
      *
@@ -118,6 +150,17 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         intent.putExtra("from", from);
         return intent;
     }
+
+  /*  @Override
+    public void onBackPressedSupport() {
+        mMaterialDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        rxTimer.cancel();
+        super.onDestroy();
+    }*/
 
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestTxtActivity.class);
@@ -180,13 +223,24 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
             zipPath = names;
             fileName = strs[strs.length - 1];
-
-            initVideo();
+//            initVideo();
         }
 
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
     }
+
+    // 点Home 键退出，添加续考功能
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.SAVE_COMPOSITION));
+//        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
+//        finish();
+    }
+
+
+    // ****************************************************************** //
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
@@ -220,7 +274,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
                 // 结束的页面
                 if (currentItem == txtFragments.size() - 1) {
-                    String final_answer = (String) event.getData();
+                    final_answer = (String) event.getData();
                     RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
                 }
 
@@ -509,32 +563,51 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     }
 
-    //--------------------------------------------------------------------------------------------------//
-
     @Override
     protected void initInject() {
         getActivityComponent().inject(this);
     }
-    //--------------------------------------------------------------------------------------------------//
 
     @Override
     protected int getLayout() {
         return R.layout.activity_test_txt;
     }
 
-  /*  @Override
-    public void onBackPressedSupport() {
-        mMaterialDialog.show();
-    }
-
-    @Override
-    protected void onDestroy() {
-        rxTimer.cancel();
-        super.onDestroy();
-    }*/
-
     @Override
     public void left() {
+//        mMaterialDialog.show();
+        setBackHint();
+        finishVideo();
+    }
+
+    //    private DialogPlus mMaterialDialog;
+    private void setBackHint() {
+        WindowManager windowManager = (WindowManager) this
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        DialogPlus mMaterialDialog = DialogPlus.newDialog(this)
+                .setGravity(Gravity.CENTER)
+                .setContentHolder(new ViewHolder(R.layout.dialog_logout))
+                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                .setContentWidth((int) (display
+                        .getWidth() * 0.8))
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setCancelable(false)//设置不可取消   可以取消
+                .setOnClickListener((dialog, view1) -> {
+                    switch (view1.getId()) {
+                        case R.id.btn_neg:
+                            dialog.dismiss();
+                            break;
+                        case R.id.btn_pos:
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, examId, homeworkId, testId, testType));
+                            dialog.dismiss();
+//                            finish();
+                            break;
+                    }
+                }).create();
+        TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+        textView.setText("是否要提前交卷？");
         mMaterialDialog.show();
     }
 
@@ -543,70 +616,11 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     }
 
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
-    }
-
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_WRITE));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
-        }
-    }
-
-
-    // ****************************************************************** //
-
-    private SurfaceView surfaceView;
-
-    private ArrayList<String> segmentList = new ArrayList<>();//分段视频地址
-    private ArrayList<String> aacList = new ArrayList<>();//分段音频地址
-    private ArrayList<Long> timeList = new ArrayList<>();//分段录制时间
-
-    //是否在录制视频
-    private AtomicBoolean isRecordVideo = new AtomicBoolean(false);
-    //拍照
-    private CameraHelp mCameraHelp = new CameraHelp();
-    private SurfaceHolder mSurfaceHolder;
-    private MyVideoEditor mVideoEditor = new MyVideoEditor();
-    private RecordUtil recordUtil;
-
-    private int executeCount;//总编译次数
-    private float executeProgress;//编译进度
-    private String audioPath;
-    private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
-
-    private String videos;
-
     private void initVideo() {
 
         LanSoEditor.initSDK(this, null);
-        videos = "/sdcard/AAAAAAA/" + System.currentTimeMillis() + "/";
+//        videos = "/sdcard/AAAAAAA/" + System.currentTimeMillis() + "/";
+        videos = AppConstants.VIDEO_RECORDING_PATH + System.currentTimeMillis() + "/";
         LanSongFileUtil.setFileDir(videos);
         LibyuvUtil.loadLibrary();
 
@@ -750,10 +764,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         return pcmPath;
     }
 
-    private long videoDuration;
-    private long recordTime;
-    private String videoPath;
-
     private void startRecord() {
 
         RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
@@ -827,7 +837,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         }
     }
 
-
     /**
      * 清除录制信息
      */
@@ -837,8 +846,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         aacList.clear();
         timeList.clear();
 
-        executeCount = 0;
-        executeProgress = 0;
+//        executeCount = 0;
+//        executeProgress = 0;
 
     }
 
@@ -856,14 +865,51 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         }
     }
 
-    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
-
     @Override
     public void onBackPressedSupport() {
-        mMaterialDialog.show();
+        setBackHint();
+//        mMaterialDialog.show();
 
-        executeCount = segmentList.size() + 4;
+//        executeCount = segmentList.size() + 4;
         finishVideo();
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_WRITE));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
     }
     // ****************************************************************** //
 }

@@ -29,7 +29,7 @@ import javax.inject.Inject;
  */
 public abstract class BaseFragmentActivity<T extends BasePresenter> extends SimpleFragmentActivity implements BaseView {
 
-    protected DialogPlus mMaterialDialog;
+//    protected DialogPlus mMaterialDialog;
 
     @Inject
     protected T mPresenter;
@@ -90,10 +90,10 @@ public abstract class BaseFragmentActivity<T extends BasePresenter> extends Simp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBackHint();
+//        setBackHint();
     }
 
-    private void setBackHint() {
+    /*private void setBackHint() {
         WindowManager windowManager = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
@@ -105,7 +105,7 @@ public abstract class BaseFragmentActivity<T extends BasePresenter> extends Simp
                 .setContentWidth((int) (display
                         .getWidth() * 0.8))
                 .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
-                .setCancelable(true)//设置不可取消   可以取消
+                .setCancelable(false)//设置不可取消   可以取消
                 .setOnClickListener((dialog, view1) -> {
                     switch (view1.getId()) {
                         case R.id.btn_neg:
@@ -118,7 +118,7 @@ public abstract class BaseFragmentActivity<T extends BasePresenter> extends Simp
                     }
                 }).create();
         TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
-        textView.setText("退出测试将不会保留答案，是否仍要退出？");
-    }
+        textView.setText("是否要提前交卷？");
+    }*/
 
 }

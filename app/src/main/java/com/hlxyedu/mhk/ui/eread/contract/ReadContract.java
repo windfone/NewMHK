@@ -16,10 +16,21 @@ public interface ReadContract {
         void commitSuccess(ScoreVO scoreVO);
 
         boolean isShow();
+
+        void onFinish();
+
+        void reUploadAnswer(String s);
+
+        void exitReUploadAnswer(String s);
     }
 
     interface Presenter extends BasePresenter<View> {
 
         String getUserId();
+
+        void cimmitAnswer();
+
+        void exitCommitAnswer();
+
     }
 }

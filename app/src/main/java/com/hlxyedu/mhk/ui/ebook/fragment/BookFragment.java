@@ -1,11 +1,15 @@
 package com.hlxyedu.mhk.ui.ebook.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +32,9 @@ import com.hlxyedu.mhk.ui.ebook.presenter.BookPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.StringUtils;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,41 +47,35 @@ import java.util.ArrayList;
 public class BookFragment extends RootFragment<BookPresenter> implements BookContract.View, ListenQuestionItemView.onAnswerClickListener {
 
 
-
     private static final String TAG = BookFragment.class.getSimpleName();
-
+    //下一页
+    private static final int NEXT_PAGE = 0x03;
+    //下一个数据
+    private static final int NEXT_TRAIN = 0x05;
+    //整套试卷的 听力部分已经播放完毕，跳转 activity
+    private static final int NEXT_PART = 0x07;
     private View view;
     //数据中心
     private PageModel pageModel;
-
     //父 的布局
     private LinearLayout base_layout;
-
     // 结束页面控制显示隐藏
     private TextView waitText;
     private TextView successHintText;
     private Button finishBtn;
-
-    //下一页
-    private static final int NEXT_PAGE = 0x03;
-
-    //下一个数据
-    private static final int NEXT_TRAIN = 0x05;
-
-    //整套试卷的 听力部分已经播放完毕，跳转 activity
-    private static final int NEXT_PART = 0x07;
-
     //判断欢迎页面
     private boolean isWelcome = true;
 
-    private ArrayList<String> answers =new ArrayList<String>();
+    private ArrayList<String> answers = new ArrayList<String>();
 
-    private ArrayList<String> questions =new ArrayList<String>();
+    private ArrayList<String> questions = new ArrayList<String>();
 
     //数组长度
-    private int op_long=0;
+    private int op_long = 0;
 
     private String type;
+
+    private RxTimerUtil rxTimer;
 
     public static BookFragment newInstance() {
         Bundle args = new Bundle();
@@ -86,7 +87,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     public static BookFragment newInstance(String type) {
         Bundle args = new Bundle();
-        args.putString("type",type);
+        args.putString("type", type);
         BookFragment fragment = new BookFragment();
         fragment.setArguments(args);
         return fragment;
@@ -107,10 +108,15 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     }
 
     @Override
+    public void onFinish() {
+        mActivity.finish();
+    }
+
+    @Override
     public void commitSuccess(ScoreVO scoreVO) {
-        if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+        if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
             RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
-        }else {
+        } else {
             waitText.setVisibility(View.GONE);
             successHintText.setVisibility(View.VISIBLE);
             finishBtn.setVisibility(View.VISIBLE);
@@ -118,7 +124,70 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                     "您在该测试中，答对" + scoreVO.getRightcount() + "题，答错" + scoreVO.getWrongcount() + "题。\n" +
                     "答对的题号有第 " + scoreVO.getRightTitle() + " 题，" + "\n答错的题号有第 " + scoreVO.getWrongTitle() + " 题。");
         }
+    }
 
+    @Override
+    public void reUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus mMaterialDialog = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)//设置不可取消   可以取消
+                        .setOnClickListener((dialog, view1) -> {
+                            switch (view1.getId()) {
+                                case R.id.re_commit_btn:
+                                    mPresenter.cimmitAnswer();
+                                    dialog.dismiss();
+                                    rxTimer.cancel();
+                                    break;
+                            }
+                        }).create();
+                TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                mMaterialDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void exitReUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus dialogPlus = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)
+                        .setOnClickListener((dialog, view) -> {
+                            if (view.getId() == R.id.re_commit_btn) {
+                                mPresenter.exitCommitAnswer();
+                                dialog.dismiss();
+                                rxTimer.cancel();
+                            }
+                        }).create();
+                TextView textView = (TextView) dialogPlus.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                dialogPlus.show();
+            }
+        });
     }
 
     @Nullable
@@ -131,19 +200,19 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
             case PageModel.huanying:
                 view = View.inflate(getActivity(), R.layout.fragment_test_layout,
                         null);
-                base_layout = getView(view,R.id.base_layout);
+                base_layout = getView(view, R.id.base_layout);
                 startTraining();
                 break;
             case PageModel.BOOK_shumianbiaoda:
                 view = View.inflate(getActivity(), R.layout.fragment_test_layout,
                         null);
-                base_layout = getView(view,R.id.base_layout);
+                base_layout = getView(view, R.id.base_layout);
                 break;
 
             case PageModel.jieshu:
-                if (com.blankj.utilcode.util.StringUtils.equals(type,"考试")){
+                if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
                     view = View.inflate(getActivity(), R.layout.fragment_exam_finish, null);
-                }else {
+                } else {
                     view = View.inflate(getActivity(), R.layout.fragment_test_finish, null);
                     waitText = getView(view, R.id.wait_text);
                     successHintText = getView(view, R.id.success_hint_text);
@@ -161,21 +230,20 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     /**
      * 开始遍历数据
      */
-    private void startTraining(){
+    private void startTraining() {
         // 第一次 2
         // 第二次 3
         //如果是结束页面 则直接返回
-        if(pageModel.getType().equals(PageModel.jieshu))
-        {
+        if (pageModel.getType().equals(PageModel.jieshu)) {
             return;
         }
 
-        if(pageModel.getType().equals(PageModel.huanying)&&isWelcome){
+        if (pageModel.getType().equals(PageModel.huanying) && isWelcome) {
             isWelcome = false;
             return;
         }
 
-        if(pageModel.getBasePageModels()!=null) {
+        if (pageModel.getBasePageModels() != null) {
             for (int i = 0; i < pageModel.getBasePageModels().size(); i++) {
                 BasePageModel basePageModel = pageModel.getBasePageModels().get(i);
                 if (!basePageModel.isShow()) {
@@ -188,8 +256,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                 }
             }
         }
-        if(!pageModel.getType().equals(PageModel.jieshu))
-        {
+        if (!pageModel.getType().equals(PageModel.jieshu)) {
 //            if (AppContext.getInstance().getProperty("examType").equals("ZH")){
 //                if (AppContext.getInstance().getCurrentItem() < AppContext.getInstance().getAllItem()-1){
 //                    //下一个fragment
@@ -215,22 +282,20 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     /**
      * 根据type去执行
      */
-    private void doTraining(BasePageModel basePageModel){
-        switch (basePageModel.getType())
-        {
+    private void doTraining(BasePageModel basePageModel) {
+        switch (basePageModel.getType()) {
             case BasePageModel.TEXT:
 
-                if(!StringUtils.isEmpty(basePageModel.getContent())){
+                if (!StringUtils.isEmpty(basePageModel.getContent())) {
                     TextView textView = new TextView(getContext());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     base_layout.addView(textView, layoutParams);
                     // textView.setPadding(80,0,80,0);
-                    String title=null;
+                    String title = null;
 
-                    try{
-                        title = basePageModel.getQuestionid().split("_")[1]+"."+"  "+basePageModel.getContent();
-                    }catch (ArrayIndexOutOfBoundsException ex)
-                    {
+                    try {
+                        title = basePageModel.getQuestionid().split("_")[1] + "." + "  " + basePageModel.getContent();
+                    } catch (ArrayIndexOutOfBoundsException ex) {
                         title = basePageModel.getContent();
                     }
                     textView.setText(title);
@@ -239,33 +304,28 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                 startTraining();
                 break;
             case BasePageModel.RICHTEXT:
-                if(basePageModel.getSuffix().equals("png"))
-                {
+                if (basePageModel.getSuffix().equals("png")) {
                     ImageView imageView = new ImageView(getContext());
-                    RelativeLayout.LayoutParams  layoutParams =  new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    base_layout.addView(imageView,layoutParams);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    base_layout.addView(imageView, layoutParams);
                     Glide.with(getContext())
                             .load(basePageModel.getSrc())
                             .into(imageView);
 
-                }else{
-                    if(!StringUtils.isEmpty(basePageModel.getSrc()))
-                    {
+                } else {
+                    if (!StringUtils.isEmpty(basePageModel.getSrc())) {
                         TextView textView = new TextView(getContext());
                         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        base_layout.addView(textView,layoutParams);
+                        base_layout.addView(textView, layoutParams);
                         //textView.setPadding(80,40,80,0);
                         try {
                             FileInputStream fileInputStream = new FileInputStream(basePageModel.getSrc());
                             String title = StringUtils.toConvertString(fileInputStream);
                             textView.setText(title);
-                        }catch (FileNotFoundException ex)
-                        {
-                            LogUtils.d(TAG,"没找到文件"+basePageModel.getSrc());
-                        }
-                        catch (UnsupportedEncodingException ex)
-                        {
-                            LogUtils.d(TAG,"编码错误"+basePageModel.getSrc());
+                        } catch (FileNotFoundException ex) {
+                            LogUtils.d(TAG, "没找到文件" + basePageModel.getSrc());
+                        } catch (UnsupportedEncodingException ex) {
+                            LogUtils.d(TAG, "编码错误" + basePageModel.getSrc());
                         }
                     }
                 }
@@ -276,13 +336,13 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                 ListenQuestionItemView questionItemView = new ListenQuestionItemView(getContext());
                 questionItemView.setData(basePageModel);
                 questionItemView.setId(op_long);
-                answers.add(op_long,"");
-                questions.add(basePageModel.getQuestionid().substring(basePageModel.getQuestionid().length()-2,basePageModel.getQuestionid().length())); // 将题号存起来
+                answers.add(op_long, "");
+                questions.add(basePageModel.getQuestionid().substring(basePageModel.getQuestionid().length() - 2, basePageModel.getQuestionid().length())); // 将题号存起来
                 op_long++;
                 questionItemView.setAnswerClickListener(this);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 base_layout.addView(questionItemView, layoutParams);
-                getView(questionItemView,R.id.question_title).setVisibility(View.GONE);
+                getView(questionItemView, R.id.question_title).setVisibility(View.GONE);
                 //questionItemView.setPadding(80,0,80,80);
                 startTraining();
                 break;
@@ -304,38 +364,38 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     @Override
     public void handleMessage(Message msg) {
         //不显示时 不影响倒计时
-        if(!isVisible())
+        if (!isVisible())
             return;
 
         super.handleMessage(msg);
         switch (msg.what) {
             case NEXT_PAGE:
-                String data="";
-                if(answers!=null) {
+                String data = "";
+                if (answers != null) {
                     for (int i = 0; i < answers.size(); i++) {
-                        data += questions.get(i) + "=" +answers.get(i) + "|";
+                        data += questions.get(i) + "=" + answers.get(i) + "|";
                     }
                 }
-                RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE,EventsConfig.TEST_NEXT_PAGE,data));
+                RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_PAGE, data));
                 break;
             case NEXT_TRAIN:
                 startTraining();
                 break;
             case NEXT_PART:
-                String data1="";
-                if(answers!=null) {
+                String data1 = "";
+                if (answers != null) {
                     for (int i = 0; i < answers.size(); i++) {
-                        data1 += questions.get(i) + "=" +answers.get(i) + "|";
+                        data1 += questions.get(i) + "=" + answers.get(i) + "|";
                     }
                 }
-                RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE,EventsConfig.TEST_NEXT_PART,data1));
+                RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_PART, data1));
                 break;
         }
     }
 
     @Override
     public void setAnswer(View view, String answer) {
-        answers.set(view.getId(),answer);
+        answers.set(view.getId(), answer);
     }
 
     public PageModel getPageModel() {
@@ -358,8 +418,9 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     protected void initEventAndData() {
-
+        rxTimer = new RxTimerUtil();
     }
+
     @Override
     public void responeError(String errorMsg) {
 

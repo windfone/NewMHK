@@ -1,15 +1,19 @@
 package com.hlxyedu.mhk.ui.ecomposition.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,11 +28,15 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.EventsConfig;
 import com.hlxyedu.mhk.model.event.ExamEvent;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
 import com.hlxyedu.mhk.ui.ecomposition.presenter.TxtPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 /**
  * Created by zhangguihua
@@ -51,9 +59,12 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
     private boolean isWelcome = true;
     //数据中心
     private PageModel pageModel;
-    private String answer;
+    private String answer = "";
 
     private String type;
+
+    // 倒计时
+    private RxTimerUtil rxTimer;
 
     public static TxtFragment newInstance() {
         Bundle args = new Bundle();
@@ -87,6 +98,21 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
     }
 
     @Override
+    public void onFinish(String str) {
+        // 这个if 判断是 保存按home键退出的时候，保存已经填写的 作文部分，重新考的时候显示到上面
+        if (!StringUtils.isEmpty(str)) {
+            mPresenter.saveReExamCompositon(answer);
+            RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
+        }
+        mActivity.finish();
+    }
+
+    @Override
+    public void getExitAnswer() {
+        mPresenter.toExitAnswer(answer);
+    }
+
+    @Override
     public void commitSuccess() {
         if (StringUtils.equals(type, "考试")) {
             RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
@@ -97,6 +123,72 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
             successHintText.setText("恭喜您该试卷已经顺利完成～\n" +
                     "祝您取得理想的成绩！");
         }
+    }
+
+    @Override
+    public void reUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus mMaterialDialog = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)//设置不可取消   可以取消
+                        .setOnClickListener((dialog, view1) -> {
+                            switch (view1.getId()) {
+                                case R.id.re_commit_btn:
+                                    mPresenter.cimmitAnswer();
+                                    dialog.dismiss();
+                                    rxTimer.cancel();
+                                    break;
+                            }
+                        }).create();
+                TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                mMaterialDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void exitReUploadAnswer(String str) {
+        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                WindowManager windowManager = (WindowManager) mActivity
+                        .getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+
+                DialogPlus mMaterialDialog = DialogPlus.newDialog(mActivity)
+                        .setGravity(Gravity.CENTER)
+                        .setContentHolder(new ViewHolder(R.layout.dialog_reupload))
+                        .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                        .setContentWidth((int) (display
+                                .getWidth() * 0.8))
+                        .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .setCancelable(false)//设置不可取消   可以取消
+                        .setOnClickListener((dialog, view1) -> {
+                            switch (view1.getId()) {
+                                case R.id.re_commit_btn:
+                                    mPresenter.exitCommitAnswer(answer);
+                                    dialog.dismiss();
+                                    rxTimer.cancel();
+                                    break;
+                            }
+                        }).create();
+                TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
+                textView.setText(str);
+                mMaterialDialog.show();
+            }
+        });
     }
 
     @Nullable
@@ -220,6 +312,8 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                         editText.setGravity(Gravity.TOP);
                         editText.setPadding(10, 10, 10, 10);
                         editText.setHeight(500);
+                        answer = mPresenter.getReExamComposition();
+                        editText.setText(answer);
 
                         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams2.setMargins(0, 0, 0, 800);
@@ -249,11 +343,11 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
 //                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
+                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:58"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
 //                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
+                baseEvents.setData(CommonUtils.delayTime("00:00:58") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;
@@ -278,7 +372,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
 
     @Override
     protected void initEventAndData() {
-
+        rxTimer = new RxTimerUtil();
     }
 
     @Override

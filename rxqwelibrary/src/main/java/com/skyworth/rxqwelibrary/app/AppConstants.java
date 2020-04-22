@@ -78,6 +78,7 @@ public class AppConstants {
         RECORD_DOWNLOAD_PATH = DOWNLOAD_PATH + "audio" + File.separator;
         FILE_DOWNLOAD_PATH = DOWNLOAD_PATH + "files" + File.separator;
         UNFILE_DOWNLOAD_PATH = DOWNLOAD_PATH + "unzip" + File.separator;
+        VIDEO_RECORDING_PATH = DOWNLOAD_PATH + "video" + File.separator;
         APK_DOWNLOAD_PATH = DOWNLOAD_PATH + "apk" + File.separator;
         RECORD_PRACTICE_PATH = PARENT_FOLD_PATH + "record" + File.separator + "practice" + File.separator;
         RECORD_EXAM_PATH = PARENT_FOLD_PATH + "record" + File.separator + "exam" + File.separator;
@@ -109,6 +110,11 @@ public class AppConstants {
      * 解压文件存储地址
      */
     public static  String UNFILE_DOWNLOAD_PATH = "";
+
+    /**
+     * 录制视频地址
+     */
+    public static  String VIDEO_RECORDING_PATH = "";
 
     //-----------------------------------------------//
     /**

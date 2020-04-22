@@ -42,4 +42,14 @@ public interface PreferencesHelper {
 
     void clearLoginInfo();
 
+    // 保存考试过程中退出 考试进程数据
+    void saveOfflineData(String dataVO);
+
+    String getOfflineData();
+
+    // 保存按home 键退出的时候写的作文题，续考时自动填上
+    void saveReExamComposition(String txt);
+
+    String getReExamComposition();
+
 }

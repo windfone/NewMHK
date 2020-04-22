@@ -14,9 +14,6 @@ import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
 import com.hlxyedu.mhk.ui.main.contract.MainContract;
 import com.hlxyedu.mhk.ui.main.fragment.ExamFragment;
-import com.hlxyedu.mhk.ui.main.fragment.ExerciseFragment;
-import com.hlxyedu.mhk.ui.main.fragment.MineFragment;
-import com.hlxyedu.mhk.ui.main.fragment.OperationFragment;
 import com.hlxyedu.mhk.ui.main.presenter.MainPresenter;
 import com.hlxyedu.mhk.utils.PermissionSettingUtil;
 import com.hlxyedu.mhk.weight.bottombar.BottomBar;
@@ -33,18 +30,20 @@ import me.yokeyword.fragmentation.SupportFragment;
  */
 public class MainActivity extends RootFragmentActivity<MainPresenter> implements MainContract.View {
 
-    public static final int FIRST = 0;
-    public static final int SECOND = 1;
-    public static final int THIRD = 2;
-    public static final int FOURTH = 3;
+        public static final int FIRST = 0;
+//    public static final int SECOND = 1;
+//    public static final int THIRD = 2;
+    //    public static final int FOURTH = 3;
     @BindView(R.id.bottomBar)
     BottomBar mBottomBar;
-    List<String> navigations = Arrays.asList("练习", "作业", "考试", "我的");
-    List<Integer> bottomIcons = Arrays.asList(R.drawable.icon_bar_selector_exercise, R.drawable.icon_bar_selector_operation,
-            R.drawable.icon_bar_selector_exam, R.drawable.icon_bar_selector_mine);
-    private SupportFragment[] mFragments = new SupportFragment[4];
-//    @BindView(R.id.main_topbar)
-//    MainTopBar main_topbar;
+//    List<String> navigations = Arrays.asList("练习", "作业", "考试", "我的");
+//    List<Integer> bottomIcons = Arrays.asList(R.drawable.icon_bar_selector_exercise, R.drawable.icon_bar_selector_operation,
+//            R.drawable.icon_bar_selector_exam, R.drawable.icon_bar_selector_mine);
+//    private SupportFragment[] mFragments = new SupportFragment[4];
+
+    List<String> navigations = Arrays.asList("考试");
+    List<Integer> bottomIcons = Arrays.asList(R.drawable.icon_bar_selector_exam);
+    private SupportFragment[] mFragments = new SupportFragment[1];
 
     /**
      * 打开新Activity
@@ -74,23 +73,27 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         mBottomBar.initBottomBar(screenWidth, MainActivity.this, navigations, bottomIcons);
 
-        SupportFragment firstFragment = findFragment(ExerciseFragment.class);
-        if (firstFragment == null) {
-            mFragments[FIRST] = ExerciseFragment.newInstance();
-            mFragments[SECOND] = OperationFragment.newInstance();
-            mFragments[THIRD] = ExamFragment.newInstance();
-            mFragments[FOURTH] = MineFragment.newInstance();
+//        SupportFragment firstFragment = findFragment(ExerciseFragment.class);
+        SupportFragment thirdFragment = findFragment(ExamFragment.class);
+        if (thirdFragment == null) {
+//            mFragments[FIRST] = ExerciseFragment.newInstance();
+//            mFragments[SECOND] = OperationFragment.newInstance();
+            mFragments[FIRST] = ExamFragment.newInstance();
+//            mFragments[FOURTH] = MineFragment.newInstance();
+//
+//            loadMultipleRootFragment(R.id.fl_tab_container, FIRST,
+//                    mFragments[FIRST], mFragments[SECOND], mFragments[THIRD], mFragments[FOURTH]);
+            loadMultipleRootFragment(R.id.fl_tab_container, FIRST, mFragments[FIRST]);
 
-            loadMultipleRootFragment(R.id.fl_tab_container, FIRST,
-                    mFragments[FIRST], mFragments[SECOND], mFragments[THIRD], mFragments[FOURTH]);
         } else {
             // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题
 
             // 这里我们需要拿到mFragments的引用,也可以通过getChildFragmentManager.findFragmentByTag自行进行判断查找(效率更高些),用下面的方法查找更方便些
-            mFragments[FIRST] = firstFragment;
-            mFragments[SECOND] = findFragment(OperationFragment.class);
-            mFragments[THIRD] = findFragment(ExamFragment.class);
-            mFragments[FOURTH] = findFragment(MineFragment.class);
+            mFragments[FIRST] = thirdFragment;
+//            mFragments[FIRST] = firstFragment;
+//            mFragments[SECOND] = findFragment(OperationFragment.class);
+//            mFragments[THIRD] = findFragment(ExamFragment.class);
+//            mFragments[FOURTH] = findFragment(MineFragment.class);
         }
 
         initView();
