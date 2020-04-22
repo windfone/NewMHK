@@ -210,6 +210,9 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
+        // 保持屏幕唤醒状态
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
 
