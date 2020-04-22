@@ -234,9 +234,9 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     @Override
     protected void onRestart() {
         super.onRestart();
-        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.SAVE_COMPOSITION));
-//        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
-//        finish();
+//        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.SAVE_COMPOSITION));
+        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
+        finish();
     }
 
 

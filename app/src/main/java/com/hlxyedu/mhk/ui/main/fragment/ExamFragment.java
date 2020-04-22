@@ -182,7 +182,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
                 break;
             case ReExamEvent.COMPOSITION:
-                rxTimerUtil.interval(800, new RxTimerUtil.IRxNext() {
+                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
                     @Override
                     public void doNext(long number) {
                         startActivity(TestTxtActivity.newInstance(mContext, "考试"));

@@ -100,10 +100,11 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
     @Override
     public void onFinish(String str) {
         // 这个if 判断是 保存按home键退出的时候，保存已经填写的 作文部分，重新考的时候显示到上面
-        if (!StringUtils.isEmpty(str)) {
+        // 这里关联的是 TestTxtActivity中onRestart()方法的RxBus,废弃掉换写法
+        /*if (!StringUtils.isEmpty(str)) {
             mPresenter.saveReExamCompositon(answer);
             RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
-        }
+        }*/
         mActivity.finish();
     }
 
@@ -331,6 +332,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                             @Override
                             public void afterTextChanged(Editable s) {
                                 answer = s.toString();
+                                mPresenter.saveReExamCompositon(answer);
                             }
                         });
                     }
@@ -343,11 +345,11 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
 //                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:58"));
+                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
 //                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-                baseEvents.setData(CommonUtils.delayTime("00:00:58") / 1000);
+                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;
