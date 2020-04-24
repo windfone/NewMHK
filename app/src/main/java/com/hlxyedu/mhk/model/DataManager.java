@@ -143,4 +143,9 @@ public class DataManager implements HttpHelper, PreferencesHelper {
         return mHttpHelper.uploadRecord(userId, examId, homeworkId, testId, testType, fileName, fileData);
     }
 
+    @Override
+    public Flowable<HttpResponse<String>> uploadVideo(RequestBody userId, RequestBody examId, RequestBody testId, RequestBody type, RequestBody fileName, MultipartBody.Part fileData) {
+        return mHttpHelper.uploadVideo(userId, examId, testId, type, fileName, fileData);
+    }
+
 }

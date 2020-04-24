@@ -6,6 +6,11 @@ public class CommitEvent {
 
     private String type;
 
+    // 解压文件路径，考试完成后删除
+    private String unzip;
+
+    private String zip;
+
     private Object answer;
 
     private String examId;
@@ -31,8 +36,10 @@ public class CommitEvent {
         this.testId = testId;
     }*/
 
-    public CommitEvent(String type, Object answer,String examId,String homeworkId,String testId,String testType) {
+    public CommitEvent(String type,String zip,String unzip, Object answer,String examId,String homeworkId,String testId,String testType) {
         this.type = type;
+        this.zip = zip;
+        this.unzip = unzip;
         this.answer = answer;
         this.examId = examId;
         this.homeworkId = homeworkId;
@@ -46,6 +53,22 @@ public class CommitEvent {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public String getUnzip() {
+        return unzip;
+    }
+
+    public void setUnzip(String unzip) {
+        this.unzip = unzip;
     }
 
     public Object getAnswer() {

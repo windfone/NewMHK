@@ -44,4 +44,11 @@ public interface HttpHelper {
                                                 RequestBody testType,
                                                 RequestBody fileName,
                                                 MultipartBody.Part fileData);
+
+    Flowable<HttpResponse<String>> uploadVideo(RequestBody userId,
+                                               RequestBody examId,
+                                               RequestBody testId,
+                                               RequestBody type,
+                                               RequestBody fileName,
+                                               MultipartBody.Part fileData);
 }

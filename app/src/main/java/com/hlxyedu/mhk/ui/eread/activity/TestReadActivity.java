@@ -176,7 +176,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
             names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
             zipPath = names;
             fileName = strs[strs.length - 1];
-//            initVideo();
+            initVideo();
         }
 
         // 解压文件
@@ -226,7 +226,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //                        final_answer = answer.substring(0, answer.length() - 1) + "finished";
                         final_answer = answer + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,final_answer, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
@@ -649,7 +649,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     @Override
     public void left() {
         setBackHint();
-//        mMaterialDialog.show();
     }
 
     private DialogPlus mMaterialDialog;
@@ -692,7 +691,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                                 }
                             }
 
-                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, answer, examId, homeworkId, testId, testType));
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,answer, examId, homeworkId, testId, testType));
                             dialog.dismiss();
 //                            finish();
                             break;
@@ -760,22 +759,26 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     private MyVideoEditor mVideoEditor = new MyVideoEditor();
     private RecordUtil recordUtil;
 
-    private int executeCount;//总编译次数
-    private float executeProgress;//编译进度
     private String audioPath;
     private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
 
     private String videos;
+    // 倒计时到随机数的时候开始录制视频
+    private int COUNT = 0;
+    private RxTimerUtil timerUtil;
 
     private void initVideo() {
 
         LanSoEditor.initSDK(this, null);
-        videos = "/sdcard/AAAAAAA/" + System.currentTimeMillis() + "/";
+        videos = AppConstants.VIDEO_RECORDING_PATH + System.currentTimeMillis() + "/";
         LanSongFileUtil.setFileDir(videos);
         LibyuvUtil.loadLibrary();
 
         initUI();
         initMediaRecorder();
+
+        // 录视频
+        initVideoRecord();
     }
 
     private void initUI() {
@@ -837,26 +840,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
             }
         });
 
-        //长按录像
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isRecordVideo.set(true);
-                startRecord();
-
-            }
-        }, 2000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isRecordVideo.get()) {
-                    isRecordVideo.set(false);
-                    upEvent();
-                }
-
-            }
-        }, 22000);
     }
 
     public void finishVideo() {
@@ -870,9 +853,10 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 String mp4Path = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".mp4";
                 mVideoEditor.h264ToMp4(h264Path, mp4Path);
                 //合成音频
-                String aacPath = mVideoEditor.executePcmEncodeAac(syntPcm(), RecordUtil.sampleRateInHz, RecordUtil.channelCount);
+//                String aacPath = mVideoEditor.executePcmEncodeAac(syntPcm(), RecordUtil.sampleRateInHz, RecordUtil.channelCount);
                 //音视频混合
-                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, aacPath);
+//                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, aacPath);
+                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, "");
                 return mp4Path;
             }
 
@@ -881,8 +865,13 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 // TODO 完成直接返回不裁剪,result 就是图片存储路径
                 List<File> s = FileUtils.listFilesInDir(videos);
                 for (int i = 0; i < s.size(); i++) {
-                    if (!StringUtils.equals(s.get(i).getPath(), result)) {
-                        FileUtils.delete(s.get(i));
+                    if (StringUtils.equals(s.get(i).getPath(), result)) {
+                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
+                        break;
+//                        FileUtils.delete(s.get(i));
+//                    }else {
+//                        // 录制完就上传视频
+//                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
                     }
                 }
             }
@@ -988,6 +977,13 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         if (recordUtil != null) {
             recordUtil.stop();
             recordUtil = null;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finishVideo();
+                }
+            },1000);
         }
     }
 
@@ -1001,9 +997,13 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         aacList.clear();
         timeList.clear();
 
-        executeCount = 0;
-        executeProgress = 0;
+    }
 
+    @Override
+    public void onPause() {
+        rxTimer.cancel();
+        timerUtil.cancel();
+        super.onPause();
     }
 
     @Override
@@ -1025,10 +1025,74 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     @Override
     public void onBackPressedSupport() {
         setBackHint();
-//        mMaterialDialog.show();
-
-        executeCount = segmentList.size() + 4;
-        finishVideo();
     }
     // ****************************************************************** //
+
+
+    // ****************************************************************** //
+
+    /**
+     *  到随机的时间点 录制视频
+     */
+    private void initVideoRecord(){
+        // *************** 随机数录视频 ***************//
+        timerUtil = new RxTimerUtil();
+        // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
+        long total = 150;
+
+        long oneMin = 5;
+        long oneMax = (long) (Math.floor(total/3) - 10);
+
+        long twoMin = (long) Math.floor(total/3);
+        long twoMax = (long) (Math.floor(total*2/3) - 10);
+
+        long threeMin = (long) Math.floor(total*2/3);
+        long threeMax = total - 10;
+
+        long videoRecordOne = oneMin + (int)(Math.random() * ((oneMax - oneMin) + 1));
+        long videoRecordTwo = twoMin + (int)(Math.random() * ((twoMax - twoMin) + 1));
+        long videoRecordThree = threeMin + (int)(Math.random() * ((threeMax - threeMin) + 1));
+
+        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                COUNT++;
+                if (COUNT == videoRecordOne) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordOne + 5){
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+//                if (COUNT == videoRecordTwo) {
+//                    // 到随机的数了开始录像
+//                    isRecordVideo.set(true);
+//                    startRecord();
+//                } else if (COUNT == videoRecordTwo + 5){
+//                    if (isRecordVideo.get()) {
+//                        isRecordVideo.set(false);
+//                        upEvent();
+//                    }
+//                }
+//
+//                if (COUNT == videoRecordThree) {
+//                    // 到随机的数了开始录像
+//                    isRecordVideo.set(true);
+//                    startRecord();
+//                } else if (COUNT == videoRecordThree + 5){
+//                    if (isRecordVideo.get()) {
+//                        isRecordVideo.set(false);
+//                        upEvent();
+//                    }
+//                }
+
+            }
+        });
+        // *******************************************//
+    }
+
 }

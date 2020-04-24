@@ -127,16 +127,16 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     private SurfaceHolder mSurfaceHolder;
     private MyVideoEditor mVideoEditor = new MyVideoEditor();
     private RecordUtil recordUtil;
-    //    private int executeCount;//总编译次数
-//    private float executeProgress;//编译进度
     private String audioPath;
     private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
     private String videos;
     private long videoDuration;
     private long recordTime;
-
-    //--------------------------------------------------------------------------------------------------//
     private String videoPath;
+
+    // 倒计时到随机数的时候开始录制视频
+    private int COUNT = 0;
+    private RxTimerUtil timerUtil;
     //--------------------------------------------------------------------------------------------------//
 
     /**
@@ -150,17 +150,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         intent.putExtra("from", from);
         return intent;
     }
-
-  /*  @Override
-    public void onBackPressedSupport() {
-        mMaterialDialog.show();
-    }
-
-    @Override
-    protected void onDestroy() {
-        rxTimer.cancel();
-        super.onDestroy();
-    }*/
 
     public static Intent newInstance(Context context, String from, String zipPath, String fileName, String examId) {
         Intent intent = new Intent(context, TestTxtActivity.class);
@@ -226,7 +215,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             names = AppConstants.FILE_DOWNLOAD_PATH + strs[strs.length - 1];
             zipPath = names;
             fileName = strs[strs.length - 1];
-//            initVideo();
+
+            initVideo();
         }
 
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
@@ -278,7 +268,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 // 结束的页面
                 if (currentItem == txtFragments.size() - 1) {
                     final_answer = (String) event.getData();
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, final_answer, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName, final_answer, examId, homeworkId, testId, testType));
                 }
 
                 break;
@@ -578,9 +568,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     @Override
     public void left() {
-//        mMaterialDialog.show();
         setBackHint();
-        finishVideo();
     }
 
     //    private DialogPlus mMaterialDialog;
@@ -603,9 +591,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                             dialog.dismiss();
                             break;
                         case R.id.btn_pos:
-                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, examId, homeworkId, testId, testType));
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName, examId, homeworkId, testId, testType));
                             dialog.dismiss();
-//                            finish();
                             break;
                     }
                 }).create();
@@ -629,6 +616,9 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
         initUI();
         initMediaRecorder();
+
+        // 录视频
+        initVideoRecord();
     }
 
     private void initUI() {
@@ -689,27 +679,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 mCameraHelp.callFocusMode();
             }
         });
-
-        //长按录像
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isRecordVideo.set(true);
-                startRecord();
-
-            }
-        }, 2000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isRecordVideo.get()) {
-                    isRecordVideo.set(false);
-                    upEvent();
-                }
-
-            }
-        }, 22000);
     }
 
     public void finishVideo() {
@@ -723,9 +692,10 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 String mp4Path = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".mp4";
                 mVideoEditor.h264ToMp4(h264Path, mp4Path);
                 //合成音频
-                String aacPath = mVideoEditor.executePcmEncodeAac(syntPcm(), RecordUtil.sampleRateInHz, RecordUtil.channelCount);
+//                String aacPath = mVideoEditor.executePcmEncodeAac(syntPcm(), RecordUtil.sampleRateInHz, RecordUtil.channelCount);
                 //音视频混合
-                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, aacPath);
+//                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, aacPath);
+                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, "");
                 return mp4Path;
             }
 
@@ -734,10 +704,16 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 // TODO 完成直接返回不裁剪,result 就是图片存储路径
                 List<File> s = FileUtils.listFilesInDir(videos);
                 for (int i = 0; i < s.size(); i++) {
-                    if (!StringUtils.equals(s.get(i).getPath(), result)) {
-                        FileUtils.delete(s.get(i));
+                    if (StringUtils.equals(s.get(i).getPath(), result)) {
+                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
+                        break;
+//                        FileUtils.delete(s.get(i));
+//                    } else {
+//                        // 录制完就上传视频
+//                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
                     }
                 }
+
             }
 
             @Override
@@ -800,6 +776,39 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         });
     }
 
+    private void startRecord2() {
+
+        RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
+            @Override
+            public Boolean doInBackground() throws Throwable {
+                videoPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".h264";
+                audioPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".pcm";
+                final boolean isFrontCamera = mCameraHelp.getCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
+                final int rotation;
+                if (isFrontCamera) {
+                    rotation = 270;
+                } else {
+                    rotation = 90;
+                }
+                recordUtil = new RecordUtil(videoPath, audioPath, mCameraHelp.getWidth(), mCameraHelp.getHeight(), rotation, isFrontCamera);
+                return true;
+            }
+
+            @Override
+            public void onFinish(Boolean result) {
+//                mOnPreviewFrameListener = recordUtil.start();
+//                videoDuration = 0;
+//                recordTime = System.currentTimeMillis();
+//                runLoopPro();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
     private void runLoopPro() {
 
         RxJavaUtil.loop(20, new RxJavaUtil.OnRxLoopListener() {
@@ -837,7 +846,15 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         if (recordUtil != null) {
             recordUtil.stop();
             recordUtil = null;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finishVideo();
+                }
+            },1000);
         }
+
     }
 
     /**
@@ -849,14 +866,12 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         aacList.clear();
         timeList.clear();
 
-//        executeCount = 0;
-//        executeProgress = 0;
-
     }
 
     @Override
     protected void onDestroy() {
         rxTimer.cancel();
+        timerUtil.cancel();
         super.onDestroy();
 
         cleanRecord();
@@ -869,12 +884,15 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     }
 
     @Override
+    public void onPause() {
+        rxTimer.cancel();
+        timerUtil.cancel();
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressedSupport() {
         setBackHint();
-//        mMaterialDialog.show();
-
-//        executeCount = segmentList.size() + 4;
-        finishVideo();
     }
 
     private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
@@ -915,4 +933,73 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         }
     }
     // ****************************************************************** //
+
+    /**
+     *  到随机的时间点 录制视频
+     */
+    private void initVideoRecord(){
+        // *************** 随机数录视频 ***************//
+        timerUtil = new RxTimerUtil();
+        // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
+        long total = 150;
+
+        long oneMin = 5;
+        long oneMax = (long) (Math.floor(total/3) - 10);
+
+        long twoMin = (long) Math.floor(total/3);
+        long twoMax = (long) (Math.floor(total*2/3) - 10);
+
+        long threeMin = (long) Math.floor(total*2/3);
+        long threeMax = total - 10;
+
+        long videoRecordOne = oneMin + (int)(Math.random() * ((oneMax - oneMin) + 1));
+        long videoRecordTwo = twoMin + (int)(Math.random() * ((twoMax - twoMin) + 1));
+        long videoRecordThree = threeMin + (int)(Math.random() * ((threeMax - threeMin) + 1));
+        Log.e("==========111===",videoRecordOne+"");
+        Log.e("==========222===",videoRecordTwo+"");
+        Log.e("==========333===",videoRecordThree+"");
+
+        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                COUNT++;
+                Log.e("================",COUNT+"");
+                if (COUNT == videoRecordOne) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordOne + 5){
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+//                if (COUNT == videoRecordTwo) {
+//                    // 到随机的数了开始录像
+//                    isRecordVideo.set(true);
+//                    startRecord();
+//                } else if (COUNT == videoRecordTwo + 5){
+//                    if (isRecordVideo.get()) {
+//                        isRecordVideo.set(false);
+//                        upEvent();
+//                    }
+//                }
+//
+//                if (COUNT == videoRecordThree) {
+//                    // 到随机的数了开始录像
+//                    isRecordVideo.set(true);
+//                    startRecord();
+//                } else if (COUNT == videoRecordThree + 5){
+//                    if (isRecordVideo.get()) {
+//                        isRecordVideo.set(false);
+//                        upEvent();
+//                    }
+//                }
+
+            }
+        });
+        // *******************************************//
+    }
+
 }

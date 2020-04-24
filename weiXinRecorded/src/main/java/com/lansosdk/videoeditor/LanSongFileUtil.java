@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.lansosdk.box.LSLog;
+import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,7 +29,8 @@ public class LanSongFileUtil {
     private static final Object mLock = new Object();
 
     //可以修改这个路径;
-    public static  String DEFAULT_DIR = "/sdcard/AAAAAAA/";
+    public static  String DEFAULT_DIR = AppConstants.VIDEO_RECORDING_PATH;
+//    public static  String DEFAULT_DIR = "/sdcard/AAAAAAA/";
     protected static String mTmpFileSubFix="";  //后缀,
     protected static String mTmpFilePreFix="";  //前缀;
 

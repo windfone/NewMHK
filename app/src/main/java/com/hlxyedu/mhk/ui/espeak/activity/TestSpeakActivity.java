@@ -264,7 +264,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
                 // 练习和作业 结束的页面
                 if (currentItem == speakFragments.size() - 1) {
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, userDir, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,"","", userDir, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:

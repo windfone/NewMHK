@@ -66,6 +66,7 @@ public class DownLoadDialog extends Dialog {
 
     private void init() {
         this.setCanceledOnTouchOutside(false);
+        this.setCancelable(false);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams dialogParams = getWindow().getAttributes();
         int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.17);

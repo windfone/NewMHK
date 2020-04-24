@@ -74,11 +74,22 @@ public interface QBaseApis {
     Flowable<HttpResponse<ScoreVO>> postExerciseScoreBody(@Field("id") String userId, @Field("homeworkId") String homeworkId, @Field("answer") String answer, @Field("examId") String examId, @Field("testId") String testId, @Field("type") String type);
 
 
+    // 上传录音文件
     @Multipart
     @POST("phone/uploadRec.do")
     Flowable<HttpResponse<String>> uploadRecord(@Part("id") RequestBody userId,
                                                 @Part("examId") RequestBody examId,
                                                 @Part("homeworkId") RequestBody homeworkId,
+                                                @Part("testId") RequestBody testId,
+                                                @Part("type") RequestBody type,
+                                                @Part("fileName") RequestBody fileName,
+                                                @Part MultipartBody.Part fileData);
+
+    // 上传视频接口
+    @Multipart
+    @POST("phone/uploadVideo.do")
+    Flowable<HttpResponse<String>> uploadVideo(@Part("id") RequestBody userId,
+                                                @Part("examId") RequestBody examId,
                                                 @Part("testId") RequestBody testId,
                                                 @Part("type") RequestBody type,
                                                 @Part("fileName") RequestBody fileName,

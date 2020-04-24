@@ -1,5 +1,6 @@
 package com.hlxyedu.mhk.ui.elistening.presenter;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.hlxyedu.mhk.base.RxBus;
@@ -14,6 +15,7 @@ import com.hlxyedu.mhk.ui.elistening.contract.ListeningContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
+import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import javax.inject.Inject;
 
@@ -105,6 +107,8 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
             mView.reUploadAnswer("未检测到网络，请连网后重新上传");
             return;
         }
+        String zip = commitEvent.getZip();
+        String unzip = commitEvent.getUnzip();
         String finalAnswer = (String) commitEvent.getAnswer();
         String paperId = commitEvent.getExamId();
         String homeworkId = commitEvent.getHomeworkId();
@@ -118,6 +122,10 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        // 删除zip 包
+                                        FileUtils.deleteFile(zip);
+                                        // 删除解压出来的文件
+                                        FileUtils.deleteDir(unzip);
                                         mView.commitSuccess(scoreVO);
                                     }
 
@@ -143,6 +151,8 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
             mView.exitReUploadAnswer("未检测到网络，请连网后重新上传");
             return;
         }
+        String zip =  exitCommitEvent.getZip();
+        String unzip = exitCommitEvent.getUnzip();
         String finalAnswer = (String) exitCommitEvent.getAnswer();
         String paperId = exitCommitEvent.getExamId();
         String homeworkId = exitCommitEvent.getHomeworkId();
@@ -157,6 +167,10 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        // 删除zip 包
+                                        FileUtils.deleteFile(zip);
+                                        // 删除解压出来的文件
+                                        FileUtils.deleteDir(unzip);
                                         mView.onFinish();
                                     }
 

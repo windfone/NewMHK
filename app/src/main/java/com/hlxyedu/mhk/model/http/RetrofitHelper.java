@@ -75,4 +75,9 @@ public class RetrofitHelper implements HttpHelper {
         return qBaseApis.uploadRecord(userId,examId,homeworkId,testId,testType,fileName,fileData);
     }
 
+    @Override
+    public Flowable<HttpResponse<String>> uploadVideo(RequestBody userId, RequestBody examId, RequestBody testId, RequestBody type, RequestBody fileName, MultipartBody.Part fileData) {
+        return qBaseApis.uploadVideo(userId,examId,testId,type,fileName,fileData);
+    }
+
 }

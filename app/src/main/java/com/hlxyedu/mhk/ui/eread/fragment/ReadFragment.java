@@ -351,12 +351,12 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
             case BasePageModel.WAIT:
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
-//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
+                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
-//                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
+                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
+//                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;

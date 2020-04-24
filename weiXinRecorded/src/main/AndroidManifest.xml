@@ -9,11 +9,6 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-        <activity android:name=".activity.RecordedActivity"/>
-        <activity android:name=".activity.EditVideoActivity"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
-        <activity android:name=".activity.CutSizeActivity"/>
-        <activity android:name=".activity.CutTimeActivity"/>
 
 
     </application>
