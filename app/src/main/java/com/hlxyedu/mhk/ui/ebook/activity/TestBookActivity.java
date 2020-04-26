@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -72,6 +72,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -189,7 +190,8 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
 //        if (fileName.contains("SM")) {
-        questionTypeTv.setText("书面表达模拟大礼包");
+//        questionTypeTv.setText("书面表达模拟大礼包");
+        questionTypeTv.setText("2020年MHK模拟考试");
 //        }
 
         if (from.equals("考试")) {
@@ -258,7 +260,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 //                        final_answer = answer.substring(0, answer.length() - 1) + "finished";
                         final_answer = answer + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,final_answer, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, final_answer, examId, homeworkId, testId, testType));
                 }
 
                 break;
@@ -363,7 +365,12 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     //开始解压文件
     public void unZip(String zipFileName, String outputDirectory) {
         try {
-            ZipFile zipFile = new ZipFile(zipFileName);
+            ZipFile zipFile = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
+            } else {
+                zipFile = new ZipFile(zipFileName);
+            }
             Enumeration e = zipFile.entries();
             ZipEntry zipEntry = null;
 //            createDirectory(outputDirectory, "");
@@ -456,7 +463,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
             // 获取此套试卷有多少道题
             try {
                 num = Integer.parseInt(root.attributeValue("examnum"));
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 ToastUtils.showShort("加载试卷失败");
                 return;
             }
@@ -714,7 +721,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                                 }
                             }
 
-                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,answer, examId, homeworkId, testId, testType));
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, answer, examId, homeworkId, testId, testType));
                             dialog.dismiss();
                             break;
                     }
@@ -940,7 +947,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 public void run() {
                     finishVideo();
                 }
-            },1000);
+            }, 1000);
         }
     }
 
@@ -955,12 +962,12 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
     }
 
-    @Override
+   /* @Override
     public void onPause() {
         rxTimer.cancel();
         timerUtil.cancel();
         super.onPause();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -980,6 +987,72 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     public void onBackPressedSupport() {
         setBackHint();
     }
+
+    /**
+     * 到随机的时间点 录制视频
+     */
+    private void initVideoRecord() {
+        // *************** 随机数录视频 ***************//
+        timerUtil = new RxTimerUtil();
+        // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
+        long total = 150;
+
+        long oneMin = 5;
+        long oneMax = (long) (Math.floor(total / 3) - 10);
+
+        long twoMin = (long) Math.floor(total / 3);
+        long twoMax = (long) (Math.floor(total * 2 / 3) - 10);
+
+        long threeMin = (long) Math.floor(total * 2 / 3);
+        long threeMax = total - 10;
+
+        long videoRecordOne = oneMin + (int) (Math.random() * ((oneMax - oneMin) + 1));
+        long videoRecordTwo = twoMin + (int) (Math.random() * ((twoMax - twoMin) + 1));
+        long videoRecordThree = threeMin + (int) (Math.random() * ((threeMax - threeMin) + 1));
+
+        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
+            @Override
+            public void doNext(long number) {
+                COUNT++;
+                if (COUNT == videoRecordOne) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordOne + 6) {
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+                if (COUNT == videoRecordTwo) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordTwo + 5) {
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+                if (COUNT == videoRecordThree) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordThree + 5) {
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+            }
+        });
+        // *******************************************//
+    }
+
+    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
 
     private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
 
@@ -1003,8 +1076,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
             return null;
         }
     }
-
-    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
+    // ****************************************************************** //
 
     private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
         @Override
@@ -1018,71 +1090,6 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
             loadData();
             return null;
         }
-    }
-    // ****************************************************************** //
-
-    /**
-     *  到随机的时间点 录制视频
-     */
-    private void initVideoRecord(){
-        // *************** 随机数录视频 ***************//
-        timerUtil = new RxTimerUtil();
-        // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
-        long total = 150;
-
-        long oneMin = 5;
-        long oneMax = (long) (Math.floor(total/3) - 10);
-
-        long twoMin = (long) Math.floor(total/3);
-        long twoMax = (long) (Math.floor(total*2/3) - 10);
-
-        long threeMin = (long) Math.floor(total*2/3);
-        long threeMax = total - 10;
-
-        long videoRecordOne = oneMin + (int)(Math.random() * ((oneMax - oneMin) + 1));
-        long videoRecordTwo = twoMin + (int)(Math.random() * ((twoMax - twoMin) + 1));
-        long videoRecordThree = threeMin + (int)(Math.random() * ((threeMax - threeMin) + 1));
-
-        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
-            @Override
-            public void doNext(long number) {
-                COUNT++;
-                if (COUNT == videoRecordOne) {
-                    // 到随机的数了开始录像
-                    isRecordVideo.set(true);
-                    startRecord();
-                } else if (COUNT == videoRecordOne + 5){
-                    if (isRecordVideo.get()) {
-                        isRecordVideo.set(false);
-                        upEvent();
-                    }
-                }
-
-//                if (COUNT == videoRecordTwo) {
-//                    // 到随机的数了开始录像
-//                    isRecordVideo.set(true);
-//                    startRecord();
-//                } else if (COUNT == videoRecordTwo + 5){
-//                    if (isRecordVideo.get()) {
-//                        isRecordVideo.set(false);
-//                        upEvent();
-//                    }
-//                }
-//
-//                if (COUNT == videoRecordThree) {
-//                    // 到随机的数了开始录像
-//                    isRecordVideo.set(true);
-//                    startRecord();
-//                } else if (COUNT == videoRecordThree + 5){
-//                    if (isRecordVideo.get()) {
-//                        isRecordVideo.set(false);
-//                        upEvent();
-//                    }
-//                }
-
-            }
-        });
-        // *******************************************//
     }
 
 }

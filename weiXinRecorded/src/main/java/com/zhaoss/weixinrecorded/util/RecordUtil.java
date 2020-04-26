@@ -6,6 +6,7 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import com.libyuv.LibyuvUtil;
 
@@ -49,7 +50,7 @@ public class RecordUtil {
 
         try {
             initVideoMediaCodec();
-            initAudioRecord();
+//            initAudioRecord();
 
             File videoFile = new File(videoPath);
             if(videoFile.exists()){
@@ -58,12 +59,12 @@ public class RecordUtil {
             videoFile.createNewFile();
             videoOut = new FileOutputStream(videoFile);
 
-            File audioFile = new File(audioPath);
-            if(audioFile.exists()){
-                audioFile.delete();
-            }
-            audioFile.createNewFile();
-            audioOut = new FileOutputStream(audioFile);
+//            File audioFile = new File(audioPath);
+//            if(audioFile.exists()){
+//                audioFile.delete();
+//            }
+//            audioFile.createNewFile();
+//            audioOut = new FileOutputStream(audioFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,7 +98,7 @@ public class RecordUtil {
 
     public OnPreviewFrameListener start(){
         isRecording.set(true);
-        startRecordAudio();
+//        startRecordAudio();
         startWhile();
         return mOnPreviewFrameListener;
     }
@@ -115,7 +116,7 @@ public class RecordUtil {
         void onPreviewFrame(byte[] data);
     }
 
-    private void startRecordAudio(){
+    /*private void startRecordAudio(){
         RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
             @Override
             public Boolean doInBackground() throws Throwable {
@@ -136,7 +137,7 @@ public class RecordUtil {
                 e.printStackTrace();
             }
         });
-    }
+    }*/
 
     private void startWhile(){
         RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
@@ -165,74 +166,6 @@ public class RecordUtil {
     }
 
     private byte[] configByte;
-    /*private void encodeVideo(byte[] nv21) throws IOException {
-   *//* if (checkMaxFrame()) {
-        currFrame--;
-        return;
-    }*//*
-        byte[] nv12 = new byte[nv21.length];
-        byte[] yuvI420 = new byte[nv21.length];
-        byte[] tempYuvI420 = new byte[nv21.length];
-        LibyuvUtil.convertNV21ToI420(nv21, yuvI420, videoWidth, videoHeight);
-        LibyuvUtil.compressI420(yuvI420, videoWidth, videoHeight, tempYuvI420, videoWidth, videoHeight, rotation, isFrontCamera);
-        LibyuvUtil.convertI420ToNV12(tempYuvI420, nv12, videoWidth, videoHeight);
-        //得到编码器的输入和输出流, 输入流写入源数据 输出流读取编码后的数据
-        //得到要使用的缓存序列角标
-        int inputIndex = videoMediaCodec.dequeueInputBuffer(TIMEOUT_USEC);
-        if (inputIndex >= 0) {
-            ByteBuffer inputBuffer = videoMediaCodec.getInputBuffer(inputIndex);
-            inputBuffer.clear();
-            //把要编码的数据添加进去
-            inputBuffer.put(nv12);
-            //塞到编码序列中, 等待MediaCodec编码
-            //videoMediaCodec.queueInputBuffer(inputIndex, 0, nv12.length, System.nanoTime() / 1000, 0);
-            videoMediaCodec.queueInputBuffer(inputIndex, 0, nv12.length, System.currentTimeMillis(), 0);
-        }
-        MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-        //读取MediaCodec编码后的数据
-        int outputIndex = videoMediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC);
-        //   boolean keyFrame = false;
-        while (outputIndex >= 0) {
-            ByteBuffer outputBuffer = videoMediaCodec.getOutputBuffer(outputIndex);
-            byte[] h264 = new byte[bufferInfo.size];
-            //这步就是编码后的h264数据了
-            outputBuffer.get(h264);
-            switch (bufferInfo.flags) {
-                case MediaCodec.BUFFER_FLAG_CODEC_CONFIG://视频信息
-                    configByte = new byte[bufferInfo.size];
-                    configByte = h264;
-                    break;
-                case MediaCodec.BUFFER_FLAG_KEY_FRAME://关键帧
-                    frameBuffer.put(configByte);
-                    frameBuffer.put(h264);
-//                    keyFrame = true;
-                    break;
-                default://正常帧
-                    frameBuffer.put(h264);
-                    break;
-            }
-            //数据写入本地成功 通知MediaCodec释放data
-            videoMediaCodec.releaseOutputBuffer(outputIndex, false);
-            //读取下一次编码数据
-            outputIndex = videoMediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC);
-        }
-
-        if (frameBuffer.position() > 0) {
-            byte[] frameByte = new byte[frameBuffer.position()];
-            frameBuffer.flip();
-            frameBuffer.get(frameByte);
-            frameBuffer.clear();
-            //主要是这里
-      *//*  while (keyFrame && checkMinFrame()) {
-            currFrame++;
-            videoOut.write(frameByte, 0, frameByte.length);
-            videoOut.flush();
-        }*//*
-            currFrame++;
-            videoOut.write(frameByte, 0, frameByte.length);
-            videoOut.flush();
-        }
-    }*/
     private void encodeVideo(byte[] nv21)throws IOException {
 
         if(checkMaxFrame()){

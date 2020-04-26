@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.hlxyedu.mhk.di.module.ActivityModule;
 import com.hlxyedu.mhk.di.scope.ActivityScope;
+import com.hlxyedu.mhk.ui.aaaa.activity.TestActivity;
 import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
 import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
 import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
@@ -70,5 +71,7 @@ public interface ActivityComponent {
     void inject(ServiceTermsActivity serviceTermsActivity);
 
     void inject(AboutUsActivity aboutUsActivity);
+
+    void inject(TestActivity testActivity);
 
 }

@@ -20,6 +20,8 @@ public interface ExamContract {
         void download();
 
         void reExamination(String questionType);
+
+        void refreshUI();
     }
 
     interface Presenter extends BasePresenter<View> {

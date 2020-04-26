@@ -118,7 +118,7 @@ public class TestListeningPresenter extends RxPresenter<TestListeningContract.Vi
                             @Override
                             public void onComplete() {
                                 super.onComplete();
-//                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
+                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
                             }
                         }
                 )

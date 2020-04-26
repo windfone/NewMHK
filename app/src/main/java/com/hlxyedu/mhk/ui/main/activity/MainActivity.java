@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
@@ -69,6 +70,9 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
 
     @Override
     protected void initEventAndData() {
+        // 保持屏幕唤醒状态
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         //设置宽高
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         mBottomBar.initBottomBar(screenWidth, MainActivity.this, navigations, bottomIcons);

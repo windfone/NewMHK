@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
+import com.hlxyedu.mhk.ui.aaaa.activity.TestActivity;
 import com.hlxyedu.mhk.ui.login.activity.LoginActivity;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
 import com.hlxyedu.mhk.ui.splash.contract.SplashContract;
@@ -54,6 +55,7 @@ public class SplashActivity extends RootActivity<SplashPresenter> implements Spl
         new Handler().postDelayed(() -> {
             if (mPresenter.isLogin()) {
                 startActivity(MainActivity.newInstance(getBaseContext()));
+//                startActivity(TestActivity.newInstance(getBaseContext()));
             } else {
                 startActivity(LoginActivity.newInstance(getBaseContext()));
             }

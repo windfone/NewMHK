@@ -344,12 +344,12 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
             case BasePageModel.WAIT:
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
-//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:02:30"));
+                getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:02:30"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
-//                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-                baseEvents.setData(CommonUtils.delayTime("00:02:30") / 1000);
+                baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
+//                baseEvents.setData(CommonUtils.delayTime("00:02:30") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;

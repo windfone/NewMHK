@@ -3,8 +3,10 @@ package com.hlxyedu.mhk.ui.espeak.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.Gravity;
@@ -70,6 +72,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -186,7 +189,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         examId = intent.getStringExtra("examId");
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
-        questionTypeTv.setText("口语模拟大礼包");
+//        questionTypeTv.setText("口语模拟大礼包");
+        questionTypeTv.setText("2020年MHK模拟考试");
 
         if (from.equals("考试")) {
             currentPos = AppContext.getInstance().getCurrentPos();
@@ -625,9 +629,10 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     }
 
     //开始解压文件
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void unZip(String zipFileName, String outputDirectory) {
         try {
-            ZipFile zipFile = new ZipFile(zipFileName);
+            ZipFile zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
             Enumeration e = zipFile.entries();
             ZipEntry zipEntry = null;
 //            createDirectory(outputDirectory, "");

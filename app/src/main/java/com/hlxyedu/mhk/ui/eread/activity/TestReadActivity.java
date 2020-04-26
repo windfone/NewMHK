@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -72,6 +74,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -163,7 +166,8 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         // item.getId() = homeworkId
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
-        questionTypeTv.setText("阅读理解模拟大礼包");
+//        questionTypeTv.setText("阅读理解模拟大礼包");
+        questionTypeTv.setText("2020年MHK模拟考试");
 
         if (from.equals("考试")) {
             currentPos = AppContext.getInstance().getCurrentPos();
@@ -329,7 +333,13 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     //开始解压文件
     public void unZip(String zipFileName, String outputDirectory) {
         try {
-            ZipFile zipFile = new ZipFile(zipFileName);
+//            ZipFile zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
+            ZipFile zipFile = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
+            } else {
+                zipFile = new ZipFile(zipFileName);
+            }
             Enumeration e = zipFile.entries();
             ZipEntry zipEntry = null;
 //            createDirectory(outputDirectory, "");
@@ -999,12 +1009,12 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     }
 
-    @Override
+   /* @Override
     public void onPause() {
         rxTimer.cancel();
         timerUtil.cancel();
         super.onPause();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -1061,34 +1071,34 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                     // 到随机的数了开始录像
                     isRecordVideo.set(true);
                     startRecord();
-                } else if (COUNT == videoRecordOne + 5){
+                } else if (COUNT == videoRecordOne + 6){
                     if (isRecordVideo.get()) {
                         isRecordVideo.set(false);
                         upEvent();
                     }
                 }
 
-//                if (COUNT == videoRecordTwo) {
-//                    // 到随机的数了开始录像
-//                    isRecordVideo.set(true);
-//                    startRecord();
-//                } else if (COUNT == videoRecordTwo + 5){
-//                    if (isRecordVideo.get()) {
-//                        isRecordVideo.set(false);
-//                        upEvent();
-//                    }
-//                }
-//
-//                if (COUNT == videoRecordThree) {
-//                    // 到随机的数了开始录像
-//                    isRecordVideo.set(true);
-//                    startRecord();
-//                } else if (COUNT == videoRecordThree + 5){
-//                    if (isRecordVideo.get()) {
-//                        isRecordVideo.set(false);
-//                        upEvent();
-//                    }
-//                }
+                if (COUNT == videoRecordTwo) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordTwo + 5){
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
+
+                if (COUNT == videoRecordThree) {
+                    // 到随机的数了开始录像
+                    isRecordVideo.set(true);
+                    startRecord();
+                } else if (COUNT == videoRecordThree + 5){
+                    if (isRecordVideo.get()) {
+                        isRecordVideo.set(false);
+                        upEvent();
+                    }
+                }
 
             }
         });

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="39dp"
             android:layout_marginTop="5dp"
-            android:text="考试模拟大礼包" />
+            android:text="2020年MHK模拟考试" />
 
         <TextView
             style="@style/textSize_whitefff_12"
@@ -39,7 +39,8 @@
             android:layout_marginStart="39dp"
             android:layout_marginTop="8dp"
             android:alpha="0.69"
-            android:text="@string/exercise_more" />
+            android:text="@string/exercise_more"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

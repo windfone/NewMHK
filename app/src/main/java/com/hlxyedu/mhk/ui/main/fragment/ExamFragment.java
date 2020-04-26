@@ -2,7 +2,6 @@ package com.hlxyedu.mhk.ui.main.fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.hlxyedu.mhk.R;
@@ -79,6 +78,11 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }*/
 
     @Override
+    public void refreshUI() {
+        refreshLayout.autoRefresh();
+    }
+
+    @Override
     protected void initEventAndData() {
         super.initEventAndData();
         stateLoading();
@@ -138,6 +142,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
                 mAdapter.loadMoreEnd();
             }
         }
+
     }
 
     @Override

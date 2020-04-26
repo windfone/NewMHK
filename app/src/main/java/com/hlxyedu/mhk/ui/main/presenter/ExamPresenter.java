@@ -9,6 +9,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.event.ReExamEvent;
+import com.hlxyedu.mhk.model.event.RefreshEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.utils.RegUtils;
@@ -77,6 +78,28 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
                     @Override
                     public void onNext(ReExamEvent s) {
                        mView.reExamination(s.getQuestionType());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        //交卷成功- 刷新列表通知
+        addSubscribe(RxBus.getDefault().toFlowable(RefreshEvent.class)
+                .compose(RxUtil.<RefreshEvent>rxSchedulerHelper())
+                .filter(new Predicate<RefreshEvent>() {
+                    @Override
+                    public boolean test(@NonNull RefreshEvent refreshEvent) throws Exception {
+                        return refreshEvent.getType().equals(RefreshEvent.REFRESH_EVENT);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<RefreshEvent>(mView) {
+                    @Override
+                    public void onNext(RefreshEvent s) {
+                        mView.refreshUI();
                     }
 
                     @Override
