@@ -123,7 +123,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.aaaa.activity.TestActivity"
+            android:name=".ui.login.activity.CheckInfoActivity"
             android:screenOrientation="portrait" />
 
         <!-- 初始化service -->

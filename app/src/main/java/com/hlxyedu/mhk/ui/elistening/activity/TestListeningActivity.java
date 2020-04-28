@@ -1,11 +1,14 @@
 package com.hlxyedu.mhk.ui.elistening.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -54,6 +57,7 @@ import com.libyuv.LibyuvUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
+import com.skyworth.rxqwelibrary.utils.RxCountDown;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.zhaoss.weixinrecorded.util.CameraHelp;
 import com.zhaoss.weixinrecorded.util.MyVideoEditor;
@@ -112,10 +116,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     private String testId; // 考试id
     private String testType;
 
-    // 倒计时
-    private RxTimerUtil rxTimer;
-    private int TIMER;
-
     private String from;
 
     private int currentPos; // 当前是第几个答题包
@@ -141,9 +141,12 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
     // 倒计时到随机数的时候开始录制视频
     private int COUNT = 0;
-    private RxTimerUtil timerUtil;
+
+    private boolean EXAM_SUCCESS;
 
     private String videoPath;
+    private HomeKeyBroadCastReceiver homeKeyBroadCastReceiver;
+    private ScreenOFFKeyBroadCastReceiver screenOFFKeyBroadCastReceiver;
 
     /**
      * 打开新Activity
@@ -195,7 +198,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         testType = intent.getStringExtra("testType");
 //        if (fileName.contains("TL")) {
 //        questionTypeTv.setText("听力模拟大礼包");
-        questionTypeTv.setText("2020年MHK模拟考试");
+        questionTypeTv.setText("2020年5月MHK三级校内测试（移动版）");
 //        }
 
         if (from.equals("考试")) {
@@ -210,12 +213,14 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             zipPath = names;
             fileName = strs[strs.length - 1];
 
-//            initVideo();
+            initVideo();
         }
         // 解压文件
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
     }
+
+    // ****************************************************************** //
 
     @Override
     protected void initEventAndData() {
@@ -223,10 +228,10 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         // 保持屏幕唤醒状态
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        registerKeyReceiver();
+
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
-
-        rxTimer = new RxTimerUtil();
 
         pageModels = new ArrayList<PageModel>();
         testListenFragments = new ArrayList<ListeningFragment>();
@@ -236,33 +241,23 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
     }
 
-    // 点Home 键退出，添加续考功能
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.LISTENING));
-        finish();
-    }
-
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        rxTimer.cancel();
+        RxCountDown.cancel();
     }
 
-    // ****************************************************************** //
-
     private void startTimeProgress(int time) {
-        TIMER = time;
-        rxTimer.interval(1000, number -> {
-            TIMER--;
-            if (TIMER == 0) {
+        RxCountDown.countdown(time, new RxCountDown.IRxExecute() {
+            @Override
+            public void doNext(long number) {
+                countdownRl.setVisibility(View.VISIBLE);
+                countdownTv.setText(number + "S");
+            }
+
+            @Override
+            public void doComplete() {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                rxTimer.cancel();
-                // 下一题
-            } else {
-                countdownRl.setVisibility(View.VISIBLE);
-                countdownTv.setText(TIMER + "S");
             }
         });
     }
@@ -281,7 +276,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 if (currentItem == testListenFragments.size() - 1) {
 //                    String final_answer = answer.substring(0, answer.length() - 1) + "finished";
                     String final_answer = answer + "finished";
-//                    String final_answer = "01=A|02=C|03=C|04=C|05=D|06=B|07=C|08=A|09=B|10=B|11=D|12=|13=D|14=A|15=D|16=D|17=|18=|19=A|20=C|21=C|22=D|23=D|24=A|25=D|26=C|27=|28=B|29=A|30=B|31=D|32=D|33=A|34=D|35=C|36=C|37=D|38=C|39=C|40=C|finished";
                     RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, final_answer, examId, homeworkId, testId, testType));
                 }
                 break;
@@ -296,6 +290,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 }
                 break;
             case EventsConfig.TEST_NEXT_ACTIVITY:
+                EXAM_SUCCESS = true;
                 // 考试 模块是多个答题压缩包，答完一个接下一个
                 if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
                     //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
@@ -826,6 +821,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                             dialog.dismiss();
                             break;
                         case R.id.btn_pos:
+                            EXAM_SUCCESS = true;
                             // 如果答案为空，则说明好在 欢迎界面 还没答题就点了退出键，answer就全部为拼为空
                             if (StringUtils.isEmpty(answer)) {
                                 for (int i = 1; i <= num; i++) {
@@ -848,7 +844,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
                             RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, answer, examId, homeworkId, testId, testType));
                             dialog.dismiss();
-//                            finish();
                             break;
                     }
                 }).create();
@@ -970,6 +965,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 List<File> s = FileUtils.listFilesInDir(videos);
                 for (int i = 0; i < s.size(); i++) {
                     if (StringUtils.equals(s.get(i).getPath(), result)) {
+                        ToastUtils.showShort("录制完成");
                         mPresenter.uploadVideo(s.get(i), examId, testId, testType);
                         break;
 //                        FileUtils.delete(s.get(i));
@@ -1098,18 +1094,34 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
     }
 
-   /* @Override
+    @Override
     public void onPause() {
-        rxTimer.cancel();
-        timerUtil.cancel();
+        RxTimerUtil.cancel();
+        RxCountDown.cancel();
         super.onPause();
-    }*/
+        if (EXAM_SUCCESS) {
+            return;
+        }
+        //点Home 键退出，添加续考功能
+        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.LISTENING));
+        finish();
+    }
 
     @Override
     protected void onDestroy() {
-        rxTimer.cancel();
         super.onDestroy();
+        clearVideo();
+        if (homeKeyBroadCastReceiver != null) {
+            // 解除广播
+            unregisterReceiver(homeKeyBroadCastReceiver);
+        }
+        if (screenOFFKeyBroadCastReceiver != null) {
+            // 解除广播
+            unregisterReceiver(screenOFFKeyBroadCastReceiver);
+        }
+    }
 
+    private void clearVideo() {
         cleanRecord();
         if (mCameraHelp != null) {
             mCameraHelp.release();
@@ -1119,19 +1131,21 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         }
     }
 
+    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
+
     @Override
     public void onBackPressedSupport() {
         setBackHint();
     }
+    // ****************************************************************** //
 
     /**
      * 到随机的时间点 录制视频
      */
     private void initVideoRecord() {
         // *************** 随机数录视频 ***************//
-        timerUtil = new RxTimerUtil();
         // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
-        long total = 150;
+        long total = 1200;
 
         long oneMin = 5;
         long oneMax = (long) (Math.floor(total / 3) - 10);
@@ -1146,7 +1160,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         long videoRecordTwo = twoMin + (int) (Math.random() * ((twoMax - twoMin) + 1));
         long videoRecordThree = threeMin + (int) (Math.random() * ((threeMax - threeMin) + 1));
 
-        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(1000, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 COUNT++;
@@ -1182,13 +1196,17 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                         upEvent();
                     }
                 }
-
             }
         });
         // *******************************************//
     }
 
-    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
+    private void registerKeyReceiver() {
+        homeKeyBroadCastReceiver = new HomeKeyBroadCastReceiver();
+        registerReceiver(homeKeyBroadCastReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        screenOFFKeyBroadCastReceiver = new ScreenOFFKeyBroadCastReceiver();
+        registerReceiver(screenOFFKeyBroadCastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+    }
 
     private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
 
@@ -1211,7 +1229,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             return null;
         }
     }
-    // ****************************************************************** //
 
     private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
         @Override
@@ -1226,4 +1243,37 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             return null;
         }
     }
+
+    class HomeKeyBroadCastReceiver extends BroadcastReceiver {
+        final String SYSTEM_DIALOG_REASON_KEY = "reason";
+        final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
+        final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
+            if (reason != null) {
+                if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
+                    //点Home 键退出，添加续考功能
+                    RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.LISTENING));
+                    finish();
+                } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
+                    RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
+                    finish();
+                }
+            }
+        }
+    }
+
+    class ScreenOFFKeyBroadCastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //点锁屏按钮，直接回列表页，也不重新考了，手动点击再继续考试
+            RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
+            finish();
+        }
+    }
+
 }

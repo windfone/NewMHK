@@ -45,6 +45,14 @@ public interface QBaseApis {
     @POST("login/loginm.do")
     Flowable<HttpResponse<UserVO>> postLoginBody(@Field("mobile") String mobile, @Field("password") String password);
 
+    // 获取密码提示语
+    @GET("phone/getNoteInfo.do")
+    Flowable<HttpResponse<String>> getNoteInfo();
+
+    // 获取密码提示语
+    @GET("phone/getUserInfo.do")
+    Flowable<HttpResponse<UserVO>> getUserInfo();
+
     // 找回密码（重置密码）
     @FormUrlEncoded
     @POST("login/forgotPwordm.do")

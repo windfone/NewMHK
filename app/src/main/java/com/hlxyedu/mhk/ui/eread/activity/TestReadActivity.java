@@ -1,12 +1,13 @@
 package com.hlxyedu.mhk.ui.eread.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -55,6 +56,7 @@ import com.libyuv.LibyuvUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
+import com.skyworth.rxqwelibrary.utils.RxCountDown;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.zhaoss.weixinrecorded.util.CameraHelp;
 import com.zhaoss.weixinrecorded.util.MyVideoEditor;
@@ -114,15 +116,35 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     private String testId; // 考试id
     private String testType;
 
-    // 倒计时
-    private RxTimerUtil rxTimer;
-    private int TIMER;
-
     private String from;
 
     private int currentPos; // 当前是第几个答题包
 
     private int num; // 这套试卷总共有几道题
+    private DialogPlus mMaterialDialog;
+    private SurfaceView surfaceView;
+    private ArrayList<String> segmentList = new ArrayList<>();//分段视频地址
+    private ArrayList<String> aacList = new ArrayList<>();//分段音频地址
+    private ArrayList<Long> timeList = new ArrayList<>();//分段录制时间
+    //是否在录制视频
+    private AtomicBoolean isRecordVideo = new AtomicBoolean(false);
+    //拍照
+    private CameraHelp mCameraHelp = new CameraHelp();
+    private SurfaceHolder mSurfaceHolder;
+    private MyVideoEditor mVideoEditor = new MyVideoEditor();
+    private RecordUtil recordUtil;
+    private String audioPath;
+    private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
+    private String videos;
+
+    // 倒计时到随机数的时候开始录制视频
+    private int COUNT = 0;
+    private long videoDuration;
+    private long recordTime;
+
+    private String videoPath;
+    private HomeKeyBroadCastReceiver homeKeyBroadCastReceiver;
+    private ScreenOFFKeyBroadCastReceiver screenOFFKeyBroadCastReceiver;
 
     /**
      * 打开新Activity
@@ -156,6 +178,9 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return intent;
     }
 
+
+    // ****************************************************************** //
+
     private void loadDataAndRefreshView() {
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
@@ -167,7 +192,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
 //        questionTypeTv.setText("阅读理解模拟大礼包");
-        questionTypeTv.setText("2020年MHK模拟考试");
+        questionTypeTv.setText("2020年5月MHK三级校内测试（移动版）");
 
         if (from.equals("考试")) {
             currentPos = AppContext.getInstance().getCurrentPos();
@@ -193,11 +218,10 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         super.initEventAndData();
         // 保持屏幕唤醒状态
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        registerKeyReceiver();
 
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
-
-        rxTimer = new RxTimerUtil();
 
         pageModels = new ArrayList<PageModel>();
         readFragments = new ArrayList<ReadFragment>();
@@ -205,14 +229,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         viewPager.setNoScroll(true);
         loadDataAndRefreshView();
 
-    }
-
-    // 点Home 键退出，添加续考功能
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.READ));
-        finish();
     }
 
     @Override
@@ -230,7 +246,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 //                        final_answer = answer.substring(0, answer.length() - 1) + "finished";
                         final_answer = answer + "finished";
                     }
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,final_answer, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, final_answer, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
@@ -311,21 +327,21 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        rxTimer.cancel();
+        RxCountDown.cancel();
     }
 
     private void startTimeProgress(int time) {
-        TIMER = time;
-        rxTimer.interval(1000, number -> {
-            TIMER--;
-            if (TIMER == 0) {
+        RxCountDown.countdown(time, new RxCountDown.IRxExecute() {
+            @Override
+            public void doNext(long number) {
+                countdownRl.setVisibility(View.VISIBLE);
+                countdownTv.setText(number + "S");
+            }
+
+            @Override
+            public void doComplete() {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                rxTimer.cancel();
-                // 下一题
-            } else {
-                countdownRl.setVisibility(View.VISIBLE);
-                countdownTv.setText(TIMER + "S");
             }
         });
     }
@@ -431,7 +447,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
             // 获取此套试卷有多少道题
             try {
                 num = Integer.parseInt(root.attributeValue("examnum"));
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 ToastUtils.showShort("加载试卷失败");
                 return;
             }
@@ -630,12 +646,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         pageModels.add(pageModel);
     }
 
-/*    @Override
-    protected void onDestroy() {
-        rxTimer.cancel();
-        super.onDestroy();
-    }*/
-
     @Override
     public void responeError(String errorMsg) {
 
@@ -651,17 +661,11 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return R.layout.activity_test_read;
     }
 
-   /* @Override
-    public void onBackPressedSupport() {
-        mMaterialDialog.show();
-    }*/
-
     @Override
     public void left() {
         setBackHint();
     }
 
-    private DialogPlus mMaterialDialog;
     private void setBackHint() {
         WindowManager windowManager = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -682,28 +686,27 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                             break;
                         case R.id.btn_pos:
                             // 如果答案为空，则说明好在 欢迎界面 还没答题就点了退出键，answer就全部为拼为空
-                            if (StringUtils.isEmpty(answer)){
+                            if (StringUtils.isEmpty(answer)) {
                                 for (int i = 1; i <= num; i++) {
-                                    if (i == num){
+                                    if (i == num) {
                                         answer += (i < 10 ? ("0" + i) : i) + "=|" + "finished";
-                                    }else {
+                                    } else {
                                         answer += (i < 10 ? ("0" + i) : i) + "=|";
                                     }
                                 }
-                            }else {
+                            } else {
                                 String[] strs = answer.split("\\|");
                                 for (int i = strs.length + 1; i <= num; i++) {
-                                    if (i == num){
+                                    if (i == num) {
                                         answer += (i < 10 ? ("0" + i) : i) + "=|" + "finished";
-                                    }else {
+                                    } else {
                                         answer += (i < 10 ? ("0" + i) : i) + "=|";
                                     }
                                 }
                             }
 
-                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath,AppConstants.UNFILE_DOWNLOAD_PATH + fileName,answer, examId, homeworkId, testId, testType));
+                            RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, answer, examId, homeworkId, testId, testType));
                             dialog.dismiss();
-//                            finish();
                             break;
                     }
                 }).create();
@@ -715,67 +718,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     @Override
     public void right() {
     }
-
-    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
-
-        public UnZipAsyncTask() {
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 解压完成
-            //加载数据
-            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
-            unZipAsyncTask.execute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //解压地址
-            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
-            return null;
-        }
-    }
-
-    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_READ));
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            loadData();
-            return null;
-        }
-    }
-
-
-    // ****************************************************************** //
-
-    private SurfaceView surfaceView;
-
-    private ArrayList<String> segmentList = new ArrayList<>();//分段视频地址
-    private ArrayList<String> aacList = new ArrayList<>();//分段音频地址
-    private ArrayList<Long> timeList = new ArrayList<>();//分段录制时间
-
-    //是否在录制视频
-    private AtomicBoolean isRecordVideo = new AtomicBoolean(false);
-    //拍照
-    private CameraHelp mCameraHelp = new CameraHelp();
-    private SurfaceHolder mSurfaceHolder;
-    private MyVideoEditor mVideoEditor = new MyVideoEditor();
-    private RecordUtil recordUtil;
-
-    private String audioPath;
-    private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
-
-    private String videos;
-    // 倒计时到随机数的时候开始录制视频
-    private int COUNT = 0;
-    private RxTimerUtil timerUtil;
 
     private void initVideo() {
 
@@ -913,10 +855,6 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
         return pcmPath;
     }
 
-    private long videoDuration;
-    private long recordTime;
-    private String videoPath;
-
     private void startRecord() {
 
         RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
@@ -993,10 +931,9 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 public void run() {
                     finishVideo();
                 }
-            },1000);
+            }, 1000);
         }
     }
-
 
     /**
      * 清除录制信息
@@ -1009,18 +946,28 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
 
     }
 
-   /* @Override
+    @Override
     public void onPause() {
-        rxTimer.cancel();
-        timerUtil.cancel();
+        RxTimerUtil.cancel();
+        RxCountDown.cancel();
         super.onPause();
-    }*/
+    }
 
     @Override
     protected void onDestroy() {
-        rxTimer.cancel();
         super.onDestroy();
+        clearVideo();
+        if (homeKeyBroadCastReceiver != null) {
+            // 解除广播
+            unregisterReceiver(homeKeyBroadCastReceiver);
+        }
+        if (screenOFFKeyBroadCastReceiver != null) {
+            // 解除广播
+            unregisterReceiver(screenOFFKeyBroadCastReceiver);
+        }
+    }
 
+    private void clearVideo() {
         cleanRecord();
         if (mCameraHelp != null) {
             mCameraHelp.release();
@@ -1042,28 +989,27 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     // ****************************************************************** //
 
     /**
-     *  到随机的时间点 录制视频
+     * 到随机的时间点 录制视频
      */
-    private void initVideoRecord(){
+    private void initVideoRecord() {
         // *************** 随机数录视频 ***************//
-        timerUtil = new RxTimerUtil();
         // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
-        long total = 150;
+        long total = 1800;
 
         long oneMin = 5;
-        long oneMax = (long) (Math.floor(total/3) - 10);
+        long oneMax = (long) (Math.floor(total / 3) - 10);
 
-        long twoMin = (long) Math.floor(total/3);
-        long twoMax = (long) (Math.floor(total*2/3) - 10);
+        long twoMin = (long) Math.floor(total / 3);
+        long twoMax = (long) (Math.floor(total * 2 / 3) - 10);
 
-        long threeMin = (long) Math.floor(total*2/3);
+        long threeMin = (long) Math.floor(total * 2 / 3);
         long threeMax = total - 10;
 
-        long videoRecordOne = oneMin + (int)(Math.random() * ((oneMax - oneMin) + 1));
-        long videoRecordTwo = twoMin + (int)(Math.random() * ((twoMax - twoMin) + 1));
-        long videoRecordThree = threeMin + (int)(Math.random() * ((threeMax - threeMin) + 1));
+        long videoRecordOne = oneMin + (int) (Math.random() * ((oneMax - oneMin) + 1));
+        long videoRecordTwo = twoMin + (int) (Math.random() * ((twoMax - twoMin) + 1));
+        long videoRecordThree = threeMin + (int) (Math.random() * ((threeMax - threeMin) + 1));
 
-        timerUtil.interval(1000, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(1000, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 COUNT++;
@@ -1071,7 +1017,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                     // 到随机的数了开始录像
                     isRecordVideo.set(true);
                     startRecord();
-                } else if (COUNT == videoRecordOne + 6){
+                } else if (COUNT == videoRecordOne + 6) {
                     if (isRecordVideo.get()) {
                         isRecordVideo.set(false);
                         upEvent();
@@ -1082,7 +1028,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                     // 到随机的数了开始录像
                     isRecordVideo.set(true);
                     startRecord();
-                } else if (COUNT == videoRecordTwo + 5){
+                } else if (COUNT == videoRecordTwo + 5) {
                     if (isRecordVideo.get()) {
                         isRecordVideo.set(false);
                         upEvent();
@@ -1093,16 +1039,89 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                     // 到随机的数了开始录像
                     isRecordVideo.set(true);
                     startRecord();
-                } else if (COUNT == videoRecordThree + 5){
+                } else if (COUNT == videoRecordThree + 5) {
                     if (isRecordVideo.get()) {
                         isRecordVideo.set(false);
                         upEvent();
                     }
                 }
-
             }
         });
         // *******************************************//
+    }
+
+    private class UnZipAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public UnZipAsyncTask() {
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 解压完成
+            //加载数据
+            DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
+            unZipAsyncTask.execute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //解压地址
+            unZip(zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName);
+            return null;
+        }
+    }
+
+    private class DecodeAsyncTask extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.SUCCESS_READ));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            loadData();
+            return null;
+        }
+    }
+
+    private void registerKeyReceiver() {
+        homeKeyBroadCastReceiver = new HomeKeyBroadCastReceiver();
+        registerReceiver(homeKeyBroadCastReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        screenOFFKeyBroadCastReceiver = new ScreenOFFKeyBroadCastReceiver();
+        registerReceiver(screenOFFKeyBroadCastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+    }
+
+    class HomeKeyBroadCastReceiver extends BroadcastReceiver {
+        final String SYSTEM_DIALOG_REASON_KEY = "reason";
+        final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
+        final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
+            if (reason != null) {
+                if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
+                    //点Home 键退出，添加续考功能
+                    RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.READ));
+                    finish();
+                } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
+                    RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
+                    finish();
+                }
+            }
+        }
+    }
+
+    class ScreenOFFKeyBroadCastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //点锁屏按钮，直接回列表页，也不重新考了，手动点击再继续考试
+            RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
+            finish();
+        }
     }
 
 }

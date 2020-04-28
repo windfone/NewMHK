@@ -73,7 +73,7 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
                                         mDataManager.setLoginStatus(true);
                                         String s = GsonUtils.toJson(userVO);
                                         mDataManager.setUserInfo(s);
-                                        mView.loginSuccess();
+                                        mView.loginSuccess(userVO);
                                     }
 
                                     @Override
@@ -92,4 +92,32 @@ public class LoginPresenter extends RxPresenter<LoginContract.View> implements L
         );
     }
 
+    @Override
+    public void getNoteInfo() {
+        addSubscribe(
+                mDataManager.getNoteInfo()
+                        .compose(RxUtil.rxSchedulerHelper())
+                        .compose(RxUtil.handleTestResult())
+                        .subscribeWith(
+                                new CommonSubscriber<String>(mView) {
+                                    @Override
+                                    public void onNext(String s) {
+                                        mView.noteInfoSuccess(s);
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        ToastUtils.showShort(e.getMessage());
+                                        //当数据返回为null时 做特殊处理
+                                        if (e instanceof HttpException) {
+                                            HttpResponseCode httpResponseCode = RegUtils
+                                                    .onError((HttpException) e);
+//                                            ToastUtils.showShort(httpResponseCode.getMsg());
+                                        }
+                                        mView.responeError("数据请求失败，请检查网络！");
+                                    }
+                                }
+                        )
+        );
+    }
 }

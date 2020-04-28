@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
@@ -31,10 +32,10 @@ import com.hlxyedu.mhk.ui.ebook.contract.BookContract;
 import com.hlxyedu.mhk.ui.ebook.presenter.BookPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.StringUtils;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,8 +76,6 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     private String type;
 
-    private RxTimerUtil rxTimer;
-
     public static BookFragment newInstance() {
         Bundle args = new Bundle();
 
@@ -109,6 +108,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     public void onFinish() {
+        ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
 
@@ -128,7 +128,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     public void reUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -148,7 +148,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                                 case R.id.re_commit_btn:
                                     mPresenter.cimmitAnswer();
                                     dialog.dismiss();
-                                    rxTimer.cancel();
+                                    RxTimerUtil.cancel();
                                     break;
                             }
                         }).create();
@@ -161,7 +161,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     public void exitReUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -180,7 +180,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                             if (view.getId() == R.id.re_commit_btn) {
                                 mPresenter.exitCommitAnswer();
                                 dialog.dismiss();
-                                rxTimer.cancel();
+                                RxTimerUtil.cancel();
                             }
                         }).create();
                 TextView textView = (TextView) dialogPlus.findViewById(R.id.txt_msg);
@@ -350,24 +350,33 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
                 getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:15"));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:02"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
                 baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-//                baseEvents.setData(CommonUtils.delayTime("00:00:15") / 1000);
+//                baseEvents.setData(CommonUtils.delayTime("00:00:02") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;
         }
     }
 
+    private boolean onPause = false;
+    @Override
+    public void onPause() {
+        super.onPause();
+        onPause = true;
+    }
+
     @Override
     public void handleMessage(Message msg) {
+        super.handleMessage(msg);
         //不显示时 不影响倒计时
-        if (!isVisible())
+        if (!isSupportVisible())
+            return;
+        if(onPause)
             return;
 
-        super.handleMessage(msg);
         switch (msg.what) {
             case NEXT_PAGE:
                 String data = "";
@@ -376,6 +385,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
                         data += questions.get(i) + "=" + answers.get(i) + "|";
                     }
                 }
+
                 RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_PAGE, data));
                 break;
             case NEXT_TRAIN:
@@ -418,7 +428,6 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     protected void initEventAndData() {
-        rxTimer = new RxTimerUtil();
     }
 
     @Override

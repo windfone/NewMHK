@@ -1,5 +1,6 @@
 package com.hlxyedu.mhk.ui.login.contract;
 
+import com.hlxyedu.mhk.model.bean.UserVO;
 import com.skyworth.rxqwelibrary.base.BasePresenter;
 import com.skyworth.rxqwelibrary.base.BaseView;
 
@@ -12,14 +13,19 @@ public interface LoginContract {
         //返回登陆结果
         void responeError(String errorMsg);
 
-        void loginSuccess();
+        void loginSuccess(UserVO userVO);
 
         void closeLogin();
+
+        void noteInfoSuccess(String note);
+
     }
 
     interface Presenter extends BasePresenter<View> {
 
         void login(String mobile,String psd);
+
+        void getNoteInfo();
     }
 
 }

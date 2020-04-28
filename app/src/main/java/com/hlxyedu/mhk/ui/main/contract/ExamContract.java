@@ -21,7 +21,6 @@ public interface ExamContract {
 
         void reExamination(String questionType);
 
-        void refreshUI();
     }
 
     interface Presenter extends BasePresenter<View> {

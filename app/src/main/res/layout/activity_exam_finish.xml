@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="39dp"
             android:layout_marginTop="5dp"
-            android:text="2020年MHK模拟考试" />
+            android:text="2020年5月MHK三级校内测试（移动版）" />
 
         <TextView
             style="@style/textSize_whitefff_12"

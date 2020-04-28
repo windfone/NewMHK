@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.fifedu.record.media.record.AudioPlayManager;
 import com.fifedu.record.media.record.AudioplayInterface;
@@ -35,10 +36,10 @@ import com.hlxyedu.mhk.ui.elistening.presenter.ListeningPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.FileUtil;
 import com.hlxyedu.mhk.utils.StringUtils;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,8 +80,6 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     private String type;
 
-    // 倒计时
-    private RxTimerUtil rxTimer;
 
     private AudioplayInterface audioPlayListen = new AudioplayInterface() {
 
@@ -154,6 +153,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     public void onFinish() {
+        ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
 
@@ -173,7 +173,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     public void reUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -193,7 +193,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                                 case R.id.re_commit_btn:
                                     mPresenter.cimmitAnswer();
                                     dialog.dismiss();
-                                    rxTimer.cancel();
+                                    RxTimerUtil.cancel();
                                     break;
                             }
                         }).create();
@@ -206,7 +206,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     public void exitReUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -225,7 +225,7 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                             if (view.getId() == R.id.re_commit_btn) {
                                 mPresenter.exitCommitAnswer();
                                 dialog.dismiss();
-                                rxTimer.cancel();
+                                RxTimerUtil.cancel();
                             }
                         }).create();
                 TextView textView = (TextView) dialogPlus.findViewById(R.id.txt_msg);
@@ -410,9 +410,11 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
                 getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:02"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
                 baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
+//                baseEvents.setData(CommonUtils.delayTime("00:00:02") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;
@@ -427,10 +429,19 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
         }
     }
 
+    private boolean onPause = false;
+    @Override
+    public void onPause() {
+        super.onPause();
+        onPause = true;
+    }
+
     @Override
     public void handleMessage(Message msg) {
         //不显示时 不影响倒计时
         if (!isVisible())
+            return;
+        if(onPause)
             return;
 
         super.handleMessage(msg);
@@ -486,7 +497,6 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
 
     @Override
     protected void initEventAndData() {
-        rxTimer = new RxTimerUtil();
     }
 
     @Override

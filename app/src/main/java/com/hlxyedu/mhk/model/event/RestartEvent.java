@@ -1,12 +1,12 @@
 package com.hlxyedu.mhk.model.event;
 
-public class RefreshEvent {
+public class RestartEvent {
 
-    public static final String REFRESH_EVENT = "REFRESH_EVENT";
+    public static final String RESTART = "RESTART";
 
     private String type;
 
-    public RefreshEvent(String type) {
+    public RestartEvent(String type) {
         super();
         this.type = type;
     }
@@ -18,6 +18,5 @@ public class RefreshEvent {
     public void setType(String type) {
         this.type = type;
     }
-
 
 }

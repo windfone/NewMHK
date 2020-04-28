@@ -106,6 +106,15 @@
     <string name="start">开始</string>
     <string name="loading_paper">加载试卷中，请稍等...</string>
 
+    <!--activity_check_info-->
+    <string name="person_info">个人信息</string>
+    <string name="name">姓名</string>
+    <string name="nation">民族</string>
+    <string name="phone_num">手机号</string>
+    <string name="id_card">身份证号</string>
+    <string name="is_me">是我本人</string>
+    <string name="not_me">不是我</string>
+
     <!--activity_service_terms-->
     <string name="service_terms">服务条款</string>
     <string-array name="terms_details">

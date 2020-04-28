@@ -9,7 +9,7 @@ import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.event.ReExamEvent;
-import com.hlxyedu.mhk.model.event.RefreshEvent;
+import com.hlxyedu.mhk.model.event.RestartEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.utils.RegUtils;
@@ -87,19 +87,18 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
                 })
         );
 
-        //交卷成功- 刷新列表通知
-        addSubscribe(RxBus.getDefault().toFlowable(RefreshEvent.class)
-                .compose(RxUtil.<RefreshEvent>rxSchedulerHelper())
-                .filter(new Predicate<RefreshEvent>() {
+        // 锁屏续考
+        addSubscribe(RxBus.getDefault().toFlowable(RestartEvent.class)
+                .compose(RxUtil.<RestartEvent>rxSchedulerHelper())
+                .filter(new Predicate<RestartEvent>() {
                     @Override
-                    public boolean test(@NonNull RefreshEvent refreshEvent) throws Exception {
-                        return refreshEvent.getType().equals(RefreshEvent.REFRESH_EVENT);
+                    public boolean test(@NonNull RestartEvent restartEvent) throws Exception {
+                        return restartEvent.getType().equals(RestartEvent.RESTART);
                     }
                 })
-                .subscribeWith(new CommonSubscriber<RefreshEvent>(mView) {
+                .subscribeWith(new CommonSubscriber<RestartEvent>(mView) {
                     @Override
-                    public void onNext(RefreshEvent s) {
-                        mView.refreshUI();
+                    public void onNext(RestartEvent s) {
                     }
 
                     @Override
@@ -108,6 +107,7 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
                     }
                 })
         );
+
     }
 
     @Override

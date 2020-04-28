@@ -19,6 +19,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
+import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.ui.login.contract.LoginContract;
 import com.hlxyedu.mhk.ui.login.presenter.LoginPresenter;
 import com.hlxyedu.mhk.ui.main.activity.MainActivity;
@@ -94,17 +95,27 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     protected void initEventAndData() {
         initUIState();
         initCode();
+
+        mPresenter.getNoteInfo();
     }
 
     @Override
     public void responeError(String errorMsg) {
-        tipDialog.dismiss();
+        if (tipDialog != null) {
+            tipDialog.dismiss();
+        }
     }
 
     @Override
-    public void loginSuccess() {
+    public void noteInfoSuccess(String note) {
+        psdEdit.setHint(note);
+    }
+
+    @Override
+    public void loginSuccess(UserVO userVO) {
         tipDialog.dismiss();
-        startActivity(MainActivity.newInstance(this));
+//        startActivity(MainActivity.newInstance(this));
+        startActivity(CheckInfoActivity.newInstance(this,userVO));
         KeyboardUtils.hideSoftInput(this);
         finish();
     }

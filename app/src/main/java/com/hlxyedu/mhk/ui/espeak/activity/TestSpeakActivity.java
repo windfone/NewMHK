@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.Gravity;
@@ -34,7 +33,6 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.CommitEvent;
 import com.hlxyedu.mhk.model.event.EventsConfig;
-import com.hlxyedu.mhk.model.event.ExitCommitEvent;
 import com.hlxyedu.mhk.model.models.AnalyticXMLUtils;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
@@ -55,7 +53,7 @@ import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.skyworth.rxqwelibrary.app.AppConstants;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
+import com.skyworth.rxqwelibrary.utils.RxCountDown;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -141,12 +139,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     private String recordName;// 录音文件名字
     private String userDir; // 录音文件夹
 
-    // 倒计时
-    private RxTimerUtil rxTimer;
-    private int TIMER;
-
     private int currentPos; // 当前是第几个答题包
-
+    private DialogPlus mMaterialDialog;
 
     /**
      * 打开新Activity
@@ -190,7 +184,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         homeworkId = intent.getStringExtra("homeworkId");
         testType = intent.getStringExtra("testType");
 //        questionTypeTv.setText("口语模拟大礼包");
-        questionTypeTv.setText("2020年MHK模拟考试");
+        questionTypeTv.setText("2020年5月MHK三级校内测试（移动版）");
 
         if (from.equals("考试")) {
             currentPos = AppContext.getInstance().getCurrentPos();
@@ -220,8 +214,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         stateLoading();
         xbaseTopbar.setxBaseTopBarImp(this);
 
-        rxTimer = new RxTimerUtil();
-
         pageModels = new ArrayList<PageModel>();
         speakFragments = new ArrayList<SpeakFragment>();
         viewPager.setNoScroll(true);
@@ -239,21 +231,21 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
-        rxTimer.cancel();
+        RxCountDown.cancel();
     }
 
     private void startTimeProgress(int time) {
-        TIMER = time;
-        rxTimer.interval(1000, number -> {
-            TIMER--;
-            if (TIMER == 0) {
+        RxCountDown.countdown(time, new RxCountDown.IRxExecute() {
+            @Override
+            public void doNext(long number) {
+                countdownRl.setVisibility(View.VISIBLE);
+                countdownTv.setText(number + "S");
+            }
+
+            @Override
+            public void doComplete() {
                 countdownTv.setText("");
                 countdownRl.setVisibility(View.GONE);
-                rxTimer.cancel();
-                // 下一题
-            } else {
-                countdownRl.setVisibility(View.VISIBLE);
-                countdownTv.setText(TIMER + "S");
             }
         });
     }
@@ -268,7 +260,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
                 // 练习和作业 结束的页面
                 if (currentItem == speakFragments.size() - 1) {
-                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT,"","", userDir, examId, homeworkId, testId, testType));
+                    RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, "", "", userDir, examId, homeworkId, testId, testType));
                 }
                 break;
             case EventsConfig.SHOW_DETAL_VIEW:
@@ -511,6 +503,8 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     }
 
+    // ********************** 录音部分 ************************** //
+
     @Override
     public void onFinished(RecordParams params) {
         if (null != mAacFile) {
@@ -536,8 +530,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         mRecordHandler.sendMessage(msg);
 
     }
-
-    // ********************** 录音部分 ************************** //
 
     //正式加载数据
     private void loadData() {
@@ -629,10 +621,14 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     }
 
     //开始解压文件
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void unZip(String zipFileName, String outputDirectory) {
         try {
-            ZipFile zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
+            ZipFile zipFile = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
+            } else {
+                zipFile = new ZipFile(zipFileName);
+            }
             Enumeration e = zipFile.entries();
             ZipEntry zipEntry = null;
 //            createDirectory(outputDirectory, "");
@@ -812,11 +808,14 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         waveview.setHeightRect(rate);
     }
 
+    //--------------------------------------------------------------------------------------------------//
+
     @Override
     protected void onStop() {
         AudioPlayManager.getManager().stop();
         super.onStop();
     }
+
 
     //--------------------------------------------------------------------------------------------------//
 
@@ -824,12 +823,9 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
     protected void onDestroy() {
         mRecordHandler.removeCallbacksAndMessages(null);
 //        mRecorder.destroy();
-        rxTimer.cancel();
+        RxCountDown.cancel();
         super.onDestroy();
     }
-
-
-    //--------------------------------------------------------------------------------------------------//
 
     @Override
     public void responeError(String errorMsg) {
@@ -858,7 +854,6 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
         setBackHint();
     }
 
-    private DialogPlus mMaterialDialog;
     private void setBackHint() {
         WindowManager windowManager = (WindowManager) this
                 .getSystemService(Context.WINDOW_SERVICE);

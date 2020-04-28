@@ -19,6 +19,8 @@ import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
 import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -47,7 +49,10 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     private int pageSize = 20;
     private int count = 1; // 当前页数;
 
-    private RxTimerUtil rxTimerUtil;
+    // 点home键退出 重启哪个activity
+    private String restartWhat = "";
+
+    private int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
 
 
     public static ExamFragment newInstance() {
@@ -68,24 +73,12 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         return R.layout.fragment_exam;
     }
 
-/*    @Override
-    public void onSupportVisible() {
-        super.onSupportVisible();
-        dataVOList.clear();
-        count = 1;
-        pageSize = 20;
-        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
-    }*/
-
-    @Override
-    public void refreshUI() {
-        refreshLayout.autoRefresh();
-    }
-
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
         stateLoading();
+
+        showLongMessageDialog();
 
         mAdapter = new ExamAdapter(R.layout.item_exercise, dataVOList);
         rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
@@ -119,7 +112,6 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
             }
         });
 
-        rxTimerUtil = new RxTimerUtil();
     }
 
     @Override
@@ -154,44 +146,47 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
-    public void reExamination(String questionType) {
-        switch (questionType) {
+    public void onResume() {
+        super.onResume();
+        refreshLayout.autoRefresh();
+
+        switch (restartWhat) {
             case ReExamEvent.LISTENING:
-                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
                     @Override
                     public void doNext(long number) {
+                        restartWhat = "";
                         startActivity(TestListeningActivity.newInstance(mContext, "考试"));
-                        rxTimerUtil.cancel();
                     }
                 });
 
                 break;
             case ReExamEvent.READ:
-                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
                     @Override
                     public void doNext(long number) {
+                        restartWhat = "";
                         startActivity(TestReadActivity.newInstance(mContext, "考试"));
-                        rxTimerUtil.cancel();
                     }
                 });
 
                 break;
             case ReExamEvent.BOOK:
-                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
                     @Override
                     public void doNext(long number) {
+                        restartWhat = "";
                         startActivity(TestBookActivity.newInstance(mContext, "考试"));
-                        rxTimerUtil.cancel();
                     }
                 });
 
                 break;
             case ReExamEvent.COMPOSITION:
-                rxTimerUtil.interval(200, new RxTimerUtil.IRxNext() {
+                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
                     @Override
                     public void doNext(long number) {
+                        restartWhat = "";
                         startActivity(TestTxtActivity.newInstance(mContext, "考试"));
-                        rxTimerUtil.cancel();
                     }
                 });
 
@@ -200,8 +195,53 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
+    public void reExamination(String questionType) {
+        switch (questionType) {
+            case ReExamEvent.LISTENING:
+                restartWhat = ReExamEvent.LISTENING;
+
+                break;
+            case ReExamEvent.READ:
+                restartWhat = ReExamEvent.READ;
+
+                break;
+            case ReExamEvent.BOOK:
+                restartWhat = ReExamEvent.BOOK;
+
+                break;
+            case ReExamEvent.COMPOSITION:
+                restartWhat = ReExamEvent.COMPOSITION;
+
+                break;
+        }
+    }
+
+    @Override
     public void responeError(String errorMsg) {
         stateError();
+    }
+
+
+    private void showLongMessageDialog() {
+        new QMUIDialog.MessageDialogBuilder(getActivity())
+                .setTitle("考试须知")
+                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .setMessage("1、退出手机微信、QQ等其他一切通信软件的账号\n" +
+                        "2、开启手机飞行模式\n" +
+                        "3、打开手机wifi，连接无线网络，并保持网络畅通\n" +
+                        "4、考试期间禁止手动锁屏\n" +
+                        "5、考试期间禁止切换程序\n" +
+                        "6、考试期间保持手机电量充足\n" +
+                        "7、考试期间，手机前置摄像头必须对准本人，考试过程中将进行全程录像，如录像采集不到本人，则视为考试作弊，取消考试资格\n\n" +
+                        "如有发生以上情况，导致考试程序中止，造成考试成绩无法上传等问题，后果自负")
+                .addAction("我已认真阅读", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .create(mCurrentDialogStyle).show();
     }
 
 }

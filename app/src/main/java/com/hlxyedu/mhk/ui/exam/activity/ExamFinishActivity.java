@@ -6,8 +6,6 @@ import android.widget.Button;
 
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootActivity;
-import com.hlxyedu.mhk.base.RxBus;
-import com.hlxyedu.mhk.model.event.RefreshEvent;
 import com.hlxyedu.mhk.ui.exam.contract.ExamFinishContract;
 import com.hlxyedu.mhk.ui.exam.presenter.ExamFinishPresenter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
@@ -59,20 +57,12 @@ public class ExamFinishActivity extends RootActivity<ExamFinishPresenter> implem
 
     @OnClick(R.id.finish_btn)
     public void onViewClicked() {
-        RxBus.getDefault().post(new RefreshEvent(RefreshEvent.REFRESH_EVENT));
         finish();
     }
 
     @Override
     public void left() {
-        RxBus.getDefault().post(new RefreshEvent(RefreshEvent.REFRESH_EVENT));
         finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        RxBus.getDefault().post(new RefreshEvent(RefreshEvent.REFRESH_EVENT));
-        super.onBackPressed();
     }
 
     @Override

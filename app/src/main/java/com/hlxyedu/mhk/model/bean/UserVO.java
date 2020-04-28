@@ -1,6 +1,9 @@
 package com.hlxyedu.mhk.model.bean;
 
-public class UserVO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class UserVO implements Parcelable {
 
 
     /**
@@ -196,4 +199,69 @@ public class UserVO {
     public void setTokentime(String tokentime) {
         this.tokentime = tokentime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.mobile);
+        dest.writeString(this.idCard);
+        dest.writeString(this.password);
+        dest.writeLong(this.createTime);
+        dest.writeString(this.updateTime);
+        dest.writeString(this.state);
+        dest.writeString(this.saasUserId);
+        dest.writeString(this.sex);
+        dest.writeString(this.userName);
+        dest.writeString(this.nationId);
+        dest.writeString(this.nationName);
+        dest.writeString(this.classId);
+        dest.writeString(this.studentNumber);
+        dest.writeString(this.dormNumber);
+        dest.writeString(this.friend);
+        dest.writeString(this.remark);
+        dest.writeString(this.token);
+        dest.writeString(this.tokentime);
+    }
+
+    public UserVO() {
+    }
+
+    protected UserVO(Parcel in) {
+        this.id = in.readString();
+        this.mobile = in.readString();
+        this.idCard = in.readString();
+        this.password = in.readString();
+        this.createTime = in.readLong();
+        this.updateTime = in.readString();
+        this.state = in.readString();
+        this.saasUserId = in.readString();
+        this.sex = in.readString();
+        this.userName = in.readString();
+        this.nationId = in.readString();
+        this.nationName = in.readString();
+        this.classId = in.readString();
+        this.studentNumber = in.readString();
+        this.dormNumber = in.readString();
+        this.friend = in.readString();
+        this.remark = in.readString();
+        this.token = in.readString();
+        this.tokentime = in.readString();
+    }
+
+    public static final Parcelable.Creator<UserVO> CREATOR = new Parcelable.Creator<UserVO>() {
+        @Override
+        public UserVO createFromParcel(Parcel source) {
+            return new UserVO(source);
+        }
+
+        @Override
+        public UserVO[] newArray(int size) {
+            return new UserVO[size];
+        }
+    };
 }

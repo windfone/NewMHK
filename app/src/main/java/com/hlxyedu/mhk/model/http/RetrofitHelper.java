@@ -41,6 +41,16 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
+    public Flowable<HttpResponse<String>> getNoteInfo() {
+        return qBaseApis.getNoteInfo();
+    }
+
+    @Override
+    public Flowable<HttpResponse<UserVO>> getUserInfo() {
+        return qBaseApis.getUserInfo();
+    }
+
+    @Override
     public Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum) {
         return qBaseApis.postModifyPsdBody(mobile,password,idNum);
     }

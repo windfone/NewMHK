@@ -108,6 +108,16 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
+    public Flowable<HttpResponse<String>> getNoteInfo() {
+        return mHttpHelper.getNoteInfo();
+    }
+
+    @Override
+    public Flowable<HttpResponse<UserVO>> getUserInfo() {
+        return mHttpHelper.getUserInfo();
+    }
+
+    @Override
     public Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum) {
         return mHttpHelper.postModifyPsdBody(mobile, password, idNum);
     }

@@ -6,7 +6,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -21,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
@@ -28,15 +28,14 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.event.BaseEvents;
 import com.hlxyedu.mhk.model.event.EventsConfig;
 import com.hlxyedu.mhk.model.event.ExamEvent;
-import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.models.BasePageModel;
 import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
 import com.hlxyedu.mhk.ui.ecomposition.presenter.TxtPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 /**
  * Created by zhangguihua
@@ -62,9 +61,6 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
     private String answer = "";
 
     private String type;
-
-    // 倒计时
-    private RxTimerUtil rxTimer;
 
     public static TxtFragment newInstance() {
         Bundle args = new Bundle();
@@ -105,6 +101,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
             mPresenter.saveReExamCompositon(answer);
             RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
         }*/
+        ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
 
@@ -128,7 +125,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
 
     @Override
     public void reUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -148,7 +145,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                                 case R.id.re_commit_btn:
                                     mPresenter.cimmitAnswer();
                                     dialog.dismiss();
-                                    rxTimer.cancel();
+                                    RxTimerUtil.cancel();
                                     break;
                             }
                         }).create();
@@ -161,7 +158,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
 
     @Override
     public void exitReUploadAnswer(String str) {
-        rxTimer.interval(300, new RxTimerUtil.IRxNext() {
+        RxTimerUtil.interval(300, new RxTimerUtil.IRxNext() {
             @Override
             public void doNext(long number) {
                 WindowManager windowManager = (WindowManager) mActivity
@@ -181,7 +178,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                                 case R.id.re_commit_btn:
                                     mPresenter.exitCommitAnswer(answer);
                                     dialog.dismiss();
-                                    rxTimer.cancel();
+                                    RxTimerUtil.cancel();
                                     break;
                             }
                         }).create();
@@ -233,12 +230,19 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
         return view;
     }
 
+    private boolean onPause = false;
+    @Override
+    public void onPause() {
+        super.onPause();
+        onPause = true;
+    }
+
     @Override
     public void handleMessage(Message msg) {
         //不显示时 不影响倒计时
-
-
         if (!isVisible())
+            return;
+        if (onPause)
             return;
 
         super.handleMessage(msg);
@@ -312,12 +316,12 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                         editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         editText.setGravity(Gravity.TOP);
                         editText.setPadding(10, 10, 10, 10);
-                        editText.setHeight(500);
+                        editText.setHeight(1500);
                         answer = mPresenter.getReExamComposition();
                         editText.setText(answer);
 
                         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        layoutParams2.setMargins(0, 0, 0, 800);
+                        layoutParams2.setMargins(0, 0, 0, 900);
                         base_layout.addView(editText, layoutParams2);
 
                         editText.addTextChangedListener(new TextWatcher() {
@@ -345,11 +349,11 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                 Message message = new Message();
                 message.what = NEXT_TRAIN;
                 getHandler().sendMessageDelayed(message, CommonUtils.delayTime(basePageModel.getTimeout()));
-//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:02:30"));
+//                getHandler().sendMessageDelayed(message, CommonUtils.delayTime("00:00:10"));
 
                 BaseEvents baseEvents = new BaseEvents(BaseEvents.NOTICE, EventsConfig.SHOW_DETAL_VIEW);
                 baseEvents.setData(CommonUtils.delayTime(basePageModel.getTimeout()) / 1000);
-//                baseEvents.setData(CommonUtils.delayTime("00:02:30") / 1000);
+//                baseEvents.setData(CommonUtils.delayTime("00:00:10") / 1000);
                 RxBus.getDefault().post(baseEvents);
 
                 break;
@@ -374,7 +378,6 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
 
     @Override
     protected void initEventAndData() {
-        rxTimer = new RxTimerUtil();
     }
 
     @Override

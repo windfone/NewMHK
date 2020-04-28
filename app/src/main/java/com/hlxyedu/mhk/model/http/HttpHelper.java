@@ -25,6 +25,10 @@ public interface HttpHelper {
 
     Flowable<HttpResponse<UserVO>> postLoginBody(String mobile, String password);
 
+    Flowable<HttpResponse<String>> getNoteInfo();
+
+    Flowable<HttpResponse<UserVO>> getUserInfo();
+
     Flowable<HttpResponse<String>> postModifyPsdBody(String mobile, String password, String idNum);
 
     Flowable<HttpResponse<ExerciseListVO>> getExamList(String examType, String id, int pageNum, int perpage, String version);
