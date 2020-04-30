@@ -22,11 +22,11 @@
 
     <TextView
         android:id="@+id/title_tv"
-        style="@style/textSize_black303_14"
+        style="@style/textSize_black303_15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4sp"
-        android:layout_marginTop="19dp"
+        android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/positive_btn"
         android:layout_toEndOf="@+id/question_type_iv" />
 
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/title_tv"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="50dp"
         android:layout_toStartOf="@+id/positive_btn"
         android:singleLine="true" />
 

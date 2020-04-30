@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     android:paddingStart="40dp"
-    android:paddingBottom="20dp"
-    >
+    android:paddingBottom="20dp">
+
     <TextView
-        android:layout_marginTop="20dp"
         android:id="@+id/question_title"
+        style="@style/textSize_black303_15"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="1"
-        style="@style/textSize_black303_15"
+        android:layout_marginTop="20dp"
         android:layout_weight="7"
-        />
+        android:text="1" />
+
     <LinearLayout
         android:id="@+id/layout_a"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:layout_marginTop="15dp"
-            >
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/image_a"
-                style="@style/textSize_gray7C7_14"
+                style="@style/textSize_gray9A9_14"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:background="@drawable/shape_gray_circle"
@@ -42,12 +41,11 @@
 
             <TextView
                 android:id="@+id/text_a"
-                android:layout_marginStart="20dp"
+                style="@style/textSize_black303_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="学生过重的学业负担减轻"
-                style="@style/textSize_black303_15"
-                />
+                android:layout_marginStart="20dp"
+                android:text="学生过重的学业负担减轻" />
 
         </LinearLayout>
 
@@ -55,12 +53,12 @@
             android:id="@+id/layout_b"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/image_b"
-                style="@style/textSize_gray7C7_14"
+                style="@style/textSize_gray9A9_14"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:background="@drawable/shape_gray_circle"
@@ -69,12 +67,11 @@
 
             <TextView
                 android:id="@+id/text_b"
-                android:layout_marginStart="20dp"
+                style="@style/textSize_black303_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="学生过重的学业负担减轻"
-                style="@style/textSize_black303_15"
-                />
+                android:layout_marginStart="20dp"
+                android:text="学生过重的学业负担减轻" />
 
         </LinearLayout>
 
@@ -82,13 +79,12 @@
             android:id="@+id/layout_c"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/image_c"
-                style="@style/textSize_gray7C7_14"
+                style="@style/textSize_gray9A9_14"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:background="@drawable/shape_gray_circle"
@@ -97,12 +93,11 @@
 
             <TextView
                 android:id="@+id/text_c"
-                android:layout_marginStart="20dp"
+                style="@style/textSize_black303_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="学生过重的学业负担减轻"
-                style="@style/textSize_black303_15"
-                />
+                android:layout_marginStart="20dp"
+                android:text="学生过重的学业负担减轻" />
 
         </LinearLayout>
 
@@ -110,13 +105,12 @@
             android:id="@+id/layout_d"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/image_d"
-                style="@style/textSize_gray7C7_14"
+                style="@style/textSize_gray9A9_14"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:background="@drawable/shape_gray_circle"
@@ -125,12 +119,11 @@
 
             <TextView
                 android:id="@+id/text_d"
-                android:layout_marginStart="20dp"
+                style="@style/textSize_black303_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="学生过重的学业负担减轻"
-                style="@style/textSize_black303_15"
-                />
+                android:layout_marginStart="20dp"
+                android:text="学生过重的学业负担减轻" />
 
         </LinearLayout>
     </LinearLayout>

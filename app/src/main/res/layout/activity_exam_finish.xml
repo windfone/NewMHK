@@ -19,7 +19,7 @@
     <LinearLayout
         android:id="@+id/ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="@drawable/icon_exercise_bg"
         android:orientation="vertical">
 
@@ -27,9 +27,9 @@
             android:id="@+id/question_type_tv"
             style="@style/textSize_whitefff_14"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="39dp"
-            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
             android:text="2020年5月MHK三级校内测试（移动版）" />
 
         <TextView

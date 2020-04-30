@@ -138,42 +138,42 @@ public class ListenQuestionItemView extends LinearLayout implements View.OnClick
         image_a.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_blue_circle));
         image_a.setTextColor(getResources().getColor(R.color.whitefff));
         image_b.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_b.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_b.setTextColor(getResources().getColor(R.color.gray9A9));
         image_c.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_c.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_c.setTextColor(getResources().getColor(R.color.gray9A9));
         image_d.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_d.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_d.setTextColor(getResources().getColor(R.color.gray9A9));
     }
 
     private void setUIB() {
         image_a.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_a.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_a.setTextColor(getResources().getColor(R.color.gray9A9));
         image_b.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_blue_circle));
         image_b.setTextColor(getResources().getColor(R.color.whitefff));
         image_c.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_c.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_c.setTextColor(getResources().getColor(R.color.gray9A9));
         image_d.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_d.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_d.setTextColor(getResources().getColor(R.color.gray9A9));
     }
 
     private void setUIC() {
         image_a.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_a.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_a.setTextColor(getResources().getColor(R.color.gray9A9));
         image_b.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_b.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_b.setTextColor(getResources().getColor(R.color.gray9A9));
         image_c.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_blue_circle));
         image_c.setTextColor(getResources().getColor(R.color.whitefff));
         image_d.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_d.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_d.setTextColor(getResources().getColor(R.color.gray9A9));
     }
 
     private void setUID() {
         image_a.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_a.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_a.setTextColor(getResources().getColor(R.color.gray9A9));
         image_b.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_b.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_b.setTextColor(getResources().getColor(R.color.gray9A9));
         image_c.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_gray_circle));
-        image_c.setTextColor(getResources().getColor(R.color.gray7C7));
+        image_c.setTextColor(getResources().getColor(R.color.gray9A9));
         image_d.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shape_blue_circle));
         image_d.setTextColor(getResources().getColor(R.color.whitefff));
     }

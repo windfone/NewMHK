@@ -113,7 +113,12 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
     @Override
     public void commitSuccess() {
         if (StringUtils.equals(type, "考试")) {
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+            RxTimerUtil.timer(5000, new RxTimerUtil.IRxNext() {
+                @Override
+                public void doNext(long number) {
+                    RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+                }
+            });
         } else {
             waitText.setVisibility(View.GONE);
             successHintText.setVisibility(View.VISIBLE);

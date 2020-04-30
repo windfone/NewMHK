@@ -60,7 +60,7 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, ExamVO item) {
         helper.setText(R.id.title_tv, item.getTestName())
-                .setText(R.id.author_tv, item.getTeacherName() + "老师")
+//                .setText(R.id.author_tv, item.getTeacherName()+"")
                 .setImageResource(R.id.question_type_iv, R.drawable.icon_zh);
         // item.getState() :  0 去考试； 1 已结束； 2 未开始
 

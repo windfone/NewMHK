@@ -72,6 +72,11 @@
         <item name="android:textSize">@dimen/textsize_sp_14</item>
     </style>
 
+    <style name="textSize_gray9A9_14">
+        <item name="android:textColor">@color/gray9A9</item>
+        <item name="android:textSize">@dimen/textsize_sp_14</item>
+    </style>
+
     <style name="textSize_orangeD57_14">
         <item name="android:textColor">@color/orangeD57</item>
         <item name="android:textSize">@dimen/textsize_sp_14</item>

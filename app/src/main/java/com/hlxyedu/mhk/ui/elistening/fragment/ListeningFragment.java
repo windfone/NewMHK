@@ -160,7 +160,12 @@ public class ListeningFragment extends RootFragment<ListeningPresenter> implemen
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
         if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
-            RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+            RxTimerUtil.timer(5000, new RxTimerUtil.IRxNext() {
+                @Override
+                public void doNext(long number) {
+                    RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
+                }
+            });
         } else {
             waitText.setVisibility(View.GONE);
             successHintText.setVisibility(View.VISIBLE);
