@@ -965,13 +965,8 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 List<File> s = FileUtils.listFilesInDir(videos);
                 for (int i = 0; i < s.size(); i++) {
                     if (StringUtils.equals(s.get(i).getPath(), result)) {
-                        ToastUtils.showShort("录制完成");
                         mPresenter.uploadVideo(s.get(i), examId, testId, testType);
                         break;
-//                        FileUtils.delete(s.get(i));
-//                    } else {
-//                        // 录制完就上传视频
-//                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
                     }
                 }
             }

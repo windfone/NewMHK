@@ -53,7 +53,7 @@ public abstract class SimpleActivity extends AppCompatActivity {
         }
 
         // 禁止截屏
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
 
     }
 

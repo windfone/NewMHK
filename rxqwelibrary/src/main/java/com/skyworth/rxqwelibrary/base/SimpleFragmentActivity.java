@@ -48,7 +48,7 @@ public abstract class SimpleFragmentActivity extends SupportAutoActivity {
         }
 
         // 禁止截屏
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     protected void onViewCreated() {

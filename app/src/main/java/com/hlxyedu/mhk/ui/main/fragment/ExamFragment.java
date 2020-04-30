@@ -1,17 +1,19 @@
 package com.hlxyedu.mhk.ui.main.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.ExamVO;
-import com.hlxyedu.mhk.model.event.ReExamEvent;
-import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
-import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
-import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
-import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.main.adapter.ExamAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
@@ -19,12 +21,12 @@ import com.hlxyedu.mhk.weight.MyLinearLayoutManager;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
 import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
+import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,9 +150,14 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     @Override
     public void onResume() {
         super.onResume();
+        // 每次进入考试列表页都删除
+        FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
+        FileUtils.deleteDir(AppConstants.FILE_DOWNLOAD_PATH);
+        FileUtils.deleteDir(AppConstants.UNFILE_DOWNLOAD_PATH);
+
         refreshLayout.autoRefresh();
 
-        switch (restartWhat) {
+        /*switch (restartWhat) {
             case ReExamEvent.LISTENING:
                 RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
                     @Override
@@ -191,12 +198,12 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
                 });
 
                 break;
-        }
+        }*/
     }
 
     @Override
     public void reExamination(String questionType) {
-        switch (questionType) {
+        /*switch (questionType) {
             case ReExamEvent.LISTENING:
                 restartWhat = ReExamEvent.LISTENING;
 
@@ -213,7 +220,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
                 restartWhat = ReExamEvent.COMPOSITION;
 
                 break;
-        }
+        }*/
     }
 
     @Override
@@ -223,7 +230,36 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
 
     private void showLongMessageDialog() {
-        new QMUIDialog.MessageDialogBuilder(getActivity())
+        WindowManager windowManager = (WindowManager) mActivity
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+
+        DialogPlus noticeDialog = DialogPlus.newDialog(mActivity)
+                .setGravity(Gravity.CENTER)
+                .setContentHolder(new ViewHolder(R.layout.dialog_notice))
+                .setContentBackgroundResource(R.drawable.shape_radius_4dp)
+                .setContentWidth((int) (display
+                        .getWidth() * 0.8))
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+                .setCancelable(false)//设置不可取消   可以取消
+                .setOnClickListener((dialog, view1) -> {
+                    switch (view1.getId()) {
+                        case R.id.txt_confirm:
+                            dialog.dismiss();
+                            break;
+                    }
+                }).create();
+        TextView textView = (TextView) noticeDialog.findViewById(R.id.txt_msg);
+        textView.setText("1、退出手机微信、QQ等其他一切通信软件的账号\n" +
+                "2、开启手机飞行模式\n" +
+                "3、打开手机wifi，连接无线网络，并保持网络畅通\n" +
+                "4、考试期间禁止手动锁屏\n" +
+                "5、考试期间禁止切换程序\n" +
+                "6、考试期间保持手机电量充足\n" +
+                "7、考试期间，手机前置摄像头必须对准本人，考试过程中将进行全程录像，如录像采集不到本人，则视为考试作弊，取消考试资格\n\n" +
+                "如有发生以上情况，导致考试程序中止，造成考试成绩无法上传等问题，后果自负");
+        noticeDialog.show();
+        /*new QMUIDialog.MessageDialogBuilder(getActivity())
                 .setTitle("考试须知")
                 .setCancelable(false)
                 .setCanceledOnTouchOutside(false)
@@ -235,13 +271,8 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
                         "6、考试期间保持手机电量充足\n" +
                         "7、考试期间，手机前置摄像头必须对准本人，考试过程中将进行全程录像，如录像采集不到本人，则视为考试作弊，取消考试资格\n\n" +
                         "如有发生以上情况，导致考试程序中止，造成考试成绩无法上传等问题，后果自负")
-                .addAction("我已认真阅读", new QMUIDialogAction.ActionListener() {
-                    @Override
-                    public void onClick(QMUIDialog dialog, int index) {
-                        dialog.dismiss();
-                    }
-                })
-                .create(mCurrentDialogStyle).show();
+                .addAction("我已认真阅读", (dialog, index) -> dialog.dismiss())
+                .create(mCurrentDialogStyle).show();*/
     }
 
 }

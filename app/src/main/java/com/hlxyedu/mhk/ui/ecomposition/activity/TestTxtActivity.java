@@ -231,15 +231,12 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     private void clearTimeProgress() {
         countdownRl.setVisibility(View.GONE);
         RxCountDown.cancel();
-        Log.e("============", "111111");
     }
 
     private void startTimeProgress(int time) {
-        Log.e("============", "33333");
         RxCountDown.countdown(time, new RxCountDown.IRxExecute() {
             @Override
             public void doNext(long number) {
-                Log.e("============", "44444");
                 countdownRl.setVisibility(View.VISIBLE);
                 countdownTv.setText(number + "S");
             }
@@ -272,7 +269,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 clearTimeProgress();
                 int time = (int) event.getData();
                 if (time > 1) {
-                    Log.e("============", "222222");
                     startTimeProgress(time);
                 }
                 break;

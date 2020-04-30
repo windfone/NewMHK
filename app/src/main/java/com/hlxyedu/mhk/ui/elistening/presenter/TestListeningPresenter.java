@@ -1,5 +1,7 @@
 package com.hlxyedu.mhk.ui.elistening.presenter;
 
+import android.util.Log;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -118,7 +120,7 @@ public class TestListeningPresenter extends RxPresenter<TestListeningContract.Vi
                             @Override
                             public void onComplete() {
                                 super.onComplete();
-                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
+//                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
                             }
                         }
                 )

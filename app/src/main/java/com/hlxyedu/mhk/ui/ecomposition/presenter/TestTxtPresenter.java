@@ -119,7 +119,7 @@ public class TestTxtPresenter extends RxPresenter<TestTxtContract.View> implemen
                             @Override
                             public void onComplete() {
                                 super.onComplete();
-                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
+//                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
                             }
                         }
                 )

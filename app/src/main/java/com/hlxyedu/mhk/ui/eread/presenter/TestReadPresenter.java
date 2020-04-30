@@ -117,7 +117,7 @@ public class TestReadPresenter extends RxPresenter<TestReadContract.View> implem
                             @Override
                             public void onComplete() {
                                 super.onComplete();
-                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
+//                                FileUtils.deleteDir(AppConstants.VIDEO_RECORDING_PATH);
                             }
                         }
                 )
