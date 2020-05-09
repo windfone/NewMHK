@@ -32,6 +32,7 @@ import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
 import com.hlxyedu.mhk.ui.eread.presenter.ReadPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.StringUtils;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -108,16 +109,19 @@ public class ReadFragment extends RootFragment<ReadPresenter> implements ReadCon
 
     @Override
     public void onFinish() {
+        Logger.d( "阅读提前交卷退出页面到考试列表");
         ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
 
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
+        Logger.d( "阅读提交答案成功-中间页等待5秒");
         if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
             RxTimerUtil.timer(5000, new RxTimerUtil.IRxNext() {
                 @Override
                 public void doNext(long number) {
+                    Logger.d( "阅读准备跳转下一个页面");
                     RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
                 }
             });

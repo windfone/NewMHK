@@ -16,16 +16,9 @@
             android:id="@+id/xbase_topbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:isShowLeft_x="true"
+            app:isShowLeft_x="false"
             app:isShowRight_x="false"
             app:middleText_x="@string/exercise" />
-
-        <SurfaceView
-            android:id="@+id/surfaceView"
-            android:layout_width="1px"
-            android:layout_height="1px"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
 

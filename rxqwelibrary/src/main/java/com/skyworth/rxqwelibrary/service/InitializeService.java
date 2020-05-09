@@ -30,12 +30,17 @@ public class InitializeService extends IntentService {
         context.startService(intent);
     }
 
+    private boolean isFrist = false;
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_INIT.equals(action)) {
-                initApplication();
+                if (!isFrist){
+                    initApplication();
+                    isFrist = true;
+                }
             }
         }
     }
@@ -77,10 +82,10 @@ public class InitializeService extends IntentService {
     private void initLogger(){
         // 初始化日志写文件的工具
         //DEBUG版本才打控制台log
-        if (BuildConfig.DEBUG) {
-            Logger.addLogAdapter(new AndroidLogAdapter(PrettyFormatStrategy.newBuilder().
-                    tag(getString(R.string.app_name)).build()));
-        }
+//        if (BuildConfig.DEBUG) {
+//            Logger.addLogAdapter(new AndroidLogAdapter(PrettyFormatStrategy.newBuilder().
+//                    tag(getString(R.string.app_name)).build()));
+//        }
         //把log存到本地
         Logger.addLogAdapter(new DiskLogAdapter(TxtFormatStrategy.newBuilder().
                 tag(getString(R.string.app_name)).build(getPackageName(), getString(R.string.app_name))));

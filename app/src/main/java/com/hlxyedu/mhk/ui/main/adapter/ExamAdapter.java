@@ -2,23 +2,16 @@ package com.hlxyedu.mhk.ui.main.adapter;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatTextView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -34,12 +27,7 @@ import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.weight.listener.NoDoubleClickListener;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
-import com.qmuiteam.qmui.util.QMUIResHelper;
-import com.qmuiteam.qmui.util.QMUIViewHelper;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.widget.NetErrorDialog;
 
 import java.util.ArrayList;
@@ -50,6 +38,7 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
     private ArrayList<ExamVO> datas;
 
     private int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
+    private String editStr = "";
 
     public ExamAdapter(int layoutResId,
                        @Nullable List<ExamVO> data) {
@@ -57,42 +46,7 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
         this.datas = (ArrayList<ExamVO>) data;
     }
 
-    @Override
-    protected void convert(BaseViewHolder helper, ExamVO item) {
-        helper.setText(R.id.title_tv, item.getTestName())
-//                .setText(R.id.author_tv, item.getTeacherName()+"")
-                .setImageResource(R.id.question_type_iv, R.drawable.icon_zh);
-        // item.getState() :  0 去考试； 1 已结束； 2 未开始
-
-        switch (item.getState()) {
-            case "0":
-                helper.setText(R.id.positive_btn, "去考试");
-                break;
-            case "1":
-                helper.setText(R.id.positive_btn, "已结束").addOnClickListener(R.id.positive_btn);
-                break;
-            case "2":
-                helper.setText(R.id.positive_btn, "未开始").addOnClickListener(R.id.positive_btn);
-                break;
-        }
-
-        Button button = helper.getView(R.id.positive_btn);
-        if (StringUtils.equals(item.getState(), "0")) {
-            button.setEnabled(true);
-            button.setOnClickListener(new NoDoubleClickListener() {
-                @Override
-                protected void onNoDoubleClick(View v) {
-//                    showDialog(item);
-                    showAutoDialog(item);
-                }
-            });
-        } else {
-            button.setEnabled(false);
-        }
-
-    }
-
-    private void showAutoDialog(ExamVO item) {
+    /*private void showAutoDialog(ExamVO item) {
         editStr = "";
         QMAutoTestDialogBuilder autoTestDialogBuilder = (QMAutoTestDialogBuilder) new QMAutoTestDialogBuilder(mContext)
                 .addAction("确定", new QMUIDialogAction.ActionListener() {
@@ -199,35 +153,72 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
 
             return layout;
         }
+    }*/
+
+    @Override
+    protected void convert(BaseViewHolder helper, ExamVO item) {
+        helper.setText(R.id.title_tv, item.getTestName())
+//                .setText(R.id.author_tv, item.getTeacherName()+"")
+                .setImageResource(R.id.question_type_iv, R.drawable.icon_zh);
+        // item.getState() :  0 去考试； 1 已结束； 2 未开始
+
+        switch (item.getState()) {
+            case "0":
+                helper.setText(R.id.positive_btn, "去考试");
+                break;
+            case "1":
+                helper.setText(R.id.positive_btn, "已结束").addOnClickListener(R.id.positive_btn);
+                break;
+            case "2":
+                helper.setText(R.id.positive_btn, "未开始").addOnClickListener(R.id.positive_btn);
+                break;
+        }
+
+        Button button = helper.getView(R.id.positive_btn);
+        if (StringUtils.equals(item.getState(), "0")) {
+            button.setEnabled(true);
+            button.setOnClickListener(new NoDoubleClickListener() {
+                @Override
+                protected void onNoDoubleClick(View v) {
+                    showDialog(item);
+//                    showAutoDialog(item);
+                }
+            });
+        } else {
+            button.setEnabled(false);
+        }
+
     }
 
-   /* private void showDialog(ExamVO item) {
+    private TextView textView;
+    private void showDialog(ExamVO item) {
         WindowManager windowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
 
         DialogPlus mMaterialDialog = DialogPlus.newDialog(mContext)
                 .setGravity(Gravity.CENTER)
-                .setContentHolder(new ViewHolder(R.layout.dialog_declaration))
+                .setContentHolder(new ViewHolder(R.layout.exam_notes))
                 .setContentBackgroundResource(R.drawable.shape_radius_4dp)
                 .setContentWidth((int) (display
-                        .getWidth() * 0.8))
-//                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
-                .setContentHeight((int) (display
-                        .getHeight() * 0.8))
+                        .getWidth() * 0.85))
+                .setContentHeight(LinearLayout.LayoutParams.WRAP_CONTENT)
+//                .setContentHeight((int) (display
+//                        .getHeight() * 0.8))
                 .setCancelable(false)//设置不可取消   可以取消
                 .setOnClickListener((dialog, view1) -> {
                     switch (view1.getId()) {
-                        case R.id.btn_neg:
-                            dialog.dismiss();
-                            break;
-                        case R.id.btn_pos:
-                            dialog.dismiss();
+                        case R.id.confirm_tv:
+                            if (!editStr.equals(mContext.getResources().getString(R.string.exam_request))) {
+                                textView.setVisibility(View.VISIBLE);
+                                Logger.d("下载输入框内容输入错误");
+                                return;
+                            }
                             if (!NetworkUtils.isConnected()) {
                                 NetErrorDialog.getInstance().showNetErrorDialog(mContext);
                                 return;
                             }
-
+                            Logger.d("下载输入框内容验证正确-准备下载试卷");
                             if (item.getExamZips() == null) {
                                 return;
                             }
@@ -242,18 +233,30 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
                             }
                             AppContext.getInstance().setExamProgressVOS(examProgressVOS);
                             RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_EXAM));
+                            dialog.dismiss();
+                            editStr = "";
                             break;
                     }
                 }).create();
 
-        String[] details = mContext.getResources().getStringArray(R.array.declaration);
-        String strings = "";
-        for (int i = 0; i < details.length; i++) {
-            strings += details[i] + "\n\n";
-        }
-        TextView textView = (TextView) mMaterialDialog.findViewById(R.id.txt_msg);
-        textView.setText(strings);
+        textView = (TextView) mMaterialDialog.findViewById(R.id.error_tv);
+        EditText editText = (EditText) mMaterialDialog.findViewById(R.id.content_edit);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                textView.setVisibility(View.GONE);
+                editStr = s.toString().replaceAll(" +", "");
+            }
+        });
         mMaterialDialog.show();
-    }*/
+    }
 
 }

@@ -22,5 +22,8 @@ public interface TestBookContract {
         String getUserId();
 
         void uploadVideo(File file, String examId, String testId, String testType);
+
+        void saveLog(String userId, String mobileInfo, String exceptionInfo);
+
     }
 }

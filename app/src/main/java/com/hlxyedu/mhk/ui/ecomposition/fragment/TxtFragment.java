@@ -33,6 +33,7 @@ import com.hlxyedu.mhk.model.models.PageModel;
 import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
 import com.hlxyedu.mhk.ui.ecomposition.presenter.TxtPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
@@ -101,6 +102,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
             mPresenter.saveReExamCompositon(answer);
             RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
         }*/
+        Logger.d( "作文提前交卷退出页面到考试列表");
         ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
@@ -112,10 +114,12 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
 
     @Override
     public void commitSuccess() {
+        Logger.d( "作文提交答案成功-中间页等待5秒");
         if (StringUtils.equals(type, "考试")) {
             RxTimerUtil.timer(5000, new RxTimerUtil.IRxNext() {
                 @Override
                 public void doNext(long number) {
+                    Logger.d( "作文准备跳转下一个页面");
                     RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
                 }
             });
@@ -321,7 +325,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                         editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         editText.setGravity(Gravity.TOP);
                         editText.setPadding(10, 10, 10, 10);
-                        editText.setHeight(1500);
+                        editText.setHeight(2000);
                         answer = mPresenter.getReExamComposition();
                         editText.setText(answer);
 

@@ -844,8 +844,7 @@ public class TestSpeakActivity extends RootFragmentActivity<TestSpeakPresenter> 
 
     @Override
     public void onBackPressedSupport() {
-        setBackHint();
-//        mMaterialDialog.show();
+//        setBackHint();
     }
 
     @Override

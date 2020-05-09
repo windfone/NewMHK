@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,13 +16,17 @@ import android.widget.TextView;
 import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.common.HttpOption;
+import com.arialyy.aria.core.download.DownloadGroupEntity;
 import com.arialyy.aria.core.processor.IHttpFileLenAdapter;
 import com.arialyy.aria.core.task.DownloadGroupTask;
 import com.arialyy.aria.util.CommonUtil;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.app.AppContext;
+import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.bean.ExamProgressVO;
+import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.http.api.ApiConstants;
 import com.hlxyedu.mhk.ui.ebook.activity.TestBookActivity;
 import com.hlxyedu.mhk.ui.ecomposition.activity.TestTxtActivity;
@@ -29,6 +34,7 @@ import com.hlxyedu.mhk.ui.elistening.activity.TestListeningActivity;
 import com.hlxyedu.mhk.ui.eread.activity.TestReadActivity;
 import com.hlxyedu.mhk.ui.espeak.activity.TestSpeakActivity;
 import com.hlxyedu.mhk.utils.PermissionSettingUtil;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -55,7 +61,6 @@ public class MoreTaskDLDialog extends Dialog {
     private List<String> examNameLists = new ArrayList<>();
 
     // 权限相关
-    private boolean CAMERA;
     private boolean READ_EXTERNAL_STORAGE;
     private boolean WRITE_EXTERNAL_STORAGE;
     private boolean RECORD_AUDIO;
@@ -93,7 +98,7 @@ public class MoreTaskDLDialog extends Dialog {
         this.setCancelable(false);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams dialogParams = getWindow().getAttributes();
-        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.17);
+        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.22);
         dialogParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         dialogParams.height = height;
 
@@ -103,6 +108,18 @@ public class MoreTaskDLDialog extends Dialog {
         mSize = findViewById(R.id.size_tv);
         mProgressBar = findViewById(R.id.progressBar);
 
+        findViewById(R.id.reload_tv).setOnClickListener(v -> {
+//            int state = Aria.download(this).getDownloadEntity(mTaskId).getState();
+            // Aria.download(this).getDownloadEntity(mTaskId).getState()
+            // 任务存在
+//            boolean b = Aria.download(this).taskExists(downUrlLists);
+//            Aria.download(this).loadGroup(mTaskId).stop(); // 走下载完成方法，实际未完成
+//            Aria.download(this).loadGroup(mTaskId).reTry();// 会走stop方法， 暂停住
+//            Aria.download(this).loadGroup(mTaskId).reStart();// 没效果,不走方法
+//            Aria.download(this).loadGroup(mTaskId).resume();
+            Aria.download(this).loadGroup(mTaskId).cancel(true);
+        });
+
         // 下载之前先检测权限，如果没有存储权限则下载不了
         checkPermissions();
 
@@ -110,12 +127,35 @@ public class MoreTaskDLDialog extends Dialog {
 
     @DownloadGroup.onTaskPre
     public void onTaskPre(DownloadGroupTask task) {
+        Logger.d("获取到文件大小" + CommonUtil.formatFileSize(task.getFileSize()));
         mSize.setText(CommonUtil.formatFileSize(task.getFileSize()));
+    }
+
+    @DownloadGroup.onTaskStart
+    public void onTaskStart(DownloadGroupTask task) {
+        Logger.d("下载开始");
+    }
+
+    @DownloadGroup.onTaskCancel
+    public void onTaskCancel(DownloadGroupTask task) {
+        Aria.download(this).unRegister();
+        Logger.d("点击了重新下载");
+        dismiss();
+        RxBus.getDefault().post(new DownLoadEvent(DownLoadEvent.DOWNLOAD_PAPER_EXAM));
+    }
+
+    @DownloadGroup.onTaskStop
+    public void onTaskStop(DownloadGroupTask task) {
+        Logger.d("下载暂停");
+        Aria.download(this).loadGroup(mTaskId).cancel();
+        this.dismiss();
     }
 
     @DownloadGroup.onTaskFail
     public void onTaskFail(DownloadGroupTask task) {
-        ToastUtils.showShort("加载失败！");
+        ToastUtils.showShort("加载失败！请重试");
+        Logger.d("文件下载失败！");
+        Aria.download(this).loadGroup(mTaskId).cancel();
         this.dismiss();
     }
 
@@ -134,7 +174,9 @@ public class MoreTaskDLDialog extends Dialog {
 
     @DownloadGroup.onTaskComplete
     public void onTaskComplete(DownloadGroupTask task) {
-
+        Logger.d("文件下载完成！");
+        Aria.download(this).loadGroup(mTaskId).cancel();
+        Aria.download(this).unRegister();
         this.dismiss();
 
         AppContext.getInstance().setCurrentPos(0);
@@ -162,16 +204,13 @@ public class MoreTaskDLDialog extends Dialog {
         RxPermissions rxPermissions = new RxPermissions((FragmentActivity) context);
         rxPermissions.setLogging(true);
         rxPermissions
-                .requestEach(Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.RECORD_AUDIO)
                 .subscribe(permission -> { // will emit 2 Permission objects
                     if (permission.granted) {
-                        if (permission.name.equals("android.permission.CAMERA")) {
-                            CAMERA = true;
-                        } else if (permission.name.equals("android.permission.READ_EXTERNAL_STORAGE")) {
+                        if (permission.name.equals("android.permission.READ_EXTERNAL_STORAGE")) {
                             READ_EXTERNAL_STORAGE = true;
                         } else if (permission.name.equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
                             WRITE_EXTERNAL_STORAGE = true;
@@ -181,7 +220,8 @@ public class MoreTaskDLDialog extends Dialog {
                             READ_PHONE_STATE = true;
                         }
                         // 权限同意,而且是权限全部同意才下载，这样做 防止只同意存储权限可以下载，但是不能录音，到口语 题型的时候不能录音还得再次申请
-                        if (CAMERA && READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE && RECORD_AUDIO && READ_PHONE_STATE) {
+                        if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE && RECORD_AUDIO && READ_PHONE_STATE) {
+
                             mTaskId = Aria.download(this)
 //                                    .setMaxSpeed(0) // 0表示不限速
                                     .loadGroup(downUrlLists)

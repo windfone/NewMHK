@@ -32,10 +32,11 @@ import com.hlxyedu.mhk.ui.ebook.contract.BookContract;
 import com.hlxyedu.mhk.ui.ebook.presenter.BookPresenter;
 import com.hlxyedu.mhk.utils.CommonUtils;
 import com.hlxyedu.mhk.utils.StringUtils;
-import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 import com.hlxyedu.mhk.weight.view.ListenQuestionItemView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
+import com.orhanobut.logger.Logger;
+import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -75,6 +76,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
     private int op_long = 0;
 
     private String type;
+    private boolean onPause = false;
 
     public static BookFragment newInstance() {
         Bundle args = new Bundle();
@@ -108,16 +110,19 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
 
     @Override
     public void onFinish() {
+        Logger.d("书面提交答案成功");
         ToastUtils.showShort("交卷成功");
         mActivity.finish();
     }
 
     @Override
     public void commitSuccess(ScoreVO scoreVO) {
+        Logger.d("书面提交答案成功-中间页等待5秒");
         if (com.blankj.utilcode.util.StringUtils.equals(type, "考试")) {
             RxTimerUtil.timer(5000, new RxTimerUtil.IRxNext() {
                 @Override
                 public void doNext(long number) {
+                    Logger.d("书面准备跳转下一个页面");
                     RxBus.getDefault().post(new BaseEvents(BaseEvents.NOTICE, EventsConfig.TEST_NEXT_ACTIVITY));
                 }
             });
@@ -366,7 +371,6 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
         }
     }
 
-    private boolean onPause = false;
     @Override
     public void onPause() {
         super.onPause();
@@ -379,7 +383,7 @@ public class BookFragment extends RootFragment<BookPresenter> implements BookCon
         //不显示时 不影响倒计时
         if (!isSupportVisible())
             return;
-        if(onPause)
+        if (onPause)
             return;
 
         switch (msg.what) {

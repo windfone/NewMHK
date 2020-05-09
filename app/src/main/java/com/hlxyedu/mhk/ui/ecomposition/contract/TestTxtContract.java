@@ -23,6 +23,8 @@ public interface TestTxtContract {
 
         String getUserId();
 
+        void saveLog(String userId, String mobileInfo, String exceptionInfo);
+
         void uploadVideo(File file, String examId, String testId, String testType);
 
     }

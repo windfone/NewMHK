@@ -54,6 +54,25 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/cancel_tv"
+            style="@style/textSize_whitefff_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="@string/reload" />
+
+        <Button
+            android:id="@+id/reload_tv"
+            style="@style/textSize_whitefff_13"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:text="@string/redownload" />
+
     </LinearLayout>
 
 </RelativeLayout>

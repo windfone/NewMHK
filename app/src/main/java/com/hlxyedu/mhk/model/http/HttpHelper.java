@@ -2,10 +2,12 @@ package com.hlxyedu.mhk.model.http;
 
 import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.FileUrlVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.bean.VersionVO;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 
 import java.util.List;
@@ -13,6 +15,11 @@ import java.util.List;
 import io.reactivex.Flowable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * 作者：skyworth on 2017/7/11 09:56
@@ -41,6 +48,8 @@ public interface HttpHelper {
 
     Flowable<HttpResponse<TotalScoreVO>> getTotalScore(String userId);
 
+    Flowable<HttpResponse<String>> saveLog(String userId, String mobileInfo, String exceptionInfo);
+
     Flowable<HttpResponse<String>> uploadRecord(RequestBody userId,
                                                 RequestBody examId,
                                                 RequestBody homeworkId,
@@ -55,4 +64,8 @@ public interface HttpHelper {
                                                RequestBody type,
                                                RequestBody fileName,
                                                MultipartBody.Part fileData);
+
+    Flowable<VersionVO> getNewVersion( RequestBody requestBody);
+
+    Flowable<FileUrlVO> getFileUrl(String fid);
 }

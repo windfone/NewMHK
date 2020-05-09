@@ -2,10 +2,12 @@ package com.hlxyedu.mhk.model;
 
 import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.bean.ExerciseListVO;
+import com.hlxyedu.mhk.model.bean.FileUrlVO;
 import com.hlxyedu.mhk.model.bean.OperationVO;
 import com.hlxyedu.mhk.model.bean.ScoreVO;
 import com.hlxyedu.mhk.model.bean.TotalScoreVO;
 import com.hlxyedu.mhk.model.bean.UserVO;
+import com.hlxyedu.mhk.model.bean.VersionVO;
 import com.hlxyedu.mhk.model.http.HttpHelper;
 import com.hlxyedu.mhk.model.http.response.HttpResponse;
 import com.hlxyedu.mhk.model.prefs.PreferencesHelper;
@@ -149,6 +151,11 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
+    public Flowable<HttpResponse<String>> saveLog(String userId, String mobileInfo, String exceptionInfo) {
+        return mHttpHelper.saveLog(userId,mobileInfo,exceptionInfo);
+    }
+
+    @Override
     public Flowable<HttpResponse<String>> uploadRecord(RequestBody userId, RequestBody examId, RequestBody homeworkId, RequestBody testId, RequestBody testType, RequestBody fileName, MultipartBody.Part fileData) {
         return mHttpHelper.uploadRecord(userId, examId, homeworkId, testId, testType, fileName, fileData);
     }
@@ -158,4 +165,13 @@ public class DataManager implements HttpHelper, PreferencesHelper {
         return mHttpHelper.uploadVideo(userId, examId, testId, type, fileName, fileData);
     }
 
+    @Override
+    public Flowable<VersionVO> getNewVersion(RequestBody requestBody) {
+        return mHttpHelper.getNewVersion(requestBody);
+    }
+
+    @Override
+    public Flowable<FileUrlVO> getFileUrl(String fid) {
+        return mHttpHelper.getFileUrl(fid);
+    }
 }

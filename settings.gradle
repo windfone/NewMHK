@@ -1,2 +1,2 @@
-include ':app', ':rxqwelibrary', ':record', ':weiXinRecorded'
+include ':app', ':rxqwelibrary', ':record'
 rootProject.name='MHK'

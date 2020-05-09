@@ -10,10 +10,13 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragment;
 import com.hlxyedu.mhk.model.bean.ExamVO;
+import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.ui.main.adapter.ExamAdapter;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.ui.main.presenter.ExamPresenter;
@@ -23,6 +26,7 @@ import com.hlxyedu.mhk.weight.dialog.MoreTaskDLDialog;
 import com.hlxyedu.mhk.weight.listener.DoubleClickListener;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
+import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -79,6 +83,9 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     protected void initEventAndData() {
         super.initEventAndData();
         stateLoading();
+        Logger.d("进入考试列表");
+
+        mPresenter.saveLog(mPresenter.getID(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), restartWhat + "进入考试列表");
 
         showLongMessageDialog();
 
@@ -141,6 +148,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
     @Override
     public void download() {
+        Logger.d("准备下载试卷");
 
         MoreTaskDLDialog downloadDialog = new MoreTaskDLDialog(mActivity);
         downloadDialog.show();
@@ -157,53 +165,15 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
         refreshLayout.autoRefresh();
 
-        /*switch (restartWhat) {
-            case ReExamEvent.LISTENING:
-                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
-                    @Override
-                    public void doNext(long number) {
-                        restartWhat = "";
-                        startActivity(TestListeningActivity.newInstance(mContext, "考试"));
-                    }
-                });
-
-                break;
-            case ReExamEvent.READ:
-                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
-                    @Override
-                    public void doNext(long number) {
-                        restartWhat = "";
-                        startActivity(TestReadActivity.newInstance(mContext, "考试"));
-                    }
-                });
-
-                break;
-            case ReExamEvent.BOOK:
-                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
-                    @Override
-                    public void doNext(long number) {
-                        restartWhat = "";
-                        startActivity(TestBookActivity.newInstance(mContext, "考试"));
-                    }
-                });
-
-                break;
-            case ReExamEvent.COMPOSITION:
-                RxTimerUtil.timer(200, new RxTimerUtil.IRxNext() {
-                    @Override
-                    public void doNext(long number) {
-                        restartWhat = "";
-                        startActivity(TestTxtActivity.newInstance(mContext, "考试"));
-                    }
-                });
-
-                break;
-        }*/
+        if (!StringUtils.isEmpty(restartWhat)) {
+            mPresenter.saveLog(mPresenter.getID(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), restartWhat + "页面退出、切屏或锁屏");
+            restartWhat = "";
+        }
     }
 
     @Override
     public void reExamination(String questionType) {
-        /*switch (questionType) {
+        switch (questionType) {
             case ReExamEvent.LISTENING:
                 restartWhat = ReExamEvent.LISTENING;
 
@@ -220,7 +190,7 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
                 restartWhat = ReExamEvent.COMPOSITION;
 
                 break;
-        }*/
+        }
     }
 
     @Override

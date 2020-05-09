@@ -25,6 +25,8 @@ public class Constants {
 
     public static final String REEXAM_COMPOSITION = "reexam_composition";
 
+    public static final String YOUMENG_KEY = "5eb3b002570df36a20000062";
+
     /**
      * data format
      */

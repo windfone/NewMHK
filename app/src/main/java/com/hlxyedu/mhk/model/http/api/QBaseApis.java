@@ -102,6 +102,10 @@ public interface QBaseApis {
                                                 @Part("type") RequestBody type,
                                                 @Part("fileName") RequestBody fileName,
                                                 @Part MultipartBody.Part fileData);
+
+    @FormUrlEncoded
+    @POST("phone/saveLog.do")
+    Flowable<HttpResponse<String>> saveLog(@Field("id") String userId,@Field("mobileInfo") String mobileInfo,@Field("exceptionInfo") String exceptionInfo);
 }
 
 

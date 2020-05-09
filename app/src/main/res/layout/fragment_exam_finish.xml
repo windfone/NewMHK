@@ -8,6 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="本模块考试完毕，请不要退出，\n接下来进行下一个模块的考试。" />
+        android:text="不要退出，即将开始下一项考试" />
 
 </RelativeLayout>

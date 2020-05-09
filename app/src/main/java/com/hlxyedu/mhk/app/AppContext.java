@@ -23,6 +23,7 @@ import com.skyworth.rxqwelibrary.app.AppConfig;
 import com.skyworth.rxqwelibrary.app.BaseApplication;
 import com.skyworth.rxqwelibrary.app.CrashHandler;
 import com.skyworth.rxqwelibrary.service.InitializeService;
+import com.umeng.commonsdk.UMConfigure;
 
 import java.util.List;
 
@@ -122,13 +123,16 @@ public class AppContext extends BaseApplication {
         //在子线程中完成其他初始化
         InitializeService.start(this);
 
+        //友盟
+        UMConfigure.init(this, Constants.YOUMENG_KEY,null,0,null);
+
         SharedPreferences mSPrefs = getSharedPreferences(Constants.BOSS, Context.MODE_PRIVATE);
 //        uid = mSPrefs.getString(Constants.UID, "");
 
 //        Glide.get(this).getRegistry().replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(HttpsUtils.getUnsafeOkHttpClient()));
 
         //初始化崩溃信息
-//        initCrash();
+        initCrash();
     }
 
     private void initCrash() {

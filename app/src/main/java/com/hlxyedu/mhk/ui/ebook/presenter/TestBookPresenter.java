@@ -124,4 +124,26 @@ public class TestBookPresenter extends RxPresenter<TestBookContract.View> implem
         );
     }
 
+    @Override
+    public void saveLog(String userId, String mobileInfo, String exceptionInfo) {
+        addSubscribe(
+                mDataManager.saveLog(userId, mobileInfo, exceptionInfo)
+                        .compose(RxUtil.rxSchedulerHelper())
+                        .compose(RxUtil.handleTestResult())
+                        .subscribeWith(
+                                new CommonSubscriber<String>(mView) {
+                                    @Override
+                                    public void onNext(String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+                                }
+                        )
+        );
+    }
+
 }

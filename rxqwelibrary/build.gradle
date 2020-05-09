@@ -53,7 +53,7 @@ dependencies {
     api rootProject.ext.dependencies["logger"]
     api rootProject.ext.dependencies["dialogplus"]
 //    api rootProject.ext.dependencies["android-pickers"]
-//    api rootProject.ext.dependencies["checkVersionLib"]
+    api rootProject.ext.dependencies["checkVersionLib"]
 
     //今日头像适配方案
     api rootProject.ext.dependencies["autosize"]
@@ -97,8 +97,8 @@ dependencies {
     // 刷新
     api rootProject.ext.dependencies["smartRefresh"]
     //友盟
-//    api files('libs/umeng-analytics-8.0.2.jar')
-//    api files('libs/umeng-common-2.0.2.jar')
+    api files('libs/umeng-analytics-8.0.2.jar')
+    api files('libs/umeng-common-2.0.2.jar')
 
     // shape selector 框架
 //    implementation 'com.noober.background:core:1.6.0'

@@ -18,6 +18,7 @@ import com.hlxyedu.mhk.ui.ecomposition.contract.TxtContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import javax.inject.Inject;
@@ -148,6 +149,7 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("作文答案上传成功");
                                         // 提交成功 清空中途程序挂起存储的作文
                                         mDataManager.saveReExamComposition("");
                                         // 删除zip 包
@@ -159,6 +161,7 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("听力答案上传失败" + e.toString());
                                         mView.reUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
@@ -204,6 +207,7 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("作文提前交卷答案上传成功");
                                         // 提交成功 清空中途程序挂起存储的作文
                                         mDataManager.saveReExamComposition("");
                                         // 删除zip 包
@@ -215,6 +219,7 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("听力提前交卷答案上传失败" + e.toString());
                                         mView.exitReUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {

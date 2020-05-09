@@ -18,6 +18,7 @@ import com.hlxyedu.mhk.ui.eread.contract.ReadContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 
 import javax.inject.Inject;
@@ -128,6 +129,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("阅读答案上传成功");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件
@@ -137,6 +139,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("阅读答案上传失败" + e.toString());
                                         mView.reUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
@@ -173,6 +176,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("阅读提前交卷答案上传成功");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件
@@ -182,6 +186,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("阅读提前交卷答案上传失败" + e.toString());
                                         mView.exitReUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {

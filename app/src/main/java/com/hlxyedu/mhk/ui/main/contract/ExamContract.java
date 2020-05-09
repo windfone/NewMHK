@@ -30,5 +30,7 @@ public interface ExamContract {
 
         String getID();
 
+        void saveLog(String userId, String mobileInfo, String exceptionInfo);
+
     }
 }

@@ -105,6 +105,8 @@
     <string name="resume">恢复</string>
     <string name="start">开始</string>
     <string name="loading_paper">加载试卷中，请稍等...</string>
+    <string name="reload">若长时间无下载进度，请点击重新下载</string>
+    <string name="redownload">重新下载</string>
 
     <!--activity_check_info-->
     <string name="person_info">个人信息</string>
@@ -114,6 +116,8 @@
     <string name="id_card">身份证号</string>
     <string name="is_me">是我本人</string>
     <string name="not_me">不是我</string>
+
+    <string name="exam_request">我已按照要求开启飞行模式连接无线网络并退出通讯软件登录状态保证考试顺利进行一旦违反影响考试后果自负</string>
 
     <!--activity_service_terms-->
     <string name="service_terms">服务条款</string>

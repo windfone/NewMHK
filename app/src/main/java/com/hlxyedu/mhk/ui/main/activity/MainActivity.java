@@ -7,12 +7,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
+import com.allenliu.versionchecklib.v2.AllenVersionChecker;
+import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
+import com.allenliu.versionchecklib.v2.builder.UIData;
+import com.allenliu.versionchecklib.v2.callback.RequestVersionListener;
+import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
+import com.hlxyedu.mhk.model.bean.VersionVO;
 import com.hlxyedu.mhk.ui.main.contract.MainContract;
 import com.hlxyedu.mhk.ui.main.fragment.ExamFragment;
 import com.hlxyedu.mhk.ui.main.presenter.MainPresenter;
@@ -31,8 +38,8 @@ import me.yokeyword.fragmentation.SupportFragment;
  */
 public class MainActivity extends RootFragmentActivity<MainPresenter> implements MainContract.View {
 
-        public static final int FIRST = 0;
-//    public static final int SECOND = 1;
+    public static final int FIRST = 0;
+    //    public static final int SECOND = 1;
 //    public static final int THIRD = 2;
     //    public static final int FOURTH = 3;
     @BindView(R.id.bottomBar)
@@ -103,6 +110,8 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
         initView();
         mBottomBar.setCurrentItem(0);
 
+        mPresenter.checkNewVersion();
+
         checkPermissions();
     }
 
@@ -161,8 +170,7 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
         RxPermissions rxPermissions = new RxPermissions((FragmentActivity) this);
         rxPermissions.setLogging(true);
         rxPermissions
-                .requestEach(Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_PHONE_STATE,
                         Manifest.permission.RECORD_AUDIO)
@@ -197,4 +205,61 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
                 });
     }
 
+    @Override
+    public void versionSuccess(VersionVO versionVO, String apkUrl) {
+        // 0 选择更新  1 强制更新
+        sendRequest(apkUrl, versionVO.getVersionDesc(),
+                StringUtils.equalsIgnoreCase(versionVO.getUpdateType(), "1"));
+    }
+
+    //*********************************************************************************************//
+
+    /**
+     * @important 使用请求版本功能，可以在这里设置downloadUrl
+     * 这里可以构造UI需要显示的数据
+     * UIData 内部是一个Bundle
+     * forceUpdate
+     */
+    public void sendRequest(final String url, final String contain, Boolean forceUpdate) {
+
+        DownloadBuilder builder = AllenVersionChecker
+                .getInstance()
+                .requestVersion()
+//                .setRequestUrl("http://test-1251233192.coscd.myqcloud.com/1_1.apk")
+                .setRequestUrl(url)
+                .request(new RequestVersionListener() {
+                    @Nullable
+                    @Override
+                    public UIData onRequestVersionSuccess(String result) {
+//                        Toast.makeText(context, "request successful", Toast.LENGTH_SHORT)
+//                                .show();
+                        return (UIData) crateUIData(url, contain);
+                    }
+
+                    @Override
+                    public void onRequestVersionFailure(String message) {
+//                        Toast.makeText(context, "request failed", Toast.LENGTH_SHORT)
+//                                .show();
+
+                    }
+                });
+        if (forceUpdate) {
+            builder.setForceUpdateListener(() -> {
+//                Toast.makeText(this, "force update handle", Toast.LENGTH_SHORT).show();
+                finish();
+            });
+        }
+        builder.setForceRedownload(true);
+        builder.executeMission(this);
+    }
+
+
+    private UIData crateUIData(String url, String contain) {
+        UIData uiData = UIData.create();
+        uiData.setTitle("版本升级");
+//        uiData.setDownloadUrl("http://test-1251233192.coscd.myqcloud.com/1_1.apk");
+        uiData.setDownloadUrl(url);
+        uiData.setContent(contain);
+        return uiData;
+    }
 }

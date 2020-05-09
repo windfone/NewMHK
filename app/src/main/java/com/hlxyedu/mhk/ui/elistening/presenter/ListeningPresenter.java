@@ -3,6 +3,7 @@ package com.hlxyedu.mhk.ui.elistening.presenter;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.ObjectUtils;
 import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
@@ -15,7 +16,7 @@ import com.hlxyedu.mhk.ui.elistening.contract.ListeningContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
-import com.skyworth.rxqwelibrary.app.AppConstants;
+import com.orhanobut.logger.Logger;
 
 import javax.inject.Inject;
 
@@ -122,6 +123,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("听力答案上传成功");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件
@@ -131,6 +133,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("听力答案上传失败" + e.toString());
                                         mView.reUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {
@@ -151,7 +154,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
             mView.exitReUploadAnswer("未检测到网络，请连网后重新上传");
             return;
         }
-        String zip =  exitCommitEvent.getZip();
+        String zip = exitCommitEvent.getZip();
         String unzip = exitCommitEvent.getUnzip();
         String finalAnswer = (String) exitCommitEvent.getAnswer();
         String paperId = exitCommitEvent.getExamId();
@@ -160,13 +163,14 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
         String type = exitCommitEvent.getTestType();
 
         addSubscribe(
-                mDataManager.postExerciseScoreBody(getUserId(), homeworkId, finalAnswer, paperId, testId, type)
+                mDataManager.postExerciseScoreBody(getUserId(), ObjectUtils.isEmpty(homeworkId)?"":homeworkId, finalAnswer, paperId, testId, type)
                         .compose(RxUtil.rxSchedulerHelper())
                         .compose(RxUtil.handleTestResult())
                         .subscribeWith(
                                 new CommonSubscriber<ScoreVO>(mView) {
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
+                                        Logger.d("听力提前交卷答案上传成功");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件
@@ -176,6 +180,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        Logger.d("听力提前交卷答案上传失败" + e.toString());
                                         mView.exitReUploadAnswer("答案上传失败，请重新上传答案");
                                         //当数据返回为null时 做特殊处理
                                         if (e instanceof HttpException) {

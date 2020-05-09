@@ -4,26 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.hlxyedu.mhk.R;
 import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.base.RootFragmentActivity;
@@ -48,19 +41,12 @@ import com.hlxyedu.mhk.utils.MyFragmentPagerAdapter;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBar;
 import com.hlxyedu.mhk.weight.actionbar.XBaseTopBarImp;
 import com.hlxyedu.mhk.weight.viewpager.NoTouchViewPager;
-import com.lansosdk.videoeditor.LanSoEditor;
-import com.lansosdk.videoeditor.LanSongFileUtil;
-import com.libyuv.LibyuvUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
+import com.orhanobut.logger.Logger;
 import com.skyworth.rxqwelibrary.app.AppConstants;
 import com.skyworth.rxqwelibrary.utils.RxCountDown;
 import com.skyworth.rxqwelibrary.utils.RxTimerUtil;
-import com.zhaoss.weixinrecorded.util.CameraHelp;
-import com.zhaoss.weixinrecorded.util.MyVideoEditor;
-import com.zhaoss.weixinrecorded.util.RecordUtil;
-import com.zhaoss.weixinrecorded.util.RxJavaUtil;
-import com.zhaoss.weixinrecorded.util.Utils;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -78,7 +64,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -117,26 +102,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     private int currentPos; // 当前是第几个答题包
 
     private String final_answer = "";// 最终提交的答案 字符串
-    private SurfaceView surfaceView;
-    private ArrayList<String> segmentList = new ArrayList<>();//分段视频地址
-    private ArrayList<String> aacList = new ArrayList<>();//分段音频地址
-    private ArrayList<Long> timeList = new ArrayList<>();//分段录制时间
-    //是否在录制视频
-    private AtomicBoolean isRecordVideo = new AtomicBoolean(false);
-    //拍照
-    private CameraHelp mCameraHelp = new CameraHelp();
-    private SurfaceHolder mSurfaceHolder;
-    private MyVideoEditor mVideoEditor = new MyVideoEditor();
-    private RecordUtil recordUtil;
-    private String audioPath;
-    private RecordUtil.OnPreviewFrameListener mOnPreviewFrameListener;
-    private String videos;
-    private long videoDuration;
-    private long recordTime;
-    private String videoPath;
-
-    // 倒计时到随机数的时候开始录制视频
-    private int COUNT = 0;
 
     //--------------------------------------------------------------------------------------------------//
     private HomeKeyBroadCastReceiver homeKeyBroadCastReceiver;
@@ -179,6 +144,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     @Override
     protected void initEventAndData() {
         super.initEventAndData();
+        Logger.d("进入作文页面");
         // 保持屏幕唤醒状态
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         registerKeyReceiver();
@@ -221,9 +187,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             zipPath = names;
             fileName = strs[strs.length - 1];
 
-            initVideo();
         }
-
+        Logger.d("解压作文试卷");
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
     }
@@ -260,6 +225,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
                 // 结束的页面
                 if (currentItem == txtFragments.size() - 1) {
+                    Logger.d("作文准备提交答案");
+                    mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文-准备提交答案");
                     final_answer = (String) event.getData();
                     RxBus.getDefault().post(new CommitEvent(CommitEvent.COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, final_answer, examId, homeworkId, testId, testType));
                 }
@@ -276,6 +243,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 // 考试 模块是多个答题压缩包，答完一个接下一个
                 if (currentPos == AppContext.getInstance().getExamProgressVOS().size() - 1) {
                     //TODO 如果是最后一个，则跳转到一个专门的 考试模块的结束页面
+                    Logger.d("跳转到整体考试结束页面");
                     startActivity(ExamFinishActivity.newInstance(this));
                 } else {
                     // TODO 如果不是最后一个答题包，则跳转到 下一套类型的试卷继续考试
@@ -286,10 +254,13 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                     } else if (names.contains("KY") || names.contains("LD")) {
                         mContext.startActivity(TestSpeakActivity.newInstance(mContext, "考试"));
                     } else if (names.contains("YD")) {
+                        Logger.d("跳转到作文页面");
                         mContext.startActivity(TestReadActivity.newInstance(mContext, "考试"));
                     } else if (names.contains("SM")) {
+                        Logger.d("跳转到书面页面");
                         mContext.startActivity(TestBookActivity.newInstance(mContext, "考试"));
                     } else if (names.contains("ZW")) {
+                        Logger.d("跳转到作文页面");
                         mContext.startActivity(TestTxtActivity.newInstance(mContext, "考试"));
                     }
                 }
@@ -304,6 +275,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             //获取数据 并且 解析成功
             case EventsConfig.SUCCESS_WRITE:
                 // TODO 新增
+                Logger.d("作文解析成功");
                 AppContext.getInstance().setAllItem(pageModels.size());
                 if (from.equals("考试")) {
                     for (int i = 0; i < pageModels.size(); i++) {
@@ -331,8 +303,10 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         try {
             ZipFile zipFile = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Logger.d("Android N以上解压方法");
                 zipFile = new ZipFile(zipFileName, Charset.forName("GBK"));
             } else {
+                Logger.d("Android N以下解压方法");
                 zipFile = new ZipFile(zipFileName);
             }
 
@@ -376,6 +350,8 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 }
             }
         } catch (Exception e) {
+            Logger.d("解压作文试卷异常" + e.toString());
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文解压异常");
             // 解压出现异常
             Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
         }
@@ -398,6 +374,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             }
         } catch (Exception ex) {
             // 创建文件夹出现异常
+            Logger.d("创建作文文件夹出现异常");
             Toast.makeText(this, "创建文件夹出现异常", Toast.LENGTH_LONG).show();
             return;
         }
@@ -464,9 +441,11 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                     switch (partName) {
                         case PageModel.huanying:
                         case PageModel.jieshu:
+                            Logger.d("解析结束部分");
                             AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels, fileName, page, partName, sectionName);
                             break;
                         case PageModel.WRITE_zuowen:
+                            Logger.d("解析作文部分");
                             encodeWritePageModel(page, partName);
                             break;
                     }
@@ -476,11 +455,14 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
 
         } catch (DocumentException e) {
+            Logger.d("DocumentException异常" + e.toString());
             stateError();
 
         } catch (UnsupportedEncodingException ex) {
+            Logger.d("UnsupportedEncodingException异常" + ex.toString());
             stateError();
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException e) {
+            Logger.d("FileNotFoundException异常" + e.toString());
             stateError();
         }
     }
@@ -587,9 +569,14 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 .setOnClickListener((dialog, view1) -> {
                     switch (view1.getId()) {
                         case R.id.btn_neg:
+                            Logger.d("弹出是否提前交卷弹窗并点击取消按钮");
                             dialog.dismiss();
                             break;
                         case R.id.btn_pos:
+                            Logger.d("弹出是否提前交卷弹窗并点击提交按钮");
+
+                            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文解压异常");
+
                             RxBus.getDefault().post(new ExitCommitEvent(ExitCommitEvent.EXIT_COMMIT, zipPath, AppConstants.UNFILE_DOWNLOAD_PATH + fileName, examId, homeworkId, testId, testType));
                             dialog.dismiss();
                             break;
@@ -605,269 +592,18 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
     }
 
-    private void initVideo() {
-
-        LanSoEditor.initSDK(this, null);
-        videos = AppConstants.VIDEO_RECORDING_PATH + System.currentTimeMillis() + "/";
-        LanSongFileUtil.setFileDir(videos);
-        LibyuvUtil.loadLibrary();
-
-        initUI();
-        initMediaRecorder();
-
-        // 录视频
-        initVideoRecord();
-    }
-
-    private void initUI() {
-        surfaceView = findViewById(R.id.surfaceView);
-        surfaceView.post(new Runnable() {
-            @Override
-            public void run() {
-                int width = surfaceView.getWidth();
-                int height = surfaceView.getHeight();
-                float viewRatio = width * 1f / height;
-                float videoRatio = 9f / 16f;
-                ViewGroup.LayoutParams layoutParams = surfaceView.getLayoutParams();
-                if (viewRatio > videoRatio) {
-                    layoutParams.width = width;
-                    layoutParams.height = (int) (width / viewRatio);
-                } else {
-                    layoutParams.width = (int) (height * viewRatio);
-                    layoutParams.height = height;
-                }
-                surfaceView.setLayoutParams(layoutParams);
-            }
-        });
-    }
-
-    private void initMediaRecorder() {
-        mCameraHelp.setPreviewCallback(new Camera.PreviewCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
-                if (isRecordVideo.get() && mOnPreviewFrameListener != null) {
-                    mOnPreviewFrameListener.onPreviewFrame(data);
-                }
-            }
-        });
-
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                mSurfaceHolder = holder;
-                // TODO 1 ,改为默认前置
-//                mCameraHelp.openCamera(mContext, Camera.CameraInfo.CAMERA_FACING_BACK, mSurfaceHolder);
-                mCameraHelp.openCamera(mContext, Camera.CameraInfo.CAMERA_FACING_FRONT, mSurfaceHolder);
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                mCameraHelp.release();
-            }
-        });
-
-        surfaceView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCameraHelp.callFocusMode();
-            }
-        });
-    }
-
-    public void finishVideo() {
-        RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<String>() {
-            @Override
-            public String doInBackground() throws Exception {
-                //合并h264
-                String h264Path = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".h264";
-                Utils.mergeFile(segmentList.toArray(new String[]{}), h264Path);
-                //h264转mp4
-                String mp4Path = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".mp4";
-                mVideoEditor.h264ToMp4(h264Path, mp4Path);
-                //合成音频
-//                String aacPath = mVideoEditor.executePcmEncodeAac(syntPcm(), RecordUtil.sampleRateInHz, RecordUtil.channelCount);
-                //音视频混合
-//                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, aacPath);
-                mp4Path = mVideoEditor.executeVideoMergeAudio(mp4Path, "");
-                return mp4Path;
-            }
-
-            @Override
-            public void onFinish(String result) {
-                // TODO 完成直接返回不裁剪,result 就是图片存储路径
-                List<File> s = FileUtils.listFilesInDir(videos);
-                for (int i = 0; i < s.size(); i++) {
-                    if (StringUtils.equals(s.get(i).getPath(), result)) {
-                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
-                        break;
-//                        FileUtils.delete(s.get(i));
-//                    } else {
-//                        // 录制完就上传视频
-//                        mPresenter.uploadVideo(s.get(i), examId, testId, testType);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-                LogUtils.i("视频编辑失败");
-            }
-        });
-    }
-
-    private String syntPcm() throws Exception {
-        String pcmPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".pcm";
-        File file = new File(pcmPath);
-        file.createNewFile();
-        FileOutputStream out = new FileOutputStream(file);
-        for (int x = 0; x < aacList.size(); x++) {
-            FileInputStream in = new FileInputStream(aacList.get(x));
-            byte[] buf = new byte[4096];
-            int len = 0;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-                out.flush();
-            }
-            in.close();
-        }
-        out.close();
-        return pcmPath;
-    }
-
-    private void startRecord() {
-
-        RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
-            @Override
-            public Boolean doInBackground() throws Throwable {
-                videoPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".h264";
-                audioPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".pcm";
-                final boolean isFrontCamera = mCameraHelp.getCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
-                final int rotation;
-                if (isFrontCamera) {
-                    rotation = 270;
-                } else {
-                    rotation = 90;
-                }
-                recordUtil = new RecordUtil(videoPath, audioPath, mCameraHelp.getWidth(), mCameraHelp.getHeight(), rotation, isFrontCamera);
-                return true;
-            }
-
-            @Override
-            public void onFinish(Boolean result) {
-                mOnPreviewFrameListener = recordUtil.start();
-                videoDuration = 0;
-                recordTime = System.currentTimeMillis();
-                runLoopPro();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-    private void startRecord2() {
-
-        RxJavaUtil.run(new RxJavaUtil.OnRxAndroidListener<Boolean>() {
-            @Override
-            public Boolean doInBackground() throws Throwable {
-                videoPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".h264";
-                audioPath = LanSongFileUtil.DEFAULT_DIR + System.currentTimeMillis() + ".pcm";
-                final boolean isFrontCamera = mCameraHelp.getCameraId() == Camera.CameraInfo.CAMERA_FACING_FRONT;
-                final int rotation;
-                if (isFrontCamera) {
-                    rotation = 270;
-                } else {
-                    rotation = 90;
-                }
-                recordUtil = new RecordUtil(videoPath, audioPath, mCameraHelp.getWidth(), mCameraHelp.getHeight(), rotation, isFrontCamera);
-                return true;
-            }
-
-            @Override
-            public void onFinish(Boolean result) {
-//                mOnPreviewFrameListener = recordUtil.start();
-//                videoDuration = 0;
-//                recordTime = System.currentTimeMillis();
-//                runLoopPro();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
-    }
-
-    private void runLoopPro() {
-
-        RxJavaUtil.loop(20, new RxJavaUtil.OnRxLoopListener() {
-            @Override
-            public Boolean takeWhile() {
-                return recordUtil != null && recordUtil.isRecording();
-            }
-
-            @Override
-            public void onExecute() {
-                long currentTime = System.currentTimeMillis();
-                videoDuration += currentTime - recordTime;
-                recordTime = currentTime;
-                long countTime = videoDuration;
-                for (long time : timeList) {
-                    countTime += time;
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                segmentList.add(videoPath);
-                aacList.add(audioPath);
-                timeList.add(videoDuration);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private void upEvent() {
-        if (recordUtil != null) {
-            recordUtil.stop();
-            recordUtil = null;
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finishVideo();
-                }
-            }, 1000);
-        }
-
-    }
-
-    /**
-     * 清除录制信息
-     */
-    private void cleanRecord() {
-
-        segmentList.clear();
-        aacList.clear();
-        timeList.clear();
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Logger.d("onRestart");
+        RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
+        finish();
     }
 
     @Override
     public void onPause() {
+        Logger.d("onPause");
+        mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(),  "作文页面退出、切屏或锁屏");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
@@ -876,7 +612,6 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        clearVideo();
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);
@@ -887,85 +622,11 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
         }
     }
 
-    private void clearVideo() {
-        cleanRecord();
-        if (mCameraHelp != null) {
-            mCameraHelp.release();
-        }
-        if (recordUtil != null) {
-            recordUtil.stop();
-        }
-    }
-
-    // TODO 3 添加完成自动结束录制视频（相当于 Rxbus 通知，免去手动点击）
-
     @Override
     public void onBackPressedSupport() {
-        setBackHint();
+//        setBackHint();
     }
     // ****************************************************************** //
-
-    /**
-     * 到随机的时间点 录制视频
-     */
-    private void initVideoRecord() {
-        // *************** 随机数录视频 ***************//
-        // 假如在 0-100，分为三个平均时间段,每段随机一个数，从该数开始录5秒视频
-        long total = 1500;
-
-        long oneMin = 5;
-        long oneMax = (long) (Math.floor(total / 3) - 10);
-
-        long twoMin = (long) Math.floor(total / 3);
-        long twoMax = (long) (Math.floor(total * 2 / 3) - 10);
-
-        long threeMin = (long) Math.floor(total * 2 / 3);
-        long threeMax = total - 10;
-
-        long videoRecordOne = oneMin + (int) (Math.random() * ((oneMax - oneMin) + 1));
-        long videoRecordTwo = twoMin + (int) (Math.random() * ((twoMax - twoMin) + 1));
-        long videoRecordThree = threeMin + (int) (Math.random() * ((threeMax - threeMin) + 1));
-
-        RxTimerUtil.interval(1000, new RxTimerUtil.IRxNext() {
-            @Override
-            public void doNext(long number) {
-                COUNT++;
-                if (COUNT == videoRecordOne) {
-                    // 到随机的数了开始录像
-                    isRecordVideo.set(true);
-                    startRecord();
-                } else if (COUNT == videoRecordOne + 6) {
-                    if (isRecordVideo.get()) {
-                        isRecordVideo.set(false);
-                        upEvent();
-                    }
-                }
-
-                if (COUNT == videoRecordTwo) {
-                    // 到随机的数了开始录像
-                    isRecordVideo.set(true);
-                    startRecord();
-                } else if (COUNT == videoRecordTwo + 5) {
-                    if (isRecordVideo.get()) {
-                        isRecordVideo.set(false);
-                        upEvent();
-                    }
-                }
-
-                if (COUNT == videoRecordThree) {
-                    // 到随机的数了开始录像
-                    isRecordVideo.set(true);
-                    startRecord();
-                } else if (COUNT == videoRecordThree + 5) {
-                    if (isRecordVideo.get()) {
-                        isRecordVideo.set(false);
-                        upEvent();
-                    }
-                }
-            }
-        });
-        // *******************************************//
-    }
 
     private void registerKeyReceiver() {
         homeKeyBroadCastReceiver = new HomeKeyBroadCastReceiver();
@@ -984,6 +645,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             super.onPostExecute(aVoid);
             // 解压完成
             //加载数据
+            Logger.d("解压作文试卷完成");
             DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
             unZipAsyncTask.execute();
         }
@@ -1022,9 +684,11 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             if (reason != null) {
                 if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
                     //点Home 键退出，添加续考功能
+                    Logger.d("在作文页面接收到Home键广播");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
                     finish();
                 } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
+                    Logger.d("在作文页面接收到菜单键/多任务键广播");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
                     finish();
                 }
@@ -1036,6 +700,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Logger.d("在作文页面接收到锁屏广播");
             //点锁屏按钮，直接回列表页，也不重新考了，手动点击再继续考试
             RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
             finish();
