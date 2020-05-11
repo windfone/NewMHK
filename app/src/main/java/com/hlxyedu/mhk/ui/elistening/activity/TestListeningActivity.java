@@ -177,10 +177,10 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             zipPath = names;
             fileName = strs[strs.length - 1];
 
-//            initVideo();
         }
         // 解压文件
         Logger.d("解压听力试卷");
+        mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力开始解压");
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
     }
@@ -237,6 +237,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 answer += event.getData();
                 notouchVp.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
+                Logger.d("听力准备切换下一页，总共：" + testListenFragments.size() + "页;" + "当前是第：" + currentItem + 1 + "页");
 
                 // 练习 作业 结束的页面
                 if (currentItem == testListenFragments.size() - 1) {
@@ -471,7 +472,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                     switch (sectionName) {
                         case PageModel.huanying:
                         case PageModel.jieshu:
-                            Logger.d("解析结束部分");
+                            Logger.d("解析欢迎、结束部分");
                             AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels, fileName, page, partName, sectionName);
                             break;
                         case PageModel.LISTEN_section_1:
@@ -760,6 +761,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
     @Override
     protected void onStop() {
+        Logger.d("onStop");
         AudioPlayManager.getManager().stop();
         super.onStop();
     }
@@ -848,7 +850,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     public void onPause() {
         Logger.d("onPause");
-        mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(),  "听力页面退出、切屏或锁屏");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
@@ -857,6 +858,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Logger.d("onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);
@@ -890,6 +892,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Logger.d("解压听力试卷完成");
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力解压成功");
             // 解压完成
             //加载数据
             DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
@@ -930,10 +933,12 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
                     //点Home 键退出，添加续考功能
                     Logger.d("在听力页面接收到Home键广播");
+                    mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力页面点击Home键");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.LISTENING));
                     finish();
                 } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
                     Logger.d("在听力页面接收到菜单键/多任务键广播");
+                    mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力页面点击菜单键");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
                     finish();
                 }

@@ -127,12 +127,14 @@ public class MoreTaskDLDialog extends Dialog {
 
     @DownloadGroup.onTaskPre
     public void onTaskPre(DownloadGroupTask task) {
+        Log.e("=============","onTaskPre");
         Logger.d("获取到文件大小" + CommonUtil.formatFileSize(task.getFileSize()));
         mSize.setText(CommonUtil.formatFileSize(task.getFileSize()));
     }
 
     @DownloadGroup.onTaskStart
     public void onTaskStart(DownloadGroupTask task) {
+        Log.e("=============","onTaskStart");
         Logger.d("下载开始");
     }
 
@@ -146,16 +148,19 @@ public class MoreTaskDLDialog extends Dialog {
 
     @DownloadGroup.onTaskStop
     public void onTaskStop(DownloadGroupTask task) {
+        Log.e("=============","onTaskStop");
         Logger.d("下载暂停");
-        Aria.download(this).loadGroup(mTaskId).cancel();
+        Aria.download(this).loadGroup(mTaskId).cancel(true);
         this.dismiss();
     }
 
     @DownloadGroup.onTaskFail
     public void onTaskFail(DownloadGroupTask task) {
+        Log.e("=============","onTaskFail");
         ToastUtils.showShort("加载失败！请重试");
         Logger.d("文件下载失败！");
-        Aria.download(this).loadGroup(mTaskId).cancel();
+        Aria.download(this).loadGroup(mTaskId).cancel(true);
+        Aria.download(this).unRegister();
         this.dismiss();
     }
 
@@ -231,6 +236,7 @@ public class MoreTaskDLDialog extends Dialog {
                                     .option(getHttpOption())
                                     .ignoreFilePathOccupy()
                                     .create();
+                            Log.e("=============",mTaskId+"");
                         }
                     } else if (permission.shouldShowRequestPermissionRationale) {
                         // Denied permission without ask never again

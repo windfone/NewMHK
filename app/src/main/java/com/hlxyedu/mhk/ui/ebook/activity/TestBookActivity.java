@@ -179,6 +179,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
 
         // 解压文件
         Logger.d("解压书面试卷");
+        mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面开始解压");
         UnZipAsyncTask unZipAsyncTask = new UnZipAsyncTask();
         unZipAsyncTask.execute();
     }
@@ -210,6 +211,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 clearTimeProgress();
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
+                Logger.d("书面准备切换下一页，总共：" + bookFragments.size() + "页;" + "当前是第：" + currentItem + 1 + "页");
 
                 // 练习和作业 结束的页面
                 if (currentItem == bookFragments.size() - 1) {
@@ -463,7 +465,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                     switch (sectionName) {
                         case PageModel.huanying:
                         case PageModel.jieshu:
-                            Logger.d("解析结束部分");
+                            Logger.d("解析欢迎、结束部分");
                             AnalyticXMLUtils.encodeWelcomeOrEndPageModel(pageModels, fileName, page, partName, sectionName);
                             break;
                         case PageModel.BOOK_shumianbiaoda:
@@ -716,15 +718,21 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     @Override
     public void onPause() {
         Logger.d("onPause");
-        mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(),  "书面页面退出、切屏或锁屏");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        Logger.d("onStop");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        Logger.d("onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);
@@ -757,6 +765,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Logger.d("解压书面试卷完成");
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面解压成功");
             // 解压完成
             //加载数据
             DecodeAsyncTask unZipAsyncTask = new DecodeAsyncTask();
@@ -799,10 +808,12 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
                     //点Home 键退出，添加续考功能
                     Logger.d("在书面页面接收到Home键广播");
+                    mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面页面点击Home键");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.BOOK));
                     finish();
                 } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
                     Logger.d("在书面页面接收到菜单键/多任务键广播");
+                    mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面页面点击菜单键");
                     RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ""));
                     finish();
                 }

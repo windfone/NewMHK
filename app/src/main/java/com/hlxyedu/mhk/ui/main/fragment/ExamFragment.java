@@ -147,8 +147,14 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
     }
 
     @Override
+    public void upLoadErrorEditStr(String editStr) {
+        mPresenter.saveLog(mPresenter.getID(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), editStr);
+    }
+
+    @Override
     public void download() {
         Logger.d("准备下载试卷");
+        mPresenter.saveLog(mPresenter.getID(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "准备下载试卷");
 
         MoreTaskDLDialog downloadDialog = new MoreTaskDLDialog(mActivity);
         downloadDialog.show();
@@ -195,6 +201,9 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
 
     @Override
     public void responeError(String errorMsg) {
+        refreshLayout.finishRefresh();
+        dataVOList.clear();
+        mAdapter.setNewData(dataVOList);
         stateError();
     }
 

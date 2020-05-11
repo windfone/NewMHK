@@ -24,6 +24,7 @@ import com.hlxyedu.mhk.base.RxBus;
 import com.hlxyedu.mhk.model.bean.ExamProgressVO;
 import com.hlxyedu.mhk.model.bean.ExamVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
+import com.hlxyedu.mhk.model.event.SaveLogEvent;
 import com.hlxyedu.mhk.weight.listener.NoDoubleClickListener;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
@@ -211,7 +212,8 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
                         case R.id.confirm_tv:
                             if (!editStr.equals(mContext.getResources().getString(R.string.exam_request))) {
                                 textView.setVisibility(View.VISIBLE);
-                                Logger.d("下载输入框内容输入错误");
+                                Logger.d("下载输入框内容输入错误---内容==="+editStr);
+                                RxBus.getDefault().post(new SaveLogEvent(SaveLogEvent.SAVE_LOG,editStr));
                                 return;
                             }
                             if (!NetworkUtils.isConnected()) {
@@ -253,7 +255,8 @@ public class ExamAdapter extends BaseQuickAdapter<ExamVO, BaseViewHolder> {
             @Override
             public void afterTextChanged(Editable s) {
                 textView.setVisibility(View.GONE);
-                editStr = s.toString().replaceAll(" +", "");
+                editStr = s.toString().replaceAll(" +", "").replace("\n","");
+//                editStr = s.toString();
             }
         });
         mMaterialDialog.show();

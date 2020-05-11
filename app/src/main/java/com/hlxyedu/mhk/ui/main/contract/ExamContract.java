@@ -21,6 +21,8 @@ public interface ExamContract {
 
         void reExamination(String questionType);
 
+        void upLoadErrorEditStr(String editStr);
+
     }
 
     interface Presenter extends BasePresenter<View> {

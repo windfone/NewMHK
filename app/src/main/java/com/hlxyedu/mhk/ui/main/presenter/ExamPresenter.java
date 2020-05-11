@@ -10,6 +10,7 @@ import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.event.DownLoadEvent;
 import com.hlxyedu.mhk.model.event.ReExamEvent;
 import com.hlxyedu.mhk.model.event.RestartEvent;
+import com.hlxyedu.mhk.model.event.SaveLogEvent;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 import com.hlxyedu.mhk.ui.main.contract.ExamContract;
 import com.hlxyedu.mhk.utils.RegUtils;
@@ -99,6 +100,28 @@ public class ExamPresenter extends RxPresenter<ExamContract.View> implements Exa
                 .subscribeWith(new CommonSubscriber<RestartEvent>(mView) {
                     @Override
                     public void onNext(RestartEvent s) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                    }
+                })
+        );
+
+        // 接收输入框内容，准备上传到服务器
+        addSubscribe(RxBus.getDefault().toFlowable(SaveLogEvent.class)
+                .compose(RxUtil.<SaveLogEvent>rxSchedulerHelper())
+                .filter(new Predicate<SaveLogEvent>() {
+                    @Override
+                    public boolean test(@NonNull SaveLogEvent saveLogEvent) throws Exception {
+                        return saveLogEvent.getType().equals(SaveLogEvent.SAVE_LOG);
+                    }
+                })
+                .subscribeWith(new CommonSubscriber<SaveLogEvent>(mView) {
+                    @Override
+                    public void onNext(SaveLogEvent s) {
+                        mView.upLoadErrorEditStr(s.getLog());
                     }
 
                     @Override
