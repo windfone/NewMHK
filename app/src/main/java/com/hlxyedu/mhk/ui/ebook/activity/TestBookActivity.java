@@ -211,7 +211,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
                 clearTimeProgress();
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
-                Logger.d("书面准备切换下一页，总共：" + bookFragments.size() + "页;" + "当前是第：" + currentItem + 1 + "页");
+                Logger.d("书面准备切换下一页，总共：" + bookFragments.size() + "页;" + "当前是第：" + (currentItem+1) + "页");
 
                 // 练习和作业 结束的页面
                 if (currentItem == bookFragments.size() - 1) {
@@ -370,9 +370,7 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
             }
         } catch (Exception e) {
             Logger.d("解压书面试卷异常" + e.toString());
-            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面表达解压异常");
-            // 解压出现异常
-            Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "书面表达解压异常==="+e.toString());
         }
     }
 
@@ -710,14 +708,14 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     @Override
     protected void onRestart() {
         super.onRestart();
-        Logger.d("onRestart");
+        Logger.d("TestBookActivity---"+"onRestart");
         RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.BOOK));
         finish();
     }
 
     @Override
     public void onPause() {
-        Logger.d("onPause");
+        Logger.d("TestBookActivity---"+"onPause");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
@@ -726,13 +724,13 @@ public class TestBookActivity extends RootFragmentActivity<TestBookPresenter> im
     @Override
     protected void onStop() {
         super.onStop();
-        Logger.d("onStop");
+        Logger.d("TestBookActivity---"+"onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logger.d("onDestroy");
+        Logger.d("TestBookActivity---"+"onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);

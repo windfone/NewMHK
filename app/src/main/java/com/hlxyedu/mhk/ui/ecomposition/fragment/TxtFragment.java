@@ -326,8 +326,8 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                         editText.setGravity(Gravity.TOP);
                         editText.setPadding(10, 10, 10, 10);
                         editText.setHeight(2000);
-                        answer = mPresenter.getReExamComposition();
-                        editText.setText(answer);
+//                        answer = mPresenter.getReExamComposition();
+//                        editText.setText(answer);
 
                         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams2.setMargins(0, 0, 0, 900);
@@ -345,7 +345,7 @@ public class TxtFragment extends RootFragment<TxtPresenter> implements TxtContra
                             @Override
                             public void afterTextChanged(Editable s) {
                                 answer = s.toString();
-                                mPresenter.saveReExamCompositon(answer);
+//                                mPresenter.saveReExamCompositon(answer);
                             }
                         });
                     }

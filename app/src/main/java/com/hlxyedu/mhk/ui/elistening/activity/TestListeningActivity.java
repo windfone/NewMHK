@@ -237,7 +237,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
                 answer += event.getData();
                 notouchVp.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
-                Logger.d("听力准备切换下一页，总共：" + testListenFragments.size() + "页;" + "当前是第：" + currentItem + 1 + "页");
+                Logger.d("听力准备切换下一页，总共：" + testListenFragments.size() + "页;" + "当前是第：" + (currentItem+1) + "页");
 
                 // 练习 作业 结束的页面
                 if (currentItem == testListenFragments.size() - 1) {
@@ -374,7 +374,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
             }
         } catch (Exception e) {
             Logger.d("解压听力试卷异常" + e.toString());
-            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力解压异常");
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力解压异常==="+e.toString());
             // 解压出现异常
             Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
         }
@@ -761,7 +761,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
 
     @Override
     protected void onStop() {
-        Logger.d("onStop");
+        Logger.d("TestListeningActivity---"+"onStop");
         AudioPlayManager.getManager().stop();
         super.onStop();
     }
@@ -842,14 +842,14 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     protected void onRestart() {
         super.onRestart();
-        Logger.d("onRestart");
+        Logger.d("TestListeningActivity---"+"onRestart");
         RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.LISTENING));
         finish();
     }
 
     @Override
     public void onPause() {
-        Logger.d("onPause");
+        Logger.d("TestListeningActivity---"+"onPause");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
@@ -858,7 +858,7 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logger.d("onDestroy");
+        Logger.d("TestListeningActivity---"+"onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);

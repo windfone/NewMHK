@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">MHK</string>
 
+    <string name="organization">Copyright © 天津翰林新语教育科技有限公司 All Rights Reserved</string>
+
     <string-array name="request_permission_reason">
         <item>为了您更好的使用播放语音、录制音频等功能，需要您同意以下这些权限：</item>
         <item>1. 访问您设备上的内容和文件</item>

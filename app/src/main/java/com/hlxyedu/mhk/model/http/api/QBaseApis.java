@@ -103,6 +103,15 @@ public interface QBaseApis {
                                                 @Part("fileName") RequestBody fileName,
                                                 @Part MultipartBody.Part fileData);
 
+    /**uploadFileBatch
+     * 上传文件
+     */
+    @Multipart
+    @POST("phone/uploadLog.do")
+    Flowable<HttpResponse<List<String>>> uploadLogFileBatch(@Part("id") RequestBody userId,
+                                              @Part("fileName") List<RequestBody> fileNames,
+                                             @Part List<MultipartBody.Part> parts2);
+
     @FormUrlEncoded
     @POST("phone/saveLog.do")
     Flowable<HttpResponse<String>> saveLog(@Field("id") String userId,@Field("mobileInfo") String mobileInfo,@Field("exceptionInfo") String exceptionInfo);

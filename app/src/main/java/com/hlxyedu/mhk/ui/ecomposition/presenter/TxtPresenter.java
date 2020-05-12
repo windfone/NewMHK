@@ -150,8 +150,8 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
                                         Logger.d("作文答案上传成功");
-                                        // 提交成功 清空中途程序挂起存储的作文
-                                        mDataManager.saveReExamComposition("");
+//                                        // 提交成功 清空中途程序挂起存储的作文
+//                                        mDataManager.saveReExamComposition("");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件
@@ -208,8 +208,8 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                                     @Override
                                     public void onNext(ScoreVO scoreVO) {
                                         Logger.d("作文提前交卷答案上传成功");
-                                        // 提交成功 清空中途程序挂起存储的作文
-                                        mDataManager.saveReExamComposition("");
+//                                        // 提交成功 清空中途程序挂起存储的作文
+//                                        mDataManager.saveReExamComposition("");
                                         // 删除zip 包
                                         FileUtils.deleteFile(zip);
                                         // 删除解压出来的文件

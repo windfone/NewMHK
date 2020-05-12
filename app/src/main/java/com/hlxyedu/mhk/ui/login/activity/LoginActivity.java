@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -62,6 +63,8 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
     RelativeLayout codeErrorPromptRl;
     @BindView(R.id.code_error_prompt_tv)
     TextView codeErrorPromptTv;
+    @BindView(R.id.version_tv)
+    TextView version_tv;
 
     private boolean codeVisible; // 是否显示验证码
     private int loginErrorNum; //登录失败(密码错误)次数,超过两次就显示验证码
@@ -93,6 +96,7 @@ public class LoginActivity extends RootActivity<LoginPresenter> implements Login
 
     @Override
     protected void initEventAndData() {
+        version_tv.setText("版本号：v"+AppUtils.getAppVersionName());
         initUIState();
         initCode();
 

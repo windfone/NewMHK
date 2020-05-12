@@ -166,6 +166,11 @@ public class DataManager implements HttpHelper, PreferencesHelper {
     }
 
     @Override
+    public Flowable<HttpResponse<List<String>>> uploadLogFileBatch(RequestBody userId,List<RequestBody> fileNames, List<MultipartBody.Part> parts2) {
+        return mHttpHelper.uploadLogFileBatch(userId, fileNames,parts2);
+    }
+
+    @Override
     public Flowable<VersionVO> getNewVersion(RequestBody requestBody) {
         return mHttpHelper.getNewVersion(requestBody);
     }

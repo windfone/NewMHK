@@ -207,7 +207,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
                 clearTimeProgress();
                 viewPager.setCurrentItem(++currentItem);
                 AppContext.getInstance().setCurrentItem(currentItem);
-                Logger.d("阅读准备切换下一页，总共："+readFragments.size()+"页;"+"当前是第："+currentItem+1+"页");
+                Logger.d("阅读准备切换下一页，总共："+readFragments.size()+"页;"+"当前是第："+(currentItem+1)+"页");
 
                 if (currentItem == readFragments.size() - 1) {
                     Logger.d("阅读准备提交答案");
@@ -364,9 +364,7 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
             }
         } catch (Exception e) {
             Logger.d("解压阅读试卷异常" + e.toString());
-            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "阅读解压异常");
-            // 解压出现异常
-            Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "阅读解压异常==="+e.toString());
         }
     }
 
@@ -703,14 +701,14 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     @Override
     protected void onRestart() {
         super.onRestart();
-        Logger.d("onRestart");
+        Logger.d("TestReadActivity---"+"onRestart");
         RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.READ));
         finish();
     }
 
     @Override
     public void onPause() {
-        Logger.d("onPause");
+        Logger.d("TestReadActivity---"+"onPause");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
         super.onPause();
@@ -719,13 +717,13 @@ public class TestReadActivity extends RootFragmentActivity<TestReadPresenter> im
     @Override
     protected void onStop() {
         super.onStop();
-        Logger.d("onStop");
+        Logger.d("TestReadActivity---"+"onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logger.d("onDestroy");
+        Logger.d("TestReadActivity---"+"onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);

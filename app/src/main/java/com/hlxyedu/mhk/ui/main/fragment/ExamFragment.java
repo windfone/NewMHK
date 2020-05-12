@@ -3,6 +3,7 @@ package com.hlxyedu.mhk.ui.main.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -93,11 +94,12 @@ public class ExamFragment extends RootFragment<ExamPresenter> implements ExamCon
         rlv.setLayoutManager(new MyLinearLayoutManager(mActivity));
         rlv.setAdapter(mAdapter);
 
-        count = 1;
+        /*count = 1;
         if (!dataVOList.isEmpty()) {
             dataVOList.clear();
         }
-        mPresenter.getMockList(mPresenter.getID(), count, pageSize);
+        Log.e("===========","2222");
+        mPresenter.getMockList(mPresenter.getID(), count, pageSize);*/
 
         mAdapter.setPreLoadNumber(1);
         mAdapter.setOnLoadMoreListener(() -> {

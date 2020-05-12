@@ -19,6 +19,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 /**
@@ -64,6 +65,10 @@ public interface HttpHelper {
                                                RequestBody type,
                                                RequestBody fileName,
                                                MultipartBody.Part fileData);
+
+    Flowable<HttpResponse<List<String>>> uploadLogFileBatch(RequestBody userId,
+                                              List<RequestBody> fileNames,
+                                                            List<MultipartBody.Part> parts2);
 
     Flowable<VersionVO> getNewVersion( RequestBody requestBody);
 

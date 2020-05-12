@@ -223,7 +223,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
                 viewPager.setCurrentItem(++currentItem);
                 // TODO 新增
                 AppContext.getInstance().setCurrentItem(currentItem);
-                Logger.d("作文准备切换下一页，总共："+txtFragments.size()+"页;"+"当前是第："+currentItem+1+"页");
+                Logger.d("作文准备切换下一页，总共："+txtFragments.size()+"页;"+"当前是第："+(currentItem+1)+"页");
 
                 // 结束的页面
                 if (currentItem == txtFragments.size() - 1) {
@@ -353,9 +353,7 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
             }
         } catch (Exception e) {
             Logger.d("解压作文试卷异常" + e.toString());
-            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文解压异常");
-            // 解压出现异常
-            Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
+            mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文解压异常==="+e.toString());
         }
     }
 
@@ -597,14 +595,14 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     @Override
     protected void onRestart() {
         super.onRestart();
-        Logger.d("onRestart");
+        Logger.d("TestTxtActivity---"+"onRestart");
         RxBus.getDefault().post(new ReExamEvent(ReExamEvent.RE_EXAM, ReExamEvent.COMPOSITION));
         finish();
     }
 
     @Override
     public void onPause() {
-        Logger.d("onPause");
+        Logger.d("TestTxtActivity---"+"onPause");
         mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "作文页面退出、切屏或锁屏");
         RxTimerUtil.cancel();
         RxCountDown.cancel();
@@ -614,13 +612,13 @@ public class TestTxtActivity extends RootFragmentActivity<TestTxtPresenter> impl
     @Override
     protected void onStop() {
         super.onStop();
-        Logger.d("onStop");
+        Logger.d("TestTxtActivity---"+"onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Logger.d("onDestroy");
+        Logger.d("TestTxtActivity---"+"onDestroy");
         if (homeKeyBroadCastReceiver != null) {
             // 解除广播
             unregisterReceiver(homeKeyBroadCastReceiver);

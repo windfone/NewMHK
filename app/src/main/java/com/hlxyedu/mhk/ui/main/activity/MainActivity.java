@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -24,11 +25,17 @@ import com.hlxyedu.mhk.ui.main.contract.MainContract;
 import com.hlxyedu.mhk.ui.main.fragment.ExamFragment;
 import com.hlxyedu.mhk.ui.main.presenter.MainPresenter;
 import com.hlxyedu.mhk.utils.PermissionSettingUtil;
+import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.weight.bottombar.BottomBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.SupportFragment;
@@ -113,6 +120,11 @@ public class MainActivity extends RootFragmentActivity<MainPresenter> implements
         mPresenter.checkNewVersion();
 
         checkPermissions();
+
+        String diskPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String folder = diskPath + File.separatorChar + "Android" + File.separatorChar + "data" + File.separatorChar + getPackageName() + File.separatorChar + "log" + File.separatorChar + new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
+        List<File> files = RegUtils.listFilesInDirWithFilter(RegUtils.getFileByPath(folder), "log");
+        mPresenter.uploadLogFileBatch(files);
     }
 
     private void initView() {

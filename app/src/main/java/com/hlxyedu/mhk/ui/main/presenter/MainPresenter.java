@@ -1,10 +1,14 @@
 package com.hlxyedu.mhk.ui.main.presenter;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.GsonUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hlxyedu.mhk.api.Constants;
 import com.hlxyedu.mhk.base.RxPresenter;
 import com.hlxyedu.mhk.model.DataManager;
 import com.hlxyedu.mhk.model.bean.FileUrlVO;
+import com.hlxyedu.mhk.model.bean.UserVO;
 import com.hlxyedu.mhk.model.bean.VersionVO;
 import com.hlxyedu.mhk.model.http.api.ManageApis;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
@@ -12,13 +16,21 @@ import com.hlxyedu.mhk.ui.main.contract.MainContract;
 import com.hlxyedu.mhk.utils.RegUtils;
 import com.hlxyedu.mhk.utils.RxUtil;
 import com.hlxyedu.mhk.weight.CommonSubscriber;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import io.reactivex.annotations.NonNull;
+import io.reactivex.annotations.Nullable;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava2.HttpException;
 
@@ -104,4 +116,54 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                         )
         );
     }
+
+    @Override
+    public void uploadLogFileBatch(List<File> files) {
+        if (files.isEmpty()) {
+            Logger.d("本地无log日志");
+            return;
+        }
+        RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), getUserId());
+
+        List<RequestBody> requestBodies = new ArrayList<>(files.size());
+        for (File file : files) {
+            RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), file.getName());
+            requestBodies.add(requestBody);
+        }
+
+        List<MultipartBody.Part> parts2 = RegUtils
+                .filesToMultipartBodyParts("logData", MediaType.parse("multipart/form-data"), files);
+        addSubscribe(
+                mDataManager.uploadLogFileBatch(userIdBody, requestBodies,parts2)
+                        .compose(RxUtil.rxSchedulerHelper())
+                        .compose(RxUtil.handleTestResult())
+                        .subscribeWith(
+                                new CommonSubscriber<List<String>>(mView) {
+                                    @Override
+                                    public void onNext(List<String> data) {
+
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
+                                        super.onComplete();
+                                    }
+                                }
+                        )
+        );
+    }
+
+    @Override
+    public String getUserId() {
+        UserVO userVO = GsonUtils.fromJson(mDataManager.getSpUserInfo(), UserVO.class);
+        return userVO.getId();
+    }
+
 }

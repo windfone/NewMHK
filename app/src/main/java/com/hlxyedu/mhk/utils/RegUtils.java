@@ -10,12 +10,24 @@ import com.google.gson.Gson;
 import com.hlxyedu.mhk.app.AppContext;
 import com.hlxyedu.mhk.model.http.response.HttpResponseCode;
 
+import java.io.File;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.annotations.Nullable;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
+import static com.blankj.utilcode.util.FileUtils.isDir;
+import static com.blankj.utilcode.util.StringUtils.isSpace;
 
 public class RegUtils {
 
@@ -97,6 +109,16 @@ public class RegUtils {
 
     }
 
+    public static List<MultipartBody.Part> filesToMultipartBodyParts(@NonNull String key, @Nullable MediaType contentType, @NonNull List<File> files) {
+        List<MultipartBody.Part> parts = new ArrayList<>(files.size());
+        for (File file : files) {
+            RequestBody requestBody = RequestBody.create(contentType, file);
+            MultipartBody.Part part = MultipartBody.Part.createFormData(key, file.getName(), requestBody);
+            parts.add(part);
+        }
+        return parts;
+    }
+
     public static String[][] MIME_MapTable = {
             // {后缀名，MIME类型}
             {".3gp", "video/3gpp"},
@@ -161,4 +183,40 @@ public class RegUtils {
             {".wps", "application/vnd.ms-works"}, {".xml", "text/plain"},
             {".z", "application/x-compress"},
             {".zip", "application/x-zip-compressed"}, {"", "*/*"}};
+
+    /**
+     * 根据文件路径获取文件
+     *
+     * @param filePath 文件路径
+     * @return 文件
+     */
+    public static File getFileByPath(String filePath) {
+        return isSpace(filePath) ? null : new File(filePath);
+    }
+
+    /**
+     * 获取目录下所有后缀名为suffix的文件包括子目录
+     * <p>大小写忽略</p>
+     *
+     * @param dir    目录
+     * @param suffix 后缀名
+     * @return 文件链表
+     */
+    public static List<File> listFilesInDirWithFilter(File dir, String suffix) {
+        if (dir == null || !isDir(dir)) return null;
+        List<File> list = new ArrayList<>();
+        File[] files = dir.listFiles();
+        if (files != null && files.length != 0) {
+            for (File file : files) {
+                if (file.getName().toUpperCase().endsWith(suffix.toUpperCase())) {
+                    list.add(file);
+                }
+                if (file.isDirectory()) {
+                    list.addAll(listFilesInDirWithFilter(file, suffix));
+                }
+            }
+        }
+        return list;
+    }
+
 }

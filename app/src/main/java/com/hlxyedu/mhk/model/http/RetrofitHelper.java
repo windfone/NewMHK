@@ -98,6 +98,11 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
+    public Flowable<HttpResponse<List<String>>> uploadLogFileBatch(RequestBody userId,List<RequestBody> fileNames, List<MultipartBody.Part> parts2) {
+        return qBaseApis.uploadLogFileBatch(userId,fileNames, parts2);
+    }
+
+    @Override
     public Flowable<VersionVO> getNewVersion(RequestBody requestBody) {
         return manageApis.getNewVersion(requestBody);
     }
