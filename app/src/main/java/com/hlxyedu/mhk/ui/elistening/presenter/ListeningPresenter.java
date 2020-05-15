@@ -62,6 +62,7 @@ public class ListeningPresenter extends RxPresenter<ListeningContract.View> impl
                                 if (!mView.isShow()) {
                                     return;
                                 }
+                                Logger.d("收到听力上传答案RxBus");
                                 commitEvent = s;
                                 cimmitAnswer();
 //                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());

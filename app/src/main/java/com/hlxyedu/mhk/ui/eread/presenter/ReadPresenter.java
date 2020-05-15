@@ -66,7 +66,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View> implements Rea
                             return;
                         }
 //                        cimmitAnswer((String) s.getAnswer(), s.getExamId(), s.getHomeworkId(), s.getTestId(), s.getTestType());
-
+                        Logger.d("收到阅读上传答案RxBus");
                         commitEvent = s;
                         cimmitAnswer();
                     }

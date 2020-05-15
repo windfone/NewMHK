@@ -87,7 +87,7 @@ public class Api {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             Response response = chain.proceed(request);
-            Logger.d(TAG,"response.code=" + response.code());
+//            Logger.d(TAG,"response.code=" + response.code());
 
 
 

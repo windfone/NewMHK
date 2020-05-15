@@ -375,8 +375,6 @@ public class TestListeningActivity extends RootFragmentActivity<TestListeningPre
         } catch (Exception e) {
             Logger.d("解压听力试卷异常" + e.toString());
             mPresenter.saveLog(mPresenter.getUserId(), DeviceUtils.getModel() + DeviceUtils.getSDKVersionCode(), "听力解压异常==="+e.toString());
-            // 解压出现异常
-            Toast.makeText(this, "解压出现异常", Toast.LENGTH_LONG).show();
         }
     }
 

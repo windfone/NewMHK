@@ -64,6 +64,7 @@ public class BookPresenter extends RxPresenter<BookContract.View> implements Boo
                         if (!mView.isShow()) {
                             return;
                         }
+                        Logger.d("收到书面上传答案RxBus");
                         commitEvent = s;
                         cimmitAnswer();
                     }

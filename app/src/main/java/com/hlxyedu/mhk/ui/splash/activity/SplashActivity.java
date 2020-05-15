@@ -50,7 +50,6 @@ public class SplashActivity extends RootActivity<SplashPresenter> implements Spl
         }
 
     }
-
     private void initApp() {
         new Handler().postDelayed(() -> {
             startActivity(LoginActivity.newInstance(getBaseContext()));

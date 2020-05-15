@@ -116,6 +116,7 @@ public class TxtPresenter extends RxPresenter<TxtContract.View> implements TxtCo
                         if (!mView.isShow()) {
                             return;
                         }
+                        Logger.d("收到作文上传答案RxBus");
                         mView.onFinish("save_answer");
                     }
 
